@@ -1,0 +1,25 @@
+{
+  "short_name": "Confirm Slot",
+  "name": "Confirm Slot",
+  "icons": [
+    {
+      "src": "https://cdn4.vectorstock.com/i/1000x1000/76/53/confirm-rubber-stamp-vector-12827653.jpg",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "https://cdn4.vectorstock.com/i/1000x1000/76/53/confirm-rubber-stamp-vector-12827653.jpg",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://cdn4.vectorstock.com/i/1000x1000/76/53/confirm-rubber-stamp-vector-12827653.jpg",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6fcac5",
+  "background_color": "#064670"
+}

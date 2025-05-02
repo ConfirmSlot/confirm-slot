@@ -1,0 +1,81 @@
+.marquee-container {
+  background-color: #f0f8ff;
+  padding: 20px;
+  border-top: 2px solid #007bff;
+  border-bottom: 2px solid #007bff;
+  overflow: hidden;
+  text-align: center;
+}
+
+.marquee-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: 40px;
+}
+
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: scroll-marquee 15s linear infinite;
+}
+
+.marquee-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #007bff;
+  padding-right: 100px;
+}
+
+.platform-name {
+  font-weight: bold;
+  color: #0056b3;
+}
+
+.platform-link {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.platform-link:hover {
+  color: #003e99;
+}
+
+.marquee-action {
+  margin-top: 15px;
+}
+
+.marquee-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 25px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.marquee-btn:hover {
+  background-color: #0056b3;
+}
+
+@keyframes scroll-marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@media (max-width: 600px) {
+  .marquee-text {
+    font-size: 0.95rem;
+  }
+
+  .marquee-btn {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+}

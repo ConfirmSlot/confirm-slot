@@ -1,0 +1,100 @@
+.about {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: auto;
+    font-family: 'Segoe UI', sans-serif;
+    color: #6c757d;
+    background-color: #f9f9fc;
+  }
+  
+  .about-title {
+    text-align: center;
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: #064670;
+    margin-bottom: 1rem;
+  }
+  
+  .about-subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 3rem;
+  }
+  
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 2rem;
+  }
+  
+  .about-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+  
+  .about-card h3 {
+    font-size: 1.3rem;
+    color: #064670;
+    margin-bottom: 1rem;
+  }
+  
+  .about-card ul {
+    padding-left: 1rem;
+  }
+  
+  .about-card li {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    list-style: none;
+  }
+  
+  .about-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+  
+  .cta-button {
+    background-color: #6FCAC5;
+    color: #064670;
+    text-decoration: none;
+    padding: 0.9rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-button.secondary {
+    background-color: #064670;
+    color: white;
+    border: 1px solid #064670;
+  }
+  
+  .cta-button:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+  
+  @media screen and (max-width: 768px) {
+    .about-title {
+      font-size: 2rem;
+    }
+  
+    .about-subtitle {
+      font-size: 1rem;
+      padding: 0 1rem;
+    }
+  
+    .cta-button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+  

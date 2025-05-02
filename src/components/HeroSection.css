@@ -1,0 +1,164 @@
+/* Container */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4rem 2rem;
+  background: #f8fafc;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 100px 10%;
+}
+
+/* Left Section */
+.hero-left {
+  flex: 1 1 400px;
+  max-width: 600px;
+}
+
+.hero-left h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #064670;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  max-width: 20ch;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.hero-subtext {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.talk-button {
+  background-color: #6FCAC5;
+  color: #064670;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.talk-button:hover {
+  background-color: #6FCAC5;
+}
+
+.talk-button.secondary {
+  background-color: transparent;
+  color: white;
+  border: 2px solid #064670;
+  background-color: #064670;
+}
+
+.talk-button.secondary:hover {
+  background-color: #064670;
+}
+
+/* Right Section */
+.hero-right {
+  flex: 1 1 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.doctor-img {
+  width: 90%;
+  max-width: 350px;
+  height: auto;
+  z-index: 1;
+}
+
+/* Floating Pills */
+.pill {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.pill.red {
+  background-color: #f87171;
+  top: 10%;
+  right: 10%;
+}
+
+.pill.blue {
+  background-color: #60a5fa;
+  bottom: 10%;
+  left: 10%;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 3rem 1.5rem;
+  }
+
+  .hero-left,
+  .hero-right {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-left h1 {
+    font-size: 2rem;
+    max-width: 22ch;
+    margin: 0 auto 1rem;
+  }
+
+  .hero-subtext {
+    font-size: 1rem;
+    max-width: 90%;
+    margin: 0 auto 1.5rem;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .doctor-img {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-left h1 {
+    font-size: 1.7rem;
+    max-width: 90%;
+  }
+
+  .hero-subtext {
+    font-size: 0.95rem;
+  }
+
+  .talk-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .doctor-img {
+    max-width: 250px;
+  }
+}
