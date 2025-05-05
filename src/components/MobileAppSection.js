@@ -108,6 +108,7 @@ const MobileAppSection = () => {
             <img
               src={mobileapp}
               className="app-preview"
+              alt="MobileAppPreview"
             />
           </div>
         </div>
