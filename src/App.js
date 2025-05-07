@@ -27,7 +27,6 @@ const App = () => {
 <section id="ourapp">
 <MobileAppSection />
 </section>
-{/* <HealthCheckSection /> */}
 <PlatformBanner />
 
 <section id="contact">

@@ -47,7 +47,7 @@ const AboutPage = () => {
           </ul>
         </motion.div>
 
-        <motion.div className="about-card" whileHover={{ scale: 1.05 }}>
+        {/* <motion.div className="about-card" whileHover={{ scale: 1.05 }}>
           <h3>🔍 Local Services Platform</h3>
           <ul>
             <li>📍 Location-Based Search</li>
@@ -56,7 +56,7 @@ const AboutPage = () => {
             <li>💬 Real Reviews</li>
             <li>📆 Instant Booking</li>
           </ul>
-        </motion.div>
+        </motion.div> */}
 
         <motion.div className="about-card" whileHover={{ scale: 1.05 }}>
           <h3>🚗 Services Offered</h3>
@@ -71,20 +71,20 @@ const AboutPage = () => {
       </div>
 
       <div className="about-cta">
-        <motion.a
-          className="cta-button"
-          whileHover={{ scale: 1.1 }}
-          href="#"
-        >
-          📞 Schedule a Demo
-        </motion.a>
-        <motion.a
+      <motion.a
+  className="cta-button"
+  whileHover={{ scale: 1.1 }}
+  href="tel:9176122210"
+>
+  📞 Schedule a Demo
+</motion.a>
+        {/* <motion.a
           className="cta-button secondary"
           whileHover={{ scale: 1.1 }}
           href="#"
         >
           🔍 Find Nearby Services
-        </motion.a>
+        </motion.a> */}
       </div>
     </section>
   );

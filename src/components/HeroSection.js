@@ -45,21 +45,11 @@ const HeroSection = () => {
         transition={{ duration: 0.8 }}
       >
         <motion.img
-          src="https://png.pngtree.com/png-clipart/20231002/original/pngtree-young-afro-professional-doctor-png-image_13227671.png"
+          src="https://img.freepik.com/free-vector/appointment-booking-with-smartphone_23-2148554313.jpg"
           alt="Appointment Booking"
           className="doctor-img"
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-        />
-        <motion.div
-          className="pill red"
-          animate={{ x: [0, 15, 0], y: [0, -15, 0], rotate: [0, 15, 0] }}
-          transition={{ duration: 3, repeat: Infinity }}
-        />
-        <motion.div
-          className="pill blue"
-          animate={{ x: [0, -20, 0], y: [0, 20, 0], rotate: [0, -20, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
         />
       </motion.div>
     </section>

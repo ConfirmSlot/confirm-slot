@@ -36,7 +36,7 @@ const Footer = () => {
         <div>
           <h4>Location & Contact</h4>
           <p>34785 Pickford dr, Farmington hills<br />MI - 48335</p>
-          <p>+1 84823 77695</p>
+          <p>+91 91761 22210</p>
         </div>
       </div>
       <p className="copyright">© 2025 Confirm Slot</p>

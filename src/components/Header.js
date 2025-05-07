@@ -22,8 +22,8 @@ const Header = () => {
         <a href="#contact">Contact</a>
       </nav>
       <div className="auth-buttons">
-        <button className="sign-in">Sign In</button>
-        <button className="login">Login</button>
+        {/* <button className="sign-in">Sign In</button> */}
+        <button className="login">Register</button>
       </div>
     </motion.header>
   );
