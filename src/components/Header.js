@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import './Header.css'; // Make sure to import the CSS
+import './Header.css';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -15,15 +16,18 @@ const Header = () => {
         <span>Confirm Slot</span>
       </div>
       <nav className="nav">
-        <a href="#home">Home</a>
-        <a href="#about">About Us</a>
-        <a href="#services">Service</a>
-        <a href="#ourapp">Our App</a>
-        <a href="#contact">Contact</a>
+        <a href="/#home">Home</a>
+        <a href="/#about">About Us</a>
+        <a href="/#services">Service</a>
+        <a href="/#ourapp">Our App</a>
+        <a href="/#contact">Contact</a>
       </nav>
       <div className="auth-buttons">
         {/* <button className="sign-in">Sign In</button> */}
-        <button className="login">Register</button>
+        {/* <button className="login">Register</button> */}
+        <Link to="/register">
+          <button className="login">Register</button>
+        </Link>
       </div>
     </motion.header>
   );
