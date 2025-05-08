@@ -80,7 +80,7 @@ const RegisterForm = () => {
       setCities(result);
       setFormData(prev => ({ ...prev, city: '' }));
     }
-  }, [formData.state]);
+  }, [formData.state,formData.country]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
