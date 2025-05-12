@@ -1,9 +1,87 @@
-import React, { useEffect, useState } from 'react';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { Country, State, City } from 'country-state-city';
 import './Register.css';
 import axios from 'axios';
 
-// Convert "09:00 AM" -> "09:00" (for time input display)
+const appointmentCategories = [
+  {
+    category: "Healthcare",
+    subcategories: [
+      "General Physician", "Dentist", "Dermatologist", "Cardiologist",
+      "Gynecologist", "Pediatrician", "Psychiatrist / Psychologist",
+      "Physiotherapist", "Eye Specialist (Ophthalmologist)", "ENT Specialist",
+      "Ayurveda / Homeopathy"
+    ]
+  },
+  {
+    category: "Beauty & Wellness",
+    subcategories: [
+      "Salon Services", "Spa & Massage", "Makeup Artist", "Nail Art / Manicure-Pedicure",
+      "Bridal Services", "Skincare / Dermatology Clinics"
+    ]
+  },
+  {
+    category: "Legal Services",
+    subcategories: [
+      "Civil Lawyer", "Criminal Lawyer", "Corporate Lawyer", "Property Lawyer",
+      "Divorce Lawyer", "Legal Consultant"
+    ]
+  },
+  {
+    category: "Education & Tutoring",
+    subcategories: [
+      "School Tutoring", "Competitive Exam Coaching", "Language Tutors",
+      "Music Lessons", "Dance Classes"
+    ]
+  },
+  {
+    category: "Financial Services",
+    subcategories: [
+      "Chartered Accountant", "Tax Consultant", "Investment Advisor",
+      "Insurance Agent", "Loan Consultant"
+    ]
+  },
+  {
+    category: "Government / Public Services",
+    subcategories: [
+      "Passport Appointment", "Aadhar Update Center", "RTO Services",
+      "Municipality Office Visit", "Police Verification"
+    ]
+  },
+  {
+    category: "Home Services",
+    subcategories: [
+      "Electrician", "Plumber", "Carpenter", "Appliance Repair",
+      "Pest Control", "Cleaning Services"
+    ]
+  },
+  {
+    category: "Tech & Business Consulting",
+    subcategories: [
+      "Software Consultant", "Digital Marketing Expert", "Web Developer",
+      "Startup Mentor", "Business Analyst"
+    ]
+  },
+  {
+    category: "Automotive Services",
+    subcategories: [
+      "Car Servicing", "Bike Servicing", "Vehicle Inspection",
+      "Insurance Renewal", "Detailing & Washing"
+    ]
+  },
+  {
+    category: "Events & Photography",
+    subcategories: [
+      "Event Planner", "Wedding Photographer", "Candid Photography",
+      "Videography", "Pre-wedding Shoot"
+    ]
+  }
+];
+
 const convertTo24Hour = (time12h) => {
   if (!time12h) return '';
   const [time, modifier] = time12h.split(' ');
@@ -13,7 +91,6 @@ const convertTo24Hour = (time12h) => {
   return `${hours.padStart(2, '0')}:${minutes}`;
 };
 
-// Convert "14:00" -> "02:00 PM" (for formData)
 const convertTo12Hour = (time24h) => {
   if (!time24h) return '';
   let [hours, minutes] = time24h.split(':');
@@ -21,7 +98,6 @@ const convertTo12Hour = (time24h) => {
   hours = (+hours % 12 || 12).toString().padStart(2, '0');
   return `${hours}:${minutes} ${modifier}`;
 };
-
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -50,16 +126,22 @@ const RegisterForm = () => {
       { day: 'Sunday', startTime: '', endTime: '' },
     ],
     token: [
-      { day: 'Tuesday', startTokenNo: '', endTokenNo: '' }
-    ],
-    reviews: [
-      { name: '', userId: '', rating: '', comment: '' }
-    ]
+  { day: 'Monday', startTokenNo: '', endTokenNo: '' },
+  { day: 'Tuesday', startTokenNo: '', endTokenNo: '' },
+  { day: 'Wednesday', startTokenNo: '', endTokenNo: '' },
+  { day: 'Thursday', startTokenNo: '', endTokenNo: '' },
+  { day: 'Friday', startTokenNo: '', endTokenNo: '' },
+  { day: 'Saturday', startTokenNo: '', endTokenNo: '' },
+  { day: 'Sunday', startTokenNo: '', endTokenNo: '' },
+],
+
+    reviews: [{ name: '', userId: '', rating: '', comment: '' }]
   });
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  const [subcategoriesList, setSubcategoriesList] = useState([]);
 
   useEffect(() => {
     setCountries(Country.getAllCountries());
@@ -80,10 +162,17 @@ const RegisterForm = () => {
       setCities(result);
       setFormData(prev => ({ ...prev, city: '' }));
     }
-  }, [formData.state,formData.country]);
+  }, [formData.state, formData.country]);
+
+  useEffect(() => {
+    const selected = appointmentCategories.find(cat => cat.category === formData.category);
+    setSubcategoriesList(selected ? selected.subcategories : []);
+    setFormData(prev => ({ ...prev, subcategory: '' }));
+  }, [formData.category]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleAppointmentChange = (index, field, value) => {
@@ -92,137 +181,140 @@ const RegisterForm = () => {
     setFormData({ ...formData, appointment: updated });
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     const payload = {
-      category: formData.category,
-      subcategory: formData.subcategory,
-      name: formData.name,
-      logo: formData.logo,
-      icon: formData.icon,
+      ...formData,
       latitude: parseFloat(formData.latitude),
       longitude: parseFloat(formData.longitude),
-      addressLine1: formData.addressLine1,
-      addressLine2: formData.addressLine2,
-      city: formData.city,
-      state: formData.state,
-      pincode: formData.pincode,
-      country: formData.country,
-      userId: formData.userId,
-      type: formData.type,
       appointment: formData.appointment.map(item => ({
         day: item.day,
         startTime: convertTo12Hour(item.startTime),
         endTime: convertTo12Hour(item.endTime)
       })),
-      token: formData.token.map(item => ({
-        day: item.day,
-        startTokenNo: item.startTokenNo,
-        endTokenNo: item.endTokenNo
-      })),
-      reviews: formData.reviews.map(item => ({
-        name: item.name,
-        userId: item.userId,
-        rating: item.rating,
-        comment: item.comment
+      reviews: formData.reviews.map(r => ({
+        ...r,
+        rating: parseFloat(r.rating)
       }))
     };
-  
+
     try {
-      const response = await axios.post('https://confirmslot.com/service-provider', payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const res = await axios.post('https://confirmslot.com/service-provider', payload, {
+        headers: { 'Content-Type': 'application/json' }
       });
-  
-      if (response.status === 200) {
-        alert('Form submitted successfully!');
-      } else {
-        alert('Failed to submit form');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while submitting the form');
+      if (res.status === 200) alert('Form submitted successfully!');
+      else alert('Submission failed');
+    } catch (err) {
+      console.error(err);
+      alert('Error while submitting form');
     }
   };
 
+  const handleTokenChange = (index, field, value) => {
+  const updatedTokens = [...formData.token];
+  updatedTokens[index][field] = value;
+  setFormData({ ...formData, token: updatedTokens });
+};
+
+
   return (
     <form className="form-container" onSubmit={handleSubmit}>
-    <input name="category" placeholder="Category" onChange={handleChange} />
-    <input name="subcategory" placeholder="Subcategory" onChange={handleChange} />
-    <input name="name" placeholder="Clinic Name" onChange={handleChange} />
-    <input name="logo" placeholder="Logo URL" onChange={handleChange} />
-    <input name="icon" placeholder="Icon URL" onChange={handleChange} />
-    <input name="latitude" placeholder="Latitude" onChange={handleChange} />
-    <input name="longitude" placeholder="Longitude" onChange={handleChange} />
-    <input name="addressLine1" placeholder="Address Line 1" onChange={handleChange} />
-    <input name="addressLine2" placeholder="Address Line 2" onChange={handleChange} />
-  
-    <select name="country" onChange={handleChange} value={formData.country}>
-      <option value="">Select Country</option>
-      {countries.map((c) => (
-        <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
-      ))}
-    </select>
-  
-    <select name="state" onChange={handleChange} value={formData.state} disabled={!states.length}>
-      <option value="">Select State</option>
-      {states.map((s) => (
-        <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
-      ))}
-    </select>
-  
-    <select name="city" onChange={handleChange} value={formData.city} disabled={!cities.length}>
-      <option value="">Select City</option>
-      {cities.map((c, index) => (
-        <option key={index} value={c.name}>{c.name}</option>
-      ))}
-    </select>
-  
-    <input name="pincode" placeholder="Pincode" onChange={handleChange} />
-    <select name="type" onChange={handleChange} value={formData.type}>
-      <option value="token">Token</option>
-      <option value="appointment">Appointment</option>
-      <option value="both">Both</option>
-    </select>
-  
-    <input name="userId" placeholder="User ID" onChange={handleChange} />
-  
-    <h4>Appointments</h4>
-    {formData.appointment.map((item, index) => (
-      <div key={index} className="appointment-row">
-        <label>{item.day}</label>
-        <input
-          type="time"
-          value={convertTo24Hour(item.startTime)}
-          onChange={(e) =>
-            handleAppointmentChange(index, 'startTime', convertTo12Hour(e.target.value))
-          }
-        />
-        <input
-          type="time"
-          value={convertTo24Hour(item.endTime)}
-          onChange={(e) =>
-            handleAppointmentChange(index, 'endTime', convertTo12Hour(e.target.value))
-          }
-        />
-      </div>
-    ))}
-  
-    <h4>Token</h4>
-    <input placeholder="Start Token No" onChange={(e) => setFormData({ ...formData, token: [{ ...formData.token[0], startTokenNo: e.target.value }] })} />
-    <input placeholder="End Token No" onChange={(e) => setFormData({ ...formData, token: [{ ...formData.token[0], endTokenNo: e.target.value }] })} />
-  
-    <h4>Review</h4>
-    <input placeholder="Reviewer Name" onChange={(e) => setFormData({ ...formData, reviews: [{ ...formData.reviews[0], name: e.target.value }] })} />
-    <input placeholder="Review User ID" onChange={(e) => setFormData({ ...formData, reviews: [{ ...formData.reviews[0], userId: e.target.value }] })} />
-    <input placeholder="Rating" onChange={(e) => setFormData({ ...formData, reviews: [{ ...formData.reviews[0], rating: parseFloat(e.target.value) }] })} />
-    <textarea placeholder="Comment" onChange={(e) => setFormData({ ...formData, reviews: [{ ...formData.reviews[0], comment: e.target.value }] })} />
-  
-    <button type="submit" className="submit-btn">Submit</button>
-  </form>
-  
+      <select name="category" onChange={handleChange} value={formData.category}>
+        <option value="">Select Category</option>
+        {appointmentCategories.map((c, i) => (
+          <option key={i} value={c.category}>{c.category}</option>
+        ))}
+      </select>
+
+      <select name="subcategory" onChange={handleChange} value={formData.subcategory} disabled={!formData.category}>
+        <option value="">Select Subcategory</option>
+        {subcategoriesList.map((sc, i) => (
+          <option key={i} value={sc}>{sc}</option>
+        ))}
+      </select>
+
+      <input name="name" placeholder="Clinic Name" onChange={handleChange} />
+      <input name="logo" placeholder="Logo URL" onChange={handleChange} />
+      <input name="icon" placeholder="Icon URL" onChange={handleChange} />
+      <input name="latitude" placeholder="Latitude" onChange={handleChange} />
+      <input name="longitude" placeholder="Longitude" onChange={handleChange} />
+      <input name="addressLine1" placeholder="Address Line 1" onChange={handleChange} />
+      <input name="addressLine2" placeholder="Address Line 2" onChange={handleChange} />
+
+      <select name="country" onChange={handleChange} value={formData.country}>
+        <option value="">Select Country</option>
+        {countries.map(c => (
+          <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+        ))}
+      </select>
+
+      <select name="state" onChange={handleChange} value={formData.state} disabled={!states.length}>
+        <option value="">Select State</option>
+        {states.map(s => (
+          <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+        ))}
+      </select>
+
+      <select name="city" onChange={handleChange} value={formData.city} disabled={!cities.length}>
+        <option value="">Select City</option>
+        {cities.map((c, i) => (
+          <option key={i} value={c.name}>{c.name}</option>
+        ))}
+      </select>
+
+      <input name="pincode" placeholder="Pincode" onChange={handleChange} />
+      <select name="type" onChange={handleChange} value={formData.type}>
+        <option value="token">Token</option>
+        <option value="appointment">Appointment</option>
+        <option value="both">Both</option>
+      </select>
+
+      <input name="userId" placeholder="User ID" onChange={handleChange} />
+
+      <h4>Appointments</h4>
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+  {formData.appointment.map((item, index) => (
+    <div key={index} className="appointment-row" style={{ marginBottom: '1rem' }}>
+      <label style={{ marginRight: '1rem' }}>{item.day}</label>
+      <TimePicker
+        label="Start Time"
+        value={dayjs(`2024-01-01T${convertTo24Hour(item.startTime)}`)} // controlled value
+        onChange={(newValue) => {
+          handleAppointmentChange(index, 'startTime', newValue.format('hh:mm'));
+        }}
+        ampm
+      />
+      <TimePicker
+        label="End Time"
+        value={dayjs(`2024-01-01T${convertTo24Hour(item.endTime)}`)}
+        onChange={(newValue) => {
+          handleAppointmentChange(index, 'endTime', newValue.format('hh:mm'));
+        }}
+        ampm
+      />
+    </div>
+  ))}
+</LocalizationProvider>
+      <h4>Token Numbers (Per Day)</h4>
+{formData.token.map((item, index) => (
+  <div key={index} className="token-row">
+    <label>{item.day}</label>
+    <input
+      type="number"
+      placeholder="Start Token No"
+      value={item.startTokenNo}
+      onChange={(e) => handleTokenChange(index, 'startTokenNo', e.target.value)}
+    />
+    <input
+      type="number"
+      placeholder="End Token No"
+      value={item.endTokenNo}
+      onChange={(e) => handleTokenChange(index, 'endTokenNo', e.target.value)}
+    />
+  </div>
+))}
+      <button type="submit" className="submit-btn">Submit</button>
+    </form>
   );
 };
 

@@ -65,21 +65,78 @@ textarea {
   background-color: #0056b3;
 }
 
+/* Appointment Row Styling */
 .appointment-row {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
   width: 100%;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .appointment-row label {
   flex: 1;
   font-weight: 500;
+  font-size: 14px;
+  color: #333;
 }
 
 .appointment-row input[type="time"] {
   flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  appearance: none; /* Remove default browser styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.appointment-row input[type="time"]:focus {
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+/* Token Row Styling */
+.token-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.token-row label {
+  width: 120px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.token-row input {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.token-row input:focus {
+  border-color: #007bff;
+  background-color: #fff;
 }
 
 /* Full width for h4 titles, textarea, submit */
@@ -94,27 +151,62 @@ textarea,
   .form-container {
     flex-direction: column;
     gap: 0;
+    padding: 20px;
   }
 
   input,
   select,
   textarea {
     width: 100%;
-    margin-bottom: 12px;  /* Add margin between input boxes on mobile */
+    margin-bottom: 12px;
+    font-size: 16px; /* Slightly larger font for mobile readability */
   }
 
   .appointment-row {
     flex-direction: column;
     align-items: flex-start;
+    padding: 12px;
+    gap: 8px;
   }
 
-  .appointment-row label,
+  .appointment-row label {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
   .appointment-row input[type="time"] {
     width: 100%;
-    margin-bottom: 12px;  /* Add gap between the appointment input boxes */
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+  }
+
+  .token-row {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .token-row label {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .token-row input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #ccc;
   }
 
   .submit-btn {
-    margin-top: 20px; /* Add some margin above the submit button */
+    margin-top: 20px;
+    padding: 14px;
+    font-size: 16px;
   }
 }
