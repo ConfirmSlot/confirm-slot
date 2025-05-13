@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Country, State, City } from 'country-state-city';
 import './Register.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const appointmentCategories = [
   {
@@ -142,6 +143,11 @@ const RegisterForm = () => {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [subcategoriesList, setSubcategoriesList] = useState([]);
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+    navigate('/');
+  };
 
   useEffect(() => {
     setCountries(Country.getAllCountries());
@@ -218,59 +224,121 @@ const RegisterForm = () => {
 
 
   return (
+    <>
+      <h2 className="form-title">Registration</h2>
     <form className="form-container" onSubmit={handleSubmit}>
-      <select name="category" onChange={handleChange} value={formData.category}>
-        <option value="">Select Category</option>
-        {appointmentCategories.map((c, i) => (
-          <option key={i} value={c.category}>{c.category}</option>
-        ))}
-      </select>
+<div className="form-section">
+  <h3>Category</h3>
+  <div className="form-group">
+    <label>Category</label>
+    <select name="category" onChange={handleChange} value={formData.category}>
+      <option value="">Select Category</option>
+      {appointmentCategories.map((c, i) => (
+        <option key={i} value={c.category}>{c.category}</option>
+      ))}
+    </select>
+  </div>
 
-      <select name="subcategory" onChange={handleChange} value={formData.subcategory} disabled={!formData.category}>
-        <option value="">Select Subcategory</option>
-        {subcategoriesList.map((sc, i) => (
-          <option key={i} value={sc}>{sc}</option>
-        ))}
-      </select>
+  <div className="form-group">
+    <label>Subcategory</label>
+    <select
+      name="subcategory"
+      onChange={handleChange}
+      value={formData.subcategory}
+      disabled={!formData.category}
+    >
+      <option value="">Select Subcategory</option>
+      {subcategoriesList.map((sc, i) => (
+        <option key={i} value={sc}>{sc}</option>
+      ))}
+    </select>
+  </div>
+</div>
 
-      <input name="name" placeholder="Clinic Name" onChange={handleChange} />
-      <input name="logo" placeholder="Logo URL" onChange={handleChange} />
-      <input name="icon" placeholder="Icon URL" onChange={handleChange} />
-      <input name="latitude" placeholder="Latitude" onChange={handleChange} />
-      <input name="longitude" placeholder="Longitude" onChange={handleChange} />
-      <input name="addressLine1" placeholder="Address Line 1" onChange={handleChange} />
-      <input name="addressLine2" placeholder="Address Line 2" onChange={handleChange} />
+<div className="form-section">
+  <h3>Basic Info</h3>
+  <div className="form-group">
+    <label>Name</label>
+    <input name="name" placeholder="Name" onChange={handleChange} />
+  </div>
 
-      <select name="country" onChange={handleChange} value={formData.country}>
-        <option value="">Select Country</option>
-        {countries.map(c => (
-          <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
-        ))}
-      </select>
+  <div className="form-group">
+    <label>Logo URL</label>
+    <input name="logo" placeholder="Logo URL" onChange={handleChange} />
+  </div>
 
-      <select name="state" onChange={handleChange} value={formData.state} disabled={!states.length}>
-        <option value="">Select State</option>
-        {states.map(s => (
-          <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
-        ))}
-      </select>
+  <div className="form-group">
+    <label>Icon URL</label>
+    <input name="icon" placeholder="Icon URL" onChange={handleChange} />
+  </div>
+</div>
 
-      <select name="city" onChange={handleChange} value={formData.city} disabled={!cities.length}>
-        <option value="">Select City</option>
-        {cities.map((c, i) => (
-          <option key={i} value={c.name}>{c.name}</option>
-        ))}
-      </select>
+<div className="form-section">
+  <h3>Location Details</h3>
 
-      <input name="pincode" placeholder="Pincode" onChange={handleChange} />
+  <div className="form-group">
+    <label>Latitude</label>
+    <input name="latitude" placeholder="Latitude" onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Longitude</label>
+    <input name="longitude" placeholder="Longitude" onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Address Line 1</label>
+    <input name="addressLine1" placeholder="Address Line 1" onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Address Line 2</label>
+    <input name="addressLine2" placeholder="Address Line 2" onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Country</label>
+    <select name="country" onChange={handleChange} value={formData.country}>
+      <option value="">Select Country</option>
+      {countries.map(c => (
+        <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+      ))}
+    </select>
+  </div>
+
+  <div className="form-group">
+    <label>State</label>
+    <select name="state" onChange={handleChange} value={formData.state} disabled={!states.length}>
+      <option value="">Select State</option>
+      {states.map(s => (
+        <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+      ))}
+    </select>
+  </div>
+
+  <div className="form-group">
+    <label>City</label>
+    <select name="city" onChange={handleChange} value={formData.city} disabled={!cities.length}>
+      <option value="">Select City</option>
+      {cities.map((c, i) => (
+        <option key={i} value={c.name}>{c.name}</option>
+      ))}
+    </select>
+  </div>
+
+  <div className="form-group">
+    <label>Pincode</label>
+    <input name="pincode" placeholder="Pincode" onChange={handleChange} />
+  </div>
+</div>
+
       <select name="type" onChange={handleChange} value={formData.type}>
-        <option value="token">Token</option>
         <option value="appointment">Appointment</option>
-        <option value="both">Both</option>
+        <option value="token">Token</option>
       </select>
 
-      <input name="userId" placeholder="User ID" onChange={handleChange} />
-
+      {(formData.type === 'appointment' || formData.type === 'both') && (
+        <>
       <h4>Appointments</h4>
 <LocalizationProvider dateAdapter={AdapterDayjs}>
   {formData.appointment.map((item, index) => (
@@ -295,26 +363,42 @@ const RegisterForm = () => {
     </div>
   ))}
 </LocalizationProvider>
-      <h4>Token Numbers (Per Day)</h4>
+</>
+      )}
+{(formData.type === 'token') && (
+  <>
+     <h4>Token Numbers (Per Day)</h4>
 {formData.token.map((item, index) => (
   <div key={index} className="token-row">
     <label>{item.day}</label>
     <input
       type="number"
+      min="0"
       placeholder="Start Token No"
       value={item.startTokenNo}
-      onChange={(e) => handleTokenChange(index, 'startTokenNo', e.target.value)}
+      onChange={(e) =>
+        handleTokenChange(index, 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0))
+      }
     />
     <input
       type="number"
+      min="0"
       placeholder="End Token No"
       value={item.endTokenNo}
-      onChange={(e) => handleTokenChange(index, 'endTokenNo', e.target.value)}
+      onChange={(e) =>
+        handleTokenChange(index, 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0))
+      }
     />
   </div>
 ))}
-      <button type="submit" className="submit-btn">Submit</button>
+</>
+)}
+<div className="form-actions">
+  <button type="submit" className="form-button">Submit</button>
+  <button type="button" className="form-button" onClick={handleCancel}>Cancel</button>
+</div>
     </form>
+    </>
   );
 };
 
