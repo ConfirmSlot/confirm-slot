@@ -176,10 +176,26 @@ const RegisterForm = () => {
     setFormData(prev => ({ ...prev, subcategory: '' }));
   }, [formData.category]);
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData(prev => ({ ...prev, [name]: value }));
+  // };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const { name, value, files } = e.target;
+
+  if (files) {
+    setFormData(prev => ({
+      ...prev,
+      [name]: files[0]
+    }));
+  } else {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+};
 
   const handleAppointmentChange = (index, field, value) => {
     const updated = [...formData.appointment];
@@ -230,7 +246,6 @@ const RegisterForm = () => {
 <div className="form-section">
   <h3>Category</h3>
   <div className="form-group">
-    <label>Category</label>
     <select name="category" onChange={handleChange} value={formData.category}>
       <option value="">Select Category</option>
       {appointmentCategories.map((c, i) => (
@@ -240,7 +255,6 @@ const RegisterForm = () => {
   </div>
 
   <div className="form-group">
-    <label>Subcategory</label>
     <select
       name="subcategory"
       onChange={handleChange}
@@ -258,46 +272,59 @@ const RegisterForm = () => {
 <div className="form-section">
   <h3>Basic Info</h3>
   <div className="form-group">
-    <label>Name</label>
     <input name="name" placeholder="Name" onChange={handleChange} />
   </div>
 
-  <div className="form-group">
-    <label>Logo URL</label>
+  {/* <div className="form-group">
     <input name="logo" placeholder="Logo URL" onChange={handleChange} />
   </div>
 
   <div className="form-group">
-    <label>Icon URL</label>
     <input name="icon" placeholder="Icon URL" onChange={handleChange} />
-  </div>
+  </div> */}
+
+  <div className="form-group">
+  {/* <label htmlFor="logo">Logo Upload</label> */}
+  <input
+    type="file"
+    name="logo"
+    accept="image/*"
+    onChange={handleChange}
+  />
+</div>
+
+<div className="form-group">
+  {/* <label htmlFor="icon">Icon Upload</label> */}
+  <input
+    type="file"
+    name="icon"
+    accept="image/*"
+    onChange={handleChange}
+  />
+</div>
+
 </div>
 
 <div className="form-section">
   <h3>Location Details</h3>
 
   <div className="form-group">
-    <label>Latitude</label>
     <input name="latitude" placeholder="Latitude" onChange={handleChange} />
   </div>
 
   <div className="form-group">
-    <label>Longitude</label>
     <input name="longitude" placeholder="Longitude" onChange={handleChange} />
   </div>
 
   <div className="form-group">
-    <label>Address Line 1</label>
     <input name="addressLine1" placeholder="Address Line 1" onChange={handleChange} />
   </div>
 
   <div className="form-group">
-    <label>Address Line 2</label>
     <input name="addressLine2" placeholder="Address Line 2" onChange={handleChange} />
   </div>
 
   <div className="form-group">
-    <label>Country</label>
     <select name="country" onChange={handleChange} value={formData.country}>
       <option value="">Select Country</option>
       {countries.map(c => (
@@ -307,7 +334,6 @@ const RegisterForm = () => {
   </div>
 
   <div className="form-group">
-    <label>State</label>
     <select name="state" onChange={handleChange} value={formData.state} disabled={!states.length}>
       <option value="">Select State</option>
       {states.map(s => (
@@ -317,7 +343,6 @@ const RegisterForm = () => {
   </div>
 
   <div className="form-group">
-    <label>City</label>
     <select name="city" onChange={handleChange} value={formData.city} disabled={!cities.length}>
       <option value="">Select City</option>
       {cities.map((c, i) => (
@@ -327,7 +352,6 @@ const RegisterForm = () => {
   </div>
 
   <div className="form-group">
-    <label>Pincode</label>
     <input name="pincode" placeholder="Pincode" onChange={handleChange} />
   </div>
 </div>
