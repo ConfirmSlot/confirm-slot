@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Routes instead of Switch
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
@@ -46,7 +46,7 @@ const App = () => {
       window.location.replace('https://api.confirmslot.com/api-docs');
     }
   }, []);
-  
+
   return (
     <Router>
       <div>
