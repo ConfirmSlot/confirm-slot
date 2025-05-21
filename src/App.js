@@ -37,6 +37,16 @@ const HomePage = () => (
 );
 
 const App = () => {
+    useEffect(() => {
+    // Check if the current URL is api.confirmslot.com/
+    if (
+      window.location.hostname === 'api.confirmslot.com' &&
+      window.location.pathname === '/'
+    ) {
+      window.location.replace('https://api.confirmslot.com/api-docs');
+    }
+  }, []);
+  
   return (
     <Router>
       <div>
