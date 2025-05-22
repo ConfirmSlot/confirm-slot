@@ -12,7 +12,9 @@ const Header = () => {
       transition={{ duration: 0.6 }}
     >
       <div className="logo">
-        <img src="https://cdn4.vectorstock.com/i/1000x1000/76/53/confirm-rubber-stamp-vector-12827653.jpg" alt="Confirm Slot Logo" />
+        <Link to="/">
+        <img src="https://cdn4.vectorstock.com/i/1000x1000/76/53/confirm-rubber-stamp-vector-12827653.jpg" alt="Confirm Slot Logo" style={{ cursor: "pointer" }} />
+        </Link>
         <span>Confirm Slot</span>
       </div>
       <nav className="nav">

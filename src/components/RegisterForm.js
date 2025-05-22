@@ -7,6 +7,8 @@ import { Country, State, City } from 'country-state-city';
 import './Register.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import IconButton from "@mui/material/IconButton";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 
 const appointmentCategories = [
   {
@@ -197,6 +199,29 @@ const RegisterForm = () => {
   }
 };
 
+const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setFormData({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          });
+        },
+        (err) => {
+          console.error("Error getting location:", err.message);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  };
+
   const handleAppointmentChange = (index, field, value) => {
     const updated = [...formData.appointment];
     updated[index][field] = value;
@@ -284,7 +309,7 @@ const RegisterForm = () => {
   </div> */}
 
   <div className="form-group">
-  {/* <label htmlFor="logo">Logo Upload</label> */}
+  <label htmlFor="logo">Logo Upload</label>
   <input
     type="file"
     name="logo"
@@ -294,7 +319,7 @@ const RegisterForm = () => {
 </div>
 
 <div className="form-group">
-  {/* <label htmlFor="icon">Icon Upload</label> */}
+  <label htmlFor="icon">Icon Upload</label>
   <input
     type="file"
     name="icon"
@@ -308,12 +333,30 @@ const RegisterForm = () => {
 <div className="form-section">
   <h3>Location Details</h3>
 
+      <IconButton
+      onClick={getLocation}
+      sx={{
+        position: "fixed",
+        bottom: 20,
+        right: 20,
+        backgroundColor: "#1976d2",
+        color: "#fff",
+        "&:hover": {
+          backgroundColor: "#115293",
+        },
+        boxShadow: 3,
+        width: 56,
+        height: 56,
+      }}
+    >
+      <MyLocationIcon />
+    </IconButton>
   <div className="form-group">
-    <input name="latitude" placeholder="Latitude" onChange={handleChange} />
+    <input name="latitude" value={formData.latitude} placeholder="Latitude" onChange={handleChange} />
   </div>
 
   <div className="form-group">
-    <input name="longitude" placeholder="Longitude" onChange={handleChange} />
+    <input name="longitude"value={formData.longitude} placeholder="Longitude" onChange={handleChange} />
   </div>
 
   <div className="form-group">
