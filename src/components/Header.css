@@ -1,73 +1,78 @@
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 25px 60px;
-    background-color: #f5f9ff;
-    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.03);
-    position: sticky;
-    top: 0;
-    z-index: 999;
+/* Header.css */
+.header-toolbar {
+  padding: 16px 64px;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  background-color: white;
+  gap: 8px; /* Add small gap between elements */
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  color: #0c2d48;
+  text-decoration: none;
+}
+
+.logo-img {
+  height: 40px;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex: 1; /* Center nav links on desktop */
+}
+
+.navbar-link {
+  color: #555;
+  font-weight: 500;
+  font-size: 16px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+.register-button {
+  border-radius: 999px !important;
+  padding: 8px 24px !important;
+  text-transform: none !important;
+  font-weight: 600;
+  background-color: #00457c !important;
+  color: white !important;
+  font-size: 14px; /* Slightly smaller on mobile */
+}
+
+/* Hide mobile menu on desktop */
+.menu-icon {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* Hide nav links on mobile */
   }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 22px;
-    font-weight: 700;
-    color: #10254e;
+
+  .menu-icon {
+    display: block;
   }
-  
-  .logo img {
-    width: 30px;
-    height: 30px;
+
+  .header-toolbar {
+    padding: 12px 16px; /* Smaller padding on mobile */
+    justify-content: space-between; /* Spread elements */
   }
-  
-  .nav {
-    display: flex;
-    gap: 30px;
+
+  .register-button {
+    padding: 6px 16px !important; /* Compact button on mobile */
+    font-size: 13px;
   }
-  
-  .nav a {
-    color: #333;
-    font-size: 16px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
+
+  .logo-container {
+    flex-grow: 0; /* Prevent logo from taking too much space */
   }
-  
-  .nav a:hover {
-    color: #0077b6;
-  }
-  
-  .auth-buttons {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .sign-in {
-    background: none;
-    border: none;
-    font-size: 16px;
-    color: #333;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
-  .login {
-    background-color: #064670;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 999px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .login:hover {
-    background-color: #064670;
-  }
-  
+}
