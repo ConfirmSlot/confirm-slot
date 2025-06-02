@@ -73,7 +73,7 @@ export const uploadFileToS3 = async (file, folder) => {
     await s3Client.send(command);
 
     // Construct the S3 URL
-    const fileUrl = `https://${params.Bucket}.s3.${process.env.REACT_APP_AWS_REGION}.amazonaws.com/${key}`;
+    const fileUrl = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${key}`;
     return fileUrl;
   } catch (error) {
     console.error('S3 Upload Error:', error);
