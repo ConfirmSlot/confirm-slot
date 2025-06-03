@@ -143,25 +143,51 @@ const RegisterForm = () => {
     // eslint-disable-next-line
   }, [formData.country, formData.state]);
 
-  const handleChange = async (e) => {
+  // const handleChange = async (e) => {
+  //   const { name, value, files } = e.target;
+
+  //   if (name === 'category') {
+  //     const selectedCategory = categories.find(c => String(c._id) === String(value));
+  //     const validSubs = selectedCategory?.subcategories?.filter(sc => !sc.isDeleted) || [];
+  //     setSubcategoriesList(validSubs);
+  //     setFormData(prev => ({ ...prev, category: value, subcategory: '' }));
+  //   } else if (files) {
+  //     setFormData(prev => ({ ...prev, [name]: files[0] }));
+  //     const url = await uploadFileToS3(files[0], "confirm-slot-logos");
+  //     if (url) {
+  //       console.log("Uploaded Image URL:", url);
+  //     }
+  //   } else if (name === 'phoneNumber') {
+  //     setPhone(value);
+  //     setFormData(prev => ({ ...prev, phoneNumber: value }));
+  //   } else {
+  //     setFormData(prev => ({ ...prev, [name]: value }));
+  //   }
+  // };
+
+   const handleChange = async (e) => {
     const { name, value, files } = e.target;
 
     if (name === 'category') {
-      const selectedCategory = categories.find(c => String(c._id) === String(value));
-      const validSubs = selectedCategory?.subcategories?.filter(sc => !sc.isDeleted) || [];
+      const selectedCategory = categories.find((c) => String(c._id) === String(value));
+      const validSubs = selectedCategory?.subcategories?.filter((sc) => !sc.isDeleted) || [];
       setSubcategoriesList(validSubs);
-      setFormData(prev => ({ ...prev, category: value, subcategory: '' }));
+      setFormData((prev) => ({ ...prev, category: value, subcategory: '' }));
     } else if (files) {
-      setFormData(prev => ({ ...prev, [name]: files[0] }));
-      const url = await uploadFileToS3(files[0], "confirm-slot-logos");
-      if (url) {
-        console.log("Uploaded Image URL:", url);
+      try {
+        const folder = name === 'logo' ? 'confirmslot.com/serviceprovider/logos' : 'confirmslot.com/serviceprovider/icons';
+        const url = await uploadFileToS3(files[0], folder);
+        setFormData((prev) => ({ ...prev, [name]: url }));
+        console.log(`Uploaded ${name} URL:`, url);
+      } catch (error) {
+        console.error(`Failed to upload ${name}:`, error);
+        alert(`Failed to upload ${name}: ${error.message}`);
       }
     } else if (name === 'phoneNumber') {
       setPhone(value);
-      setFormData(prev => ({ ...prev, phoneNumber: value }));
+      setFormData((prev) => ({ ...prev, phoneNumber: value }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
