@@ -5,9 +5,18 @@ https://confirmslot.com/*  /index.html  200
 
  -->
 
-# Redirect root of api.xxx.com to api-docs
-https://api.confirmslot.com/  https://api.confirmslot.com/api-docs  301!
+<!-- # Redirect root of api.xxx.com to api-docs
+https://api.confirmslot.com/  https://api.confirmslot.com/api-docs  200
 # Proxy API requests for the subdomain
 https://api.confirmslot.com/*  http://43.204.155.169:3000/:splat  200
 # Serve React app for the main domain
-https://confirmslot.com/*  /index.html  200
+https://confirmslot.com/*  /index.html  200 -->
+
+# Proxy API requests to backend server
+/api/*       http://43.204.155.169:3000/:splat    200
+
+# Serve API docs directly
+/api-docs    http://43.204.155.169:3000/api-docs  200
+
+# Catch-all: serve React app for other routes
+/*           /index.html                          200
