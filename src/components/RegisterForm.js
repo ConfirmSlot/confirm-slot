@@ -8,7 +8,6 @@ import { Country, State, City } from 'country-state-city';
 import './Register.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { uploadFileToS3 } from './uploadFileToS3';
 
 const convertTo24Hour = (time12h) => {
   if (!time12h) return "";
@@ -48,13 +47,13 @@ const RegisterForm = () => {
     userId: '',
     groupSize: '',
     appointment: [
-      { day: 'MON', startTime: '', endTime: '', duration: '', noofpeople: '', noofgroups: '' },
-      { day: 'TUE', startTime: '', endTime: '', duration: '', noofpeople: '', noofgroups: '' },
-      { day: 'WED', startTime: '', endTime: '', duration: '', noofpeople: '', noofgroups: '' },
-      { day: 'THU', startTime: '', endTime: '', duration: '', noofpeople: '', noofgroups: '' },
-      { day: 'FRI', startTime: '', endTime: '', duration: '', noofpeople: '', noofgroups: '' },
-      { day: 'SAT', startTime: '', endTime: '', duration: '', noofpeople: '', noofgroups: '' },
-      { day: 'SUN', startTime: '', endTime: '', duration: '', noofpeople: '', noofgroups: '' },
+      { day: 'MON', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
+      { day: 'TUE', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
+      { day: 'WED', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
+      { day: 'THU', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
+      { day: 'FRI', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
+      { day: 'SAT', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
+      { day: 'SUN', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
     ],
     token: [
       { day: 'MON', startTokenNo: '', endTokenNo: '' },
@@ -65,34 +64,32 @@ const RegisterForm = () => {
       { day: 'SAT', startTokenNo: '', endTokenNo: '' },
       { day: 'SUN', startTokenNo: '', endTokenNo: '' },
     ],
-    reviews: [{ name: '', userId: '', rating: '', comment: '' }]
+    reviews: [{ name: '', userId: '', rating: '', comment: '' }],
   });
 
   const [countries, setCountries] = useState([]);
-  const [countryCodes, setCountryCodes] = useState([]); // Separate state for phone country codes
+  const [countryCodes, setCountryCodes] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [subcategoriesList, setSubcategoriesList] = useState([]);
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
-  const [selectedCode, setSelectedCode] = useState('+91'); // Default India
+  const [selectedCode, setSelectedCode] = useState('+91');
   const [phone, setPhone] = useState('');
 
   useEffect(() => {
-    // Fetch country codes for phone number dropdown
     axios.get('https://restcountries.com/v3.1/all')
       .then(res => {
         const codes = res.data.map(country => ({
           name: country.name.common,
           code: country.idd?.root ? country.idd.root + (country.idd.suffixes?.[0] || '') : '',
-        })).filter(c => c.code); // Filter valid codes
+        })).filter(c => c.code);
         setCountryCodes(codes.sort((a, b) => a.name.localeCompare(b.name)));
       })
       .catch(err => {
         console.error('Error fetching country codes:', err);
       });
 
-    // Set countries for location dropdown
     setCountries(Country.getAllCountries());
   }, []);
 
@@ -126,7 +123,6 @@ const RegisterForm = () => {
       setCities([]);
       setFormData(prev => ({ ...prev, state: '', city: '' }));
     }
-    // eslint-disable-next-line
   }, [formData.country]);
 
   useEffect(() => {
@@ -140,32 +136,9 @@ const RegisterForm = () => {
       setCities([]);
       setFormData(prev => ({ ...prev, city: '' }));
     }
-    // eslint-disable-next-line
   }, [formData.country, formData.state]);
 
-  // const handleChange = async (e) => {
-  //   const { name, value, files } = e.target;
-
-  //   if (name === 'category') {
-  //     const selectedCategory = categories.find(c => String(c._id) === String(value));
-  //     const validSubs = selectedCategory?.subcategories?.filter(sc => !sc.isDeleted) || [];
-  //     setSubcategoriesList(validSubs);
-  //     setFormData(prev => ({ ...prev, category: value, subcategory: '' }));
-  //   } else if (files) {
-  //     setFormData(prev => ({ ...prev, [name]: files[0] }));
-  //     const url = await uploadFileToS3(files[0], "confirm-slot-logos");
-  //     if (url) {
-  //       console.log("Uploaded Image URL:", url);
-  //     }
-  //   } else if (name === 'phoneNumber') {
-  //     setPhone(value);
-  //     setFormData(prev => ({ ...prev, phoneNumber: value }));
-  //   } else {
-  //     setFormData(prev => ({ ...prev, [name]: value }));
-  //   }
-  // };
-
-   const handleChange = async (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
 
     if (name === 'category') {
@@ -175,13 +148,18 @@ const RegisterForm = () => {
       setFormData((prev) => ({ ...prev, category: value, subcategory: '' }));
     } else if (files) {
       try {
-        const folder = name === 'logo' ? 'confirmslot.com/serviceprovider/logos' : 'confirmslot.com/serviceprovider/icons';
-        const url = await uploadFileToS3(files[0], folder);
-        setFormData((prev) => ({ ...prev, [name]: url }));
-        console.log(`Uploaded ${name} URL:`, url);
+        const type = name === 'logo' ? 'logo' : 'icon';
+        const formData = new FormData();
+        formData.append('image', files[0]);
+        const response = await axios.post(`https://api.confirmslot.com/uploads/${type}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        const { imageUrl } = response.data;
+        setFormData((prev) => ({ ...prev, [name]: imageUrl }));
+        console.log(`Uploaded ${name} URL:`, imageUrl);
       } catch (error) {
         console.error(`Failed to upload ${name}:`, error);
-        alert(`Failed to upload ${name}: ${error.message}`);
+        alert(`Failed to upload ${name}: ${error.response?.data?.message || error.message}`);
       }
     } else if (name === 'phoneNumber') {
       setPhone(value);
@@ -196,26 +174,21 @@ const RegisterForm = () => {
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
           const { latitude, longitude } = pos.coords;
-
           try {
             const res = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
             );
             const data = await res.json();
-
             if (data && data.address) {
               const countryCode = data.address.country_code?.toUpperCase() || '';
               const country = countries.find(c => c.isoCode === countryCode);
-
               const isoCode = data.address['ISO3166-2-lvl4'] || '';
               const stateCode = isoCode.split('-')[1] || '';
               const states = State.getStatesOfCountry(countryCode);
               const state = states.find(s => s.isoCode === stateCode) || states[0] || { isoCode: '', name: '' };
-
               const cityName = data.address.city || data.address.town || data.address.village || data.address.suburb || '';
               const cities = City.getCitiesOfState(countryCode, state?.isoCode || '');
               const city = cities.find(c => c.name.toLowerCase() === cityName.toLowerCase()) ? cityName : (cities[0]?.name || '');
-
               setFormData(prev => ({
                 ...prev,
                 latitude: latitude.toFixed(6),
@@ -224,9 +197,8 @@ const RegisterForm = () => {
                 country: country ? country.isoCode : '',
                 state: state.isoCode,
                 city,
-                pincode: data.address.postcode || ''
+                pincode: data.address.postcode || '',
               }));
-
               setStates(states);
               setCities(cities);
             } else {
@@ -277,38 +249,66 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {
-      ...formData,
-      phoneNumber: `${selectedCode} ${phone}`,
-      latitude: parseFloat(formData.latitude) || 0,
-      longitude: parseFloat(formData.longitude) || 0,
-      appointment: formData.appointment.map((item) => ({
-        day: item.day,
-        startTime: convertTo12Hour(item.startTime),
-        endTime: convertTo12Hour(item.endTime),
-        duration: parseInt(item.duration) || 0,
-        noofpeople: parseInt(item.noofpeople) || 0,
-        noofgroups: parseInt(item.noofgroups) || 0,
-      })),
-      reviews: formData.reviews.map((r) => ({
-        ...r,
-        rating: parseFloat(r.rating) || 0,
-      })),
+
+    // Prepare login payload
+    const loginPayload = {
+      mobile: `${selectedCode}${phone}`,
     };
 
     try {
-      const res = await axios.post(
-        "https://confirmslot.com/service-provider",
-        payload,
+      // Call login API
+      const loginResponse = await axios.post(
+        "https://api.confirmslot.com/login",
+        loginPayload,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-      if (res.status === 200) alert("Form submitted successfully!");
-      else alert("Submission failed");
+
+      if (loginResponse.status === 201) {
+        const accessToken = loginResponse.data.accessToken;
+
+        const payload = {
+          ...formData,
+          phoneNumber: `${selectedCode} ${phone}`,
+          latitude: parseFloat(formData.latitude) || 0,
+          longitude: parseFloat(formData.longitude) || 0,
+          appointment: formData.appointment.map((item) => ({
+            day: item.day,
+            startTime: convertTo12Hour(item.startTime),
+            endTime: convertTo12Hour(item.endTime),
+            duration: parseInt(item.duration) || 0,
+            individualCount: parseInt(item.individualCount) || 0,
+            groupCount: parseInt(item.groupCount) || 0,
+          })),
+          reviews: formData.reviews.map((r) => ({
+            ...r,
+            rating: parseFloat(r.rating) || 0,
+          })),
+        };
+
+        const serviceProviderResponse = await axios.post(
+          "https://api.confirmslot.com/service-provider",
+          payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (serviceProviderResponse.status === 200) {
+          alert("Form submitted successfully!");
+        } else {
+          alert("Submission failed");
+        }
+      } else {
+        alert("Login failed");
+      }
     } catch (err) {
-      console.error(err);
-      alert("Error while submitting form");
+      console.error("Error during submission:", err);
+      alert("Error while submitting form: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -467,14 +467,6 @@ const RegisterForm = () => {
       {(formData.type === 'appointment' || formData.type === 'both') && (
         <>
           <h4>Appointments</h4>
-          <div className="form-group">
-            <input
-              name="groupSize"
-              placeholder="Group Size"
-              value={formData.groupSize}
-              onChange={handleChange}
-            />
-          </div>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             {formData.appointment.map((item, index) => (
               <div key={index} className="appointment-row" style={{ marginBottom: '1rem' }}>
@@ -505,18 +497,18 @@ const RegisterForm = () => {
                 </div>
                 <div className="form-group">
                   <input
-                    name={`noofpeople-${index}`}
+                    name={`individualCount-${index}`}
                     placeholder="Individual Count"
-                    value={item.noofpeople}
-                    onChange={(e) => handleAppointmentChange(index, 'noofpeople', e.target.value)}
+                    value={item.individualCount}
+                    onChange={(e) => handleAppointmentChange(index, 'individualCount', e.target.value)}
                   />
                 </div>
                 <div className="form-group">
                   <input
-                    name={`noofgroups-${index}`}
+                    name={`groupCount-${index}`}
                     placeholder="Group Count"
-                    value={item.noofgroups}
-                    onChange={(e) => handleAppointmentChange(index, 'noofgroups', e.target.value)}
+                    value={item.groupCount}
+                    onChange={(e) => handleAppointmentChange(index, 'groupCount', e.target.value)}
                   />
                 </div>
               </div>
