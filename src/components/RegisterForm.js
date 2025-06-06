@@ -8,6 +8,8 @@ import { Country, State, City } from 'country-state-city';
 import './Register.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const convertTo24Hour = (time12h) => {
   if (!time12h) return "";
@@ -18,12 +20,14 @@ const convertTo24Hour = (time12h) => {
   return `${hours.padStart(2, "0")}:${minutes}`;
 };
 
-const convertTo12Hour = (time24h) => {
-  if (!time24h) return "";
-  let [hours, minutes] = time24h.split(":");
-  const modifier = +hours >= 12 ? "PM" : "AM";
-  hours = (+hours % 12 || 12).toString().padStart(2, "0");
-  return `${hours}:${minutes} ${modifier}`;
+const dayMapping = {
+  MON: 'Monday',
+  TUE: 'Tuesday',
+  WED: 'Wednesday',
+  THU: 'Thursday',
+  FRI: 'Friday',
+  SAT: 'Saturday',
+  SUN: 'Sunday',
 };
 
 const RegisterForm = () => {
@@ -47,24 +51,23 @@ const RegisterForm = () => {
     userId: '',
     groupSize: '',
     appointment: [
-      { day: 'MON', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
-      { day: 'TUE', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
-      { day: 'WED', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
-      { day: 'THU', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
-      { day: 'FRI', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
-      { day: 'SAT', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
-      { day: 'SUN', startTime: '', endTime: '', duration: '', individualCount: '', groupCount: '' },
+      { day: 'MON', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
+      { day: 'TUE', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
+      { day: 'WED', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
+      { day: 'THU', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
+      { day: 'FRI', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
+      { day: 'SAT', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
+      { day: 'SUN', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
     ],
     token: [
-      { day: 'MON', startTokenNo: '', endTokenNo: '' },
-      { day: 'TUE', startTokenNo: '', endTokenNo: '' },
-      { day: 'WED', startTokenNo: '', endTokenNo: '' },
-      { day: 'THU', startTokenNo: '', endTokenNo: '' },
-      { day: 'FRI', startTokenNo: '', endTokenNo: '' },
-      { day: 'SAT', startTokenNo: '', endTokenNo: '' },
-      { day: 'SUN', startTokenNo: '', endTokenNo: '' },
+      { day: 'MON', startTokenNo: 1, endTokenNo: 1 },
+      { day: 'TUE', startTokenNo: 1, endTokenNo: 1 },
+      { day: 'WED', startTokenNo: 1, endTokenNo: 1 },
+      { day: 'THU', startTokenNo: 1, endTokenNo: 1 },
+      { day: 'FRI', startTokenNo: 1, endTokenNo: 1 },
+      { day: 'SAT', startTokenNo: 1, endTokenNo: 1 },
+      { day: 'SUN', startTokenNo: 1, endTokenNo: 1 },
     ],
-    reviews: [{ name: '', userId: '', rating: '', comment: '' }],
   });
 
   const [countries, setCountries] = useState([]);
@@ -74,23 +77,21 @@ const RegisterForm = () => {
   const [subcategoriesList, setSubcategoriesList] = useState([]);
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
-  const [selectedCode, setSelectedCode] = useState('+91');
+  const [selectedCode, setSelectedCode] = useState('91');
   const [phone, setPhone] = useState('');
 
   useEffect(() => {
-    axios.get('https://restcountries.com/v3.1/all')
-      .then(res => {
-        const codes = res.data.map(country => ({
-          name: country.name.common,
-          code: country.idd?.root ? country.idd.root + (country.idd.suffixes?.[0] || '') : '',
-        })).filter(c => c.code);
-        setCountryCodes(codes.sort((a, b) => a.name.localeCompare(b.name)));
-      })
-      .catch(err => {
-        console.error('Error fetching country codes:', err);
-      });
-
-    setCountries(Country.getAllCountries());
+    const allCountries = Country.getAllCountries();
+    setCountries(allCountries);
+    const codes = allCountries
+      .map(country => ({
+        name: country.name,
+        code: country.phonecode,
+        isoCode: country.isoCode,
+      }))
+      .filter(c => c.code)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    setCountryCodes(codes);
   }, []);
 
   const handleCancel = () => {
@@ -105,6 +106,7 @@ const RegisterForm = () => {
         setCategories(filtered);
       } catch (err) {
         console.error('Error fetching categories:', err);
+        toast.error('Failed to fetch categories. Please try again.');
       }
     };
     fetchCategories();
@@ -153,15 +155,15 @@ const RegisterForm = () => {
         const type = name === 'logo' ? 'logo' : 'icon';
         const formData = new FormData();
         formData.append('image', files[0]);
-        const response = await axios.post(`https://api.confirmslot.com/uploads/${type}`, formData, {
+        const response = await axios.post(`https://api.confirmslot.com/Uploads/${type}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         const { imageUrl } = response.data;
         setFormData((prev) => ({ ...prev, [name]: imageUrl }));
-        console.log(`Uploaded ${name} URL:`, imageUrl);
+        toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully!`);
       } catch (error) {
         console.error(`Failed to upload ${name}:`, error);
-        alert(`Failed to upload ${name}: ${error.response?.data?.message || error.message}`);
+        toast.error(`Failed to upload ${name}: ${error.response?.data?.message || error.message}`);
       }
     } else if (name === 'phoneNumber') {
       setPhone(value);
@@ -203,9 +205,10 @@ const RegisterForm = () => {
               }));
               setStates(states);
               setCities(cities);
+              toast.success('Location fetched successfully!');
             } else {
               console.error("No address data returned from reverse geocoding");
-              alert("Unable to fetch address details. Please enter manually.");
+              toast.warn('Unable to fetch address details. Please enter manually.');
               setFormData(prev => ({
                 ...prev,
                 latitude: latitude.toFixed(6),
@@ -214,7 +217,7 @@ const RegisterForm = () => {
             }
           } catch (error) {
             console.error("Reverse geocoding failed:", error);
-            alert("Failed to fetch address details. Please enter manually.");
+            toast.error('Failed to fetch address details: ' + error.message);
             setFormData(prev => ({
               ...prev,
               latitude: latitude.toFixed(6),
@@ -224,7 +227,7 @@ const RegisterForm = () => {
         },
         (err) => {
           console.error("Error getting location:", err.message);
-          alert("Failed to get location: " + err.message);
+          toast.error('Failed to get location: ' + err.message);
         },
         {
           enableHighAccuracy: true,
@@ -233,7 +236,7 @@ const RegisterForm = () => {
         }
       );
     } else {
-      alert("Geolocation is not supported by this browser.");
+      toast.error('Geolocation is not supported by this browser.');
     }
   };
 
@@ -252,13 +255,11 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare login payload
     const loginPayload = {
       mobile: `${selectedCode}${phone}`,
     };
 
     try {
-      // Call login API
       const loginResponse = await axios.post(
         "https://api.confirmslot.com/login",
         loginPayload,
@@ -270,22 +271,28 @@ const RegisterForm = () => {
       if (loginResponse.status === 201) {
         const accessToken = loginResponse.data.accessToken;
 
+        const country = countries.find(c => c.isoCode === formData.country);
+        const state = states.find(s => s.isoCode === formData.state);
+
         const payload = {
           ...formData,
           phoneNumber: `${selectedCode} ${phone}`,
+          country: country ? country.name : formData.country,
+          state: state ? state.name : formData.state,
           latitude: parseFloat(formData.latitude) || 0,
           longitude: parseFloat(formData.longitude) || 0,
           appointment: formData.appointment.map((item) => ({
-            day: item.day,
-            startTime: convertTo12Hour(item.startTime),
-            endTime: convertTo12Hour(item.endTime),
+            day: dayMapping[item.day],
+            startTime: item.startTime || '09:00 AM',
+            endTime: item.endTime || '09:00 PM',
             duration: parseInt(item.duration) || 0,
             individualCount: parseInt(item.individualCount) || 0,
             groupCount: parseInt(item.groupCount) || 0,
           })),
-          reviews: formData.reviews.map((r) => ({
-            ...r,
-            rating: parseFloat(r.rating) || 0,
+          token: formData.token.map((item) => ({
+            day: dayMapping[item.day],
+            startTokenNo: item.startTokenNo || '0',
+            endTokenNo: item.endTokenNo || '0',
           })),
         };
 
@@ -300,21 +307,23 @@ const RegisterForm = () => {
           }
         );
 
-        if (serviceProviderResponse.status === 200) {
-          alert("Form submitted successfully!");
+         if (serviceProviderResponse.status === 200) {
+          toast.success('Form submitted successfully!');
         } else {
-          alert("Submission failed");
+          toast.error('Submission failed. Please try again.');
         }
       } else {
-        alert("Login failed");
+        toast.error('Login failed. Please check your credentials.');
       }
     } catch (err) {
-      console.error("Error during submission:", err);
-      alert("Error while submitting form: " + (err.response?.data?.message || err.message));
+      console.error('Error during submission:', err);
+      toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
     }
   };
 
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
     <form className="form-container" onSubmit={handleSubmit}>
       <div className="form-section">
         <h3>Category</h3>
@@ -463,7 +472,7 @@ const RegisterForm = () => {
         </select>
       </div>
       <div className="form-group">
-        <input name="minAmount" placeholder="Minimum Amount" value={formData.minAmount} onChange={handleChange} />
+        <input name="minAmount" placeholder="Minimum Amount" onChange={handleChange} />
       </div>
 
       {(formData.type === 'appointment' || formData.type === 'both') && (
@@ -477,7 +486,7 @@ const RegisterForm = () => {
                   label="Start Time"
                   value={item.startTime ? dayjs(`2024-01-01T${convertTo24Hour(item.startTime)}`) : null}
                   onChange={(newValue) => {
-                    handleAppointmentChange(index, 'startTime', newValue ? newValue.format('hh:mm A') : '');
+                    handleAppointmentChange(index, 'startTime', newValue ? newValue.format('hh:mm A') : '09:00 AM');
                   }}
                   ampm
                 />
@@ -485,7 +494,7 @@ const RegisterForm = () => {
                   label="End Time"
                   value={item.endTime ? dayjs(`2024-01-01T${convertTo24Hour(item.endTime)}`) : null}
                   onChange={(newValue) => {
-                    handleAppointmentChange(index, 'endTime', newValue ? newValue.format('hh:mm A') : '');
+                    handleAppointmentChange(index, 'endTime', newValue ? newValue.format('hh:mm A') : '09:00 PM');
                   }}
                   ampm
                 />
@@ -531,7 +540,7 @@ const RegisterForm = () => {
                 placeholder="Start Token No"
                 value={item.startTokenNo}
                 onChange={(e) =>
-                  handleTokenChange(index, 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0))
+                  handleTokenChange(index, 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
                 }
               />
               <input
@@ -540,7 +549,7 @@ const RegisterForm = () => {
                 placeholder="End Token No"
                 value={item.endTokenNo}
                 onChange={(e) =>
-                  handleTokenChange(index, 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0))
+                  handleTokenChange(index, 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
                 }
               />
             </div>
@@ -553,6 +562,7 @@ const RegisterForm = () => {
         <button type="button" className="form-button" onClick={handleCancel}>Cancel</button>
       </div>
     </form>
+    </>
   );
 };
 
