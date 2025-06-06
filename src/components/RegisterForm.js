@@ -1,4 +1,4 @@
-import { Button, Box, Typography } from '@mui/material';
+import { Button, Box, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -51,13 +51,13 @@ const RegisterForm = () => {
     userId: '',
     groupSize: '',
     appointment: [
-      { day: 'MON', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
-      { day: 'TUE', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
-      { day: 'WED', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
-      { day: 'THU', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
-      { day: 'FRI', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
-      { day: 'SAT', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
-      { day: 'SUN', startTime: '09:00 AM', endTime: '09:00 PM', duration: '', individualCount: '', groupCount: '' },
+      { day: 'MON', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
+      { day: 'TUE', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
+      { day: 'WED', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
+      { day: 'THU', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
+      { day: 'FRI', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
+      { day: 'SAT', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
+      { day: 'SUN', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
     ],
     token: [
       { day: 'MON', startTokenNo: 1, endTokenNo: 1 },
@@ -76,6 +76,7 @@ const RegisterForm = () => {
   const [cities, setCities] = useState([]);
   const [subcategoriesList, setSubcategoriesList] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const navigate = useNavigate();
   const [selectedCode, setSelectedCode] = useState('91');
   const [phone, setPhone] = useState('');
@@ -101,7 +102,7 @@ const RegisterForm = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get('https://api.confirmslot.com/Categories/');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Categories/`);
         const filtered = res.data.data.filter(cat => !cat.isDeleted);
         setCategories(filtered);
       } catch (err) {
@@ -155,7 +156,7 @@ const RegisterForm = () => {
         const type = name === 'logo' ? 'logo' : 'icon';
         const formData = new FormData();
         formData.append('image', files[0]);
-        const response = await axios.post(`https://api.confirmslot.com/Uploads/${type}`, formData, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/Uploads/${type}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         const { imageUrl } = response.data;
@@ -252,16 +253,20 @@ const RegisterForm = () => {
     setFormData({ ...formData, token: updatedTokens });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setOpenConfirm(true);
+  };
 
+  const handleConfirmSubmit = async () => {
+    setOpenConfirm(false);
     const loginPayload = {
       mobile: `${selectedCode}${phone}`,
     };
 
     try {
       const loginResponse = await axios.post(
-        "https://api.confirmslot.com/login",
+        `${process.env.REACT_APP_API_URL}/login`,
         loginPayload,
         {
           headers: { "Content-Type": "application/json" },
@@ -270,12 +275,14 @@ const RegisterForm = () => {
 
       if (loginResponse.status === 201) {
         const accessToken = loginResponse.data.accessToken;
+        const userId = loginResponse.data.user.id;
 
         const country = countries.find(c => c.isoCode === formData.country);
         const state = states.find(s => s.isoCode === formData.state);
 
         const payload = {
           ...formData,
+          userId: userId,
           phoneNumber: `${selectedCode} ${phone}`,
           country: country ? country.name : formData.country,
           state: state ? state.name : formData.state,
@@ -291,13 +298,13 @@ const RegisterForm = () => {
           })),
           token: formData.token.map((item) => ({
             day: dayMapping[item.day],
-            startTokenNo: item.startTokenNo || '0',
-            endTokenNo: item.endTokenNo || '0',
+            startTokenNo: parseInt(item.startTokenNo) || 0,
+            endTokenNo: parseInt(item.endTokenNo) || 0,
           })),
         };
 
         const serviceProviderResponse = await axios.post(
-          "https://api.confirmslot.com/service-provider",
+          `${process.env.REACT_APP_API_URL}/service-provider`,
           payload,
           {
             headers: {
@@ -307,7 +314,7 @@ const RegisterForm = () => {
           }
         );
 
-         if (serviceProviderResponse.status === 200) {
+        if (serviceProviderResponse.status === 201) {
           toast.success('Form submitted successfully!');
         } else {
           toast.error('Submission failed. Please try again.');
@@ -319,6 +326,10 @@ const RegisterForm = () => {
       console.error('Error during submission:', err);
       toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
     }
+  };
+
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
   };
 
   return (
@@ -401,7 +412,16 @@ const RegisterForm = () => {
             />
           </div>
         </div>
-
+        <div className="form-group">
+          <input
+            type="number"
+            name="minAmount"
+            placeholder="Minimum Service Amount to be Paid"
+            value={formData.minAmount}
+            onChange={handleChange}
+            min="0"
+          />
+        </div>
         <div className="form-group">
           <label htmlFor="logo">Logo Upload</label>
           <input type="file" name="logo" accept="image/*" onChange={handleChange} />
@@ -471,10 +491,6 @@ const RegisterForm = () => {
           <option value="token">Token</option>
         </select>
       </div>
-      <div className="form-group">
-        <input name="minAmount" placeholder="Minimum Amount" onChange={handleChange} />
-      </div>
-
       {(formData.type === 'appointment' || formData.type === 'both') && (
         <>
           <h4>Appointments</h4>
@@ -498,30 +514,30 @@ const RegisterForm = () => {
                   }}
                   ampm
                 />
-                <div className="form-group">
-                  <input
-                    name={`duration-${index}`}
-                    placeholder="Duration (min)"
+                  <TextField
+                    type="number"
+                    label="Duration (min)"
                     value={item.duration}
                     onChange={(e) => handleAppointmentChange(index, 'duration', e.target.value)}
+                    InputProps={{ inputProps: { min: 0 } }}
+                    sx={{ width: '150px' }}
                   />
-                </div>
-                <div className="form-group">
-                  <input
-                    name={`individualCount-${index}`}
-                    placeholder="Individual Count"
+                  <TextField
+                    type="number"
+                    label="Individual Count"
                     value={item.individualCount}
                     onChange={(e) => handleAppointmentChange(index, 'individualCount', e.target.value)}
+                    InputProps={{ inputProps: { min: 0 } }}
+                    sx={{ width: '150px' }}
                   />
-                </div>
-                <div className="form-group">
-                  <input
-                    name={`groupCount-${index}`}
-                    placeholder="Group Count"
+                  <TextField
+                    type="number"
+                    label="Group Count"
                     value={item.groupCount}
                     onChange={(e) => handleAppointmentChange(index, 'groupCount', e.target.value)}
+                    InputProps={{ inputProps: { min: 0 } }}
+                    sx={{ width: '150px' }}
                   />
-                </div>
               </div>
             ))}
           </LocalizationProvider>
@@ -562,6 +578,28 @@ const RegisterForm = () => {
         <button type="button" className="form-button" onClick={handleCancel}>Cancel</button>
       </div>
     </form>
+
+    <Dialog
+      open={openConfirm}
+      onClose={handleCloseConfirm}
+      aria-labelledby="confirm-dialog-title"
+      aria-describedby="confirm-dialog-description"
+    >
+      <DialogTitle id="confirm-dialog-title">Confirm Submission</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="confirm-dialog-description">
+          Are you sure you want to submit the registration form? Please verify all details before proceeding.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseConfirm} color="secondary">
+          No
+        </Button>
+        <Button onClick={handleConfirmSubmit} color="primary" autoFocus>
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
     </>
   );
 };
