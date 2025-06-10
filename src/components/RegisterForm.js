@@ -1,7 +1,8 @@
-import { Button, Box, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Box, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress, IconButton } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Country, State, City } from 'country-state-city';
@@ -77,9 +78,13 @@ const RegisterForm = () => {
   const [subcategoriesList, setSubcategoriesList] = useState([]);
   const [categories, setCategories] = useState([]);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedCode, setSelectedCode] = useState('91');
   const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const allCountries = Country.getAllCountries();
@@ -169,8 +174,71 @@ const RegisterForm = () => {
     } else if (name === 'phoneNumber') {
       setPhone(value);
       setFormData((prev) => ({ ...prev, phoneNumber: value }));
+      setIsOtpSent(false);
+      setIsOtpVerified(false);
+      setOtp('');
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleSendOtp = async () => {
+    if (!phone || !selectedCode) {
+      toast.error('Please enter a valid phone number and select a country code.');
+      return;
+    }
+    setIsLoading(true);
+    const payload = {
+      route: 'otp',
+      variables_values: '0000',
+      schedule_time: 0,
+      numbers: `${phone}`,
+    };
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/otp/send`, payload, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (response.status === 200 || response.status === 201) {
+        setIsOtpSent(true);
+        toast.success('OTP sent successfully!');
+      } else {
+        toast.error('Failed to send OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      toast.error(`Failed to send OTP: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp) {
+      toast.error('Please enter the OTP.');
+      return;
+    }
+    setIsLoading(true);
+    const payload = {
+      phoneNumber: `${phone}`,
+      otp: otp
+    };
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/otp/validate`, payload, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (response.status === 200 || response.status === 201) {
+        setIsOtpVerified(true);
+        toast.success('OTP verified successfully!');
+      } else {
+        toast.error('OTP verification failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      toast.error(`OTP verification failed: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -255,11 +323,17 @@ const RegisterForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isOtpVerified) {
+      toast.error('Please verify your phone number before submitting.');
+      return;
+    }
     setOpenConfirm(true);
   };
 
   const handleConfirmSubmit = async () => {
     setOpenConfirm(false);
+    setIsLoading(true);
+
     const loginPayload = {
       mobile: `${selectedCode}${phone}`,
     };
@@ -325,6 +399,8 @@ const RegisterForm = () => {
     } catch (err) {
       console.error('Error during submission:', err);
       toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -334,186 +410,256 @@ const RegisterForm = () => {
 
   return (
     <>
-    <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
-    <form className="form-container" onSubmit={handleSubmit}>
-      <div className="form-section">
-        <h3>Category</h3>
-        <div className="form-group">
-          <select name="category" onChange={handleChange} value={formData.category}>
-            <option value="">Select Category</option>
-            {categories.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <select
-            name="subcategory"
-            onChange={handleChange}
-            value={formData.subcategory}
-            disabled={!formData.category}
-          >
-            <option value="">Select Subcategory</option>
-            {subcategoriesList.map((sc) => (
-              <option key={sc._id} value={sc._id}>
-                {sc.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="form-section">
-        <h3>Basic Info</h3>
-        <div className="form-group">
-          <input name="name" placeholder="Name" onChange={handleChange} />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
-          <select
-            value={selectedCode}
-            onChange={(e) => setSelectedCode(e.target.value)}
-            style={{
-              height: '40px',
-              padding: '0 12px',
-              fontSize: '16px',
-              lineHeight: '1.5',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-              minWidth: '200px',
-              boxSizing: 'border-box',
-            }}
-          >
-            <option value="">Select Country Code</option>
-            {countryCodes.map((country, idx) => (
-              <option key={idx} value={country.code}>
-                {country.name} ({country.code})
-              </option>
-            ))}
-          </select>
-
-          <div style={{ flexGrow: 1 }}>
-            <input
-              name="phoneNumber"
-              placeholder="Phone Number"
-              value={phone}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
+      {isLoading && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999,
+            pointerEvents: 'all',
+          }}
+        >
+          <CircularProgress size={60} color="primary" />
+        </Box>
+      )}
+      <form className="form-container" onSubmit={handleSubmit}>
+        <div className="form-section">
+          <h3>Category</h3>
+          <div className="form-group">
+            <select name="category" onChange={handleChange} value={formData.category} disabled={isLoading}>
+              <option value="">Select Category</option>
+              {categories.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <select
+              name="subcategory"
               onChange={handleChange}
+              value={formData.subcategory}
+              disabled={!formData.category || isLoading}
+            >
+              <option value="">Select Subcategory</option>
+              {subcategoriesList.map((sc) => (
+                <option key={sc._id} value={sc._id}>
+                  {sc.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-section">
+          <h3>Basic Info</h3>
+          <div className="form-group">
+            <input name="name" placeholder="Name" onChange={handleChange} disabled={isLoading} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
+            <select
+              value={selectedCode}
+              onChange={(e) => setSelectedCode(e.target.value)}
+              disabled={isLoading || isOtpVerified}
               style={{
                 height: '40px',
-                width: '100%',
                 padding: '0 12px',
                 fontSize: '16px',
                 lineHeight: '1.5',
                 borderRadius: '4px',
                 border: '1px solid #ccc',
+                minWidth: '200px',
                 boxSizing: 'border-box',
               }}
+            >
+              <option value="">Select Country Code</option>
+              {countryCodes.map((country, idx) => (
+                <option key={idx} value={country.code}>
+                  {country.name} ({country.code})
+                </option>
+              ))}
+            </select>
+
+            <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input
+                name="phoneNumber"
+                placeholder="Phone Number"
+                value={phone}
+                onChange={handleChange}
+                disabled={isLoading || isOtpVerified}
+                style={{
+                  height: '40px',
+                  width: '100%',
+                  padding: '0 12px',
+                  fontSize: '16px',
+                  lineHeight: '1.5',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  boxSizing: 'border-box',
+                }}
+              />
+              {!isOtpSent && !isOtpVerified && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSendOtp}
+                  disabled={isLoading || !phone || !selectedCode}
+                  sx={{ height: '40px' }}
+                >
+                  Verify
+                </Button>
+              )}
+              {isOtpSent && !isOtpVerified && (
+                <>
+                  <TextField
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    disabled={isLoading}
+                    sx={{ width: '120px', height: '40px' }}
+                    inputProps={{
+                      style: {
+                        height: '40px',
+                        padding: '0 12px',
+                        fontSize: '16px',
+                        lineHeight: '1.5',
+                        boxSizing: 'border-box',
+                      },
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleVerifyOtp}
+                    disabled={isLoading || !otp}
+                    sx={{ height: '40px' }}
+                  >
+                    Submit
+                  </Button>
+                </>
+              )}
+              {isOtpVerified && (
+                <IconButton sx={{ color: 'green' }}>
+                  <CheckCircleIcon />
+                </IconButton>
+              )}
+            </div>
+          </div>
+          <div className="form-group">
+            <input
+              type="number"
+              name="minAmount"
+              placeholder="Minimum Service Amount to be Paid"
+              value={formData.minAmount}
+              onChange={handleChange}
+              min="0"
+              disabled={isLoading}
             />
           </div>
+          <div className="form-group">
+            <label htmlFor="logo">Logo Upload</label>
+            <input type="file" name="logo" accept="image/*" onChange={handleChange} disabled={isLoading} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="icon">Icon Upload</label>
+            <input type="file" name="icon" accept="image/*" onChange={handleChange} disabled={isLoading} />
+          </div>
         </div>
-        <div className="form-group">
-          <input
-            type="number"
-            name="minAmount"
-            placeholder="Minimum Service Amount to be Paid"
-            value={formData.minAmount}
-            onChange={handleChange}
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="logo">Logo Upload</label>
-          <input type="file" name="logo" accept="image/*" onChange={handleChange} />
-        </div>
-        <div className="form-group">
-          <label htmlFor="icon">Icon Upload</label>
-          <input type="file" name="icon" accept="image/*" onChange={handleChange} />
-        </div>
-      </div>
 
-      <div className="form-section">
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h6">Location Details</Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={getLocation} 
-            startIcon={<span>📍</span>}
-          >
-            Locate Me
-          </Button>
-        </Box>
-        <div className="form-group">
-          <input name="latitude" value={formData.latitude} placeholder="Latitude" onChange={handleChange} />
+        <div className="form-section">
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography variant="h6">Location Details</Typography>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={getLocation} 
+              startIcon={<span>📍</span>}
+              disabled={isLoading}
+            >
+              Locate Me
+            </Button>
+          </Box>
+          <div className="form-group">
+            <input name="latitude" value={formData.latitude} placeholder="Latitude" onChange={handleChange} disabled={isLoading} />
+          </div>
+          <div className="form-group">
+            <input name="longitude" value={formData.longitude} placeholder="Longitude" onChange={handleChange} disabled={isLoading} />
+          </div>
+          <div className="form-group">
+            <input name="addressLine1" value={formData.addressLine1} placeholder="Address Line 1" onChange={handleChange} disabled={isLoading} />
+          </div>
+          <div className="form-group">
+            <input name="addressLine2" value={formData.addressLine2} placeholder="Address Line 2" onChange={handleChange} disabled={isLoading} />
+          </div>
+          <div className="form-group">
+            <select name="country" onChange={handleChange} value={formData.country} disabled={isLoading}>
+              <option value="">Select Country</option>
+              {countries.map(c => (
+                <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <select name="state" onChange={handleChange} value={formData.state} disabled={!states.length || isLoading}>
+              <option value="">Select State</option>
+              {states.map(s => (
+                <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <select name="city" onChange={handleChange} value={formData.city} disabled={!cities.length || isLoading}>
+              <option value="">Select District</option>
+              {cities.map((c, i) => (
+                <option key={i} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <input name="pincode" value={formData.pincode} placeholder="Pincode" onChange={handleChange} disabled={isLoading} />
+          </div>
         </div>
-        <div className="form-group">
-          <input name="longitude" value={formData.longitude} placeholder="Longitude" onChange={handleChange} />
-        </div>
-        <div className="form-group">
-          <input name="addressLine1" value={formData.addressLine1} placeholder="Address Line 1" onChange={handleChange} />
-        </div>
-        <div className="form-group">
-          <input name="addressLine2" value={formData.addressLine2} placeholder="Address Line 2" onChange={handleChange} />
-        </div>
-        <div className="form-group">
-          <select name="country" onChange={handleChange} value={formData.country}>
-            <option value="">Select Country</option>
-            {countries.map(c => (
-              <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <select name="state" onChange={handleChange} value={formData.state} disabled={!states.length}>
-            <option value="">Select State</option>
-            {states.map(s => (
-              <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <select name="city" onChange={handleChange} value={formData.city} disabled={!cities.length}>
-            <option value="">Select District</option>
-            {cities.map((c, i) => (
-              <option key={i} value={c.name}>{c.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <input name="pincode" value={formData.pincode} placeholder="Pincode" onChange={handleChange} />
-        </div>
-      </div>
 
-      <div className="form-group">
-        <select name="type" onChange={handleChange} value={formData.type}>
-          <option value="appointment">Appointment</option>
-          <option value="token">Token</option>
-        </select>
-      </div>
-      {(formData.type === 'appointment' || formData.type === 'both') && (
-        <>
-          <h4>Appointments</h4>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            {formData.appointment.map((item, index) => (
-              <div key={index} className="appointment-row" style={{ marginBottom: '1rem' }}>
-                <label style={{ marginRight: '1rem' }}>{item.day}</label>
-                <TimePicker
-                  label="Start Time"
-                  value={item.startTime ? dayjs(`2024-01-01T${convertTo24Hour(item.startTime)}`) : null}
-                  onChange={(newValue) => {
-                    handleAppointmentChange(index, 'startTime', newValue ? newValue.format('hh:mm A') : '09:00 AM');
-                  }}
-                  ampm
-                />
-                <TimePicker
-                  label="End Time"
-                  value={item.endTime ? dayjs(`2024-01-01T${convertTo24Hour(item.endTime)}`) : null}
-                  onChange={(newValue) => {
-                    handleAppointmentChange(index, 'endTime', newValue ? newValue.format('hh:mm A') : '09:00 PM');
-                  }}
-                  ampm
-                />
+        <div className="form-group">
+          <select name="type" onChange={handleChange} value={formData.type} disabled={isLoading}>
+            <option value="appointment">Appointment</option>
+            <option value="token">Token</option>
+          </select>
+        </div>
+        {(formData.type === 'appointment' || formData.type === 'both') && (
+          <>
+            <h4>Appointments</h4>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {formData.appointment.map((item, index) => (
+                <div key={index} className="appointment-row" style={{ marginBottom: '1rem' }}>
+                  <label style={{ marginRight: '1rem' }}>{item.day}</label>
+                  <TimePicker
+                    label="Start Time"
+                    value={item.startTime ? dayjs(`2024-01-01T${convertTo24Hour(item.startTime)}`) : null}
+                    onChange={(newValue) => {
+                      handleAppointmentChange(index, 'startTime', newValue ? newValue.format('hh:mm A') : '09:00 AM');
+                    }}
+                    ampm
+                    disabled={isLoading}
+                  />
+                  <TimePicker
+                    label="End Time"
+                    value={item.endTime ? dayjs(`2024-01-01T${convertTo24Hour(item.endTime)}`) : null}
+                    onChange={(newValue) => {
+                      handleAppointmentChange(index, 'endTime', newValue ? newValue.format('hh:mm A') : '09:00 PM');
+                    }}
+                    ampm
+                    disabled={isLoading}
+                  />
                   <TextField
                     type="number"
                     label="Duration (min)"
@@ -521,6 +667,7 @@ const RegisterForm = () => {
                     onChange={(e) => handleAppointmentChange(index, 'duration', e.target.value)}
                     InputProps={{ inputProps: { min: 0 } }}
                     sx={{ width: '150px' }}
+                    disabled={isLoading}
                   />
                   <TextField
                     type="number"
@@ -529,6 +676,7 @@ const RegisterForm = () => {
                     onChange={(e) => handleAppointmentChange(index, 'individualCount', e.target.value)}
                     InputProps={{ inputProps: { min: 0 } }}
                     sx={{ width: '150px' }}
+                    disabled={isLoading}
                   />
                   <TextField
                     type="number"
@@ -537,69 +685,74 @@ const RegisterForm = () => {
                     onChange={(e) => handleAppointmentChange(index, 'groupCount', e.target.value)}
                     InputProps={{ inputProps: { min: 0 } }}
                     sx={{ width: '150px' }}
+                    disabled={isLoading}
                   />
+                </div>
+              ))}
+            </LocalizationProvider>
+          </>
+        )}
+
+        {formData.type === 'token' && (
+          <>
+            <h4>Token Numbers (Per Day)</h4>
+            {formData.token.map((item, index) => (
+              <div key={index} className="token-row">
+                <label>{item.day}</label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Start Token No"
+                  value={item.startTokenNo}
+                  onChange={(e) =>
+                    handleTokenChange(index, 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
+                  }
+                  disabled={isLoading}
+                />
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="End Token No"
+                  value={item.endTokenNo}
+                  onChange={(e) =>
+                    handleTokenChange(index, 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
+                  }
+                  disabled={isLoading}
+                />
               </div>
             ))}
-          </LocalizationProvider>
-        </>
-      )}
+          </>
+        )}
 
-      {formData.type === 'token' && (
-        <>
-          <h4>Token Numbers (Per Day)</h4>
-          {formData.token.map((item, index) => (
-            <div key={index} className="token-row">
-              <label>{item.day}</label>
-              <input
-                type="number"
-                min="0"
-                placeholder="Start Token No"
-                value={item.startTokenNo}
-                onChange={(e) =>
-                  handleTokenChange(index, 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
-                }
-              />
-              <input
-                type="number"
-                min="0"
-                placeholder="End Token No"
-                value={item.endTokenNo}
-                onChange={(e) =>
-                  handleTokenChange(index, 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
-                }
-              />
-            </div>
-          ))}
-        </>
-      )}
+        <div className="form-actions">
+          <button type="submit" className="form-button" disabled={isLoading || !isOtpVerified || !isOtpVerified}>Submit</button>
+          <button type="button" className="form-button" onClick={handleCancel} disabled={isLoading}>Cancel</button>
+        </div>
+      </form>
 
-      <div className="form-actions">
-        <button type="submit" className="form-button">Submit</button>
-        <button type="button" className="form-button" onClick={handleCancel}>Cancel</button>
-      </div>
-    </form>
-
-    <Dialog
-      open={openConfirm}
-      onClose={handleCloseConfirm}
-      aria-labelledby="confirm-dialog-title"
-      aria-describedby="confirm-dialog-description"
-    >
-      <DialogTitle id="confirm-dialog-title">Confirm Submission</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="confirm-dialog-description">
-          Are you sure you want to submit the registration form? Please verify all details before proceeding.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseConfirm} color="secondary">
-          No
-        </Button>
-        <Button onClick={handleConfirmSubmit} color="primary" autoFocus>
-          Yes
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <Dialog
+        open={openConfirm}
+        onClose={handleCloseConfirm}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+        disableEscapeKeyDown={isLoading}
+        sx={{ pointerEvents: isLoading ? 'none' : 'auto' }}
+      >
+        <DialogTitle id="confirm-dialog-title">Confirm Submission</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            Are you sure you want to submit the registration form? Please verify all details before proceeding.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirm} color="secondary" disabled={isLoading}>
+            No
+          </Button>
+          <Button onClick={handleConfirmSubmit} color="primary" autoFocus disabled={isLoading}>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
