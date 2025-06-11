@@ -495,7 +495,7 @@ const RegisterForm = () => {
                 placeholder="Phone Number"
                 value={phone}
                 onChange={handleChange}
-                disabled={isLoading || isOtpVerified}
+                disabled={isLoading || isOtpSent || isOtpVerified}
                 style={{
                   height: '40px',
                   width: '100%',
@@ -558,7 +558,7 @@ const RegisterForm = () => {
             <input
               type="number"
               name="minAmount"
-              placeholder="Minimum Service Amount to be Paid"
+              placeholder="Minimum Amount"
               value={formData.minAmount}
               onChange={handleChange}
               min="0"
