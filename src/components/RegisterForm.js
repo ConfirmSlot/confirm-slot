@@ -214,8 +214,8 @@ const RegisterForm = () => {
   };
 
   const handleVerifyOtp = async () => {
-    if (!otp) {
-      toast.error('Please enter the OTP.');
+      if (!otp || otp.length !== 6) {
+      toast.error('Please enter a valid 6-digit OTP.');
       return;
     }
     setIsLoading(true);
@@ -498,7 +498,7 @@ const RegisterForm = () => {
                 disabled={isLoading || isOtpSent || isOtpVerified}
                 style={{
                   height: '40px',
-                  width: '100%',
+                  width: '50%',
                   padding: '0 12px',
                   fontSize: '16px',
                   lineHeight: '1.5',
@@ -540,7 +540,7 @@ const RegisterForm = () => {
                     variant="contained"
                     color="primary"
                     onClick={handleVerifyOtp}
-                    disabled={isLoading || !otp}
+                    disabled={isLoading || !otp || otp.length !== 6}
                     sx={{ height: '40px' }}
                   >
                     Submit
