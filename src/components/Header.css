@@ -1,11 +1,13 @@
-/* Header.css */
 .header-toolbar {
   padding: 16px 64px;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
   background-color: white;
-  gap: 8px; /* Add small gap between elements */
+  gap: 8px;
+  box-sizing: border-box;
+  max-width: 100vw;
+  width: 100%;
 }
 
 .logo-container {
@@ -16,6 +18,7 @@
   font-size: 20px;
   color: #0c2d48;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .logo-img {
@@ -26,7 +29,7 @@
   display: flex;
   justify-content: center;
   gap: 40px;
-  flex: 1; /* Center nav links on desktop */
+  flex: 1;
 }
 
 .navbar-link {
@@ -44,35 +47,48 @@
   font-weight: 600;
   background-color: #00457c !important;
   color: white !important;
-  font-size: 14px; /* Slightly smaller on mobile */
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
-/* Hide mobile menu on desktop */
 .menu-icon {
   display: none;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
+  .header-toolbar {
+    padding: 12px 16px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    min-height: 56px;
+  }
+
   .nav-links {
-    display: none; /* Hide nav links on mobile */
+    display: none;
   }
 
   .menu-icon {
     display: block;
-  }
-
-  .header-toolbar {
-    padding: 12px 16px; /* Smaller padding on mobile */
-    justify-content: space-between; /* Spread elements */
-  }
-
-  .register-button {
-    padding: 6px 16px !important; /* Compact button on mobile */
-    font-size: 13px;
+    font-size: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
   }
 
   .logo-container {
-    flex-grow: 0; /* Prevent logo from taking too much space */
+    font-size: 18px;
+    gap: 8px;
+    flex-grow: 0;
+    flex-shrink: 1;
+  }
+
+  .logo-img {
+    height: 32px;
+  }
+
+  .register-button {
+    padding: 6px 16px !important;
+    font-size: 13px;
+    line-height: 1.5;
   }
 }
