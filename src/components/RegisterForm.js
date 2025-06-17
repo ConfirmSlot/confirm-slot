@@ -160,6 +160,7 @@ const RegisterForm = () => {
       setCities([]);
       setFormData(prev => ({ ...prev, state: '', city: '' }));
     }
+     // eslint-disable-next-line
   }, [formData.country]);
 
   useEffect(() => {
@@ -173,6 +174,7 @@ const RegisterForm = () => {
       setCities([]);
       setFormData(prev => ({ ...prev, city: '' }));
     }
+     // eslint-disable-next-line
   }, [formData.country, formData.state]);
 
   const handleChange = async (e) => {
