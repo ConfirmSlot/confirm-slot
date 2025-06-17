@@ -1,8 +1,9 @@
-import { Button, Box, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress, IconButton } from '@mui/material';
+import { Button, Box, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress, IconButton, Collapse } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Country, State, City } from 'country-state-city';
@@ -52,22 +53,50 @@ const RegisterForm = () => {
     userId: '',
     groupSize: '',
     appointment: [
-      { day: 'MON', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
-      { day: 'TUE', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
-      { day: 'WED', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
-      { day: 'THU', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
-      { day: 'FRI', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
-      { day: 'SAT', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
-      { day: 'SUN', startTime: '09:00 AM', endTime: '09:00 PM', duration: '15', individualCount: '1', groupCount: '0' },
+      { day: 'MON', availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'TUE', availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'WED', availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'THU', availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'FRI', availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'SAT', availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'SUN', availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
     ],
     token: [
-      { day: 'MON', startTokenNo: 1, endTokenNo: 1 },
-      { day: 'TUE', startTokenNo: 1, endTokenNo: 1 },
-      { day: 'WED', startTokenNo: 1, endTokenNo: 1 },
-      { day: 'THU', startTokenNo: 1, endTokenNo: 1 },
-      { day: 'FRI', startTokenNo: 1, endTokenNo: 1 },
-      { day: 'SAT', startTokenNo: 1, endTokenNo: 1 },
-      { day: 'SUN', startTokenNo: 1, endTokenNo: 1 },
+      { 
+        day: 'MON', 
+        morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 },
+        afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 }
+      },
+      { 
+        day: 'TUE', 
+        morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 },
+        afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 }
+      },
+      { 
+        day: 'WED', 
+        morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 },
+        afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 }
+      },
+      { 
+        day: 'THU', 
+        morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 },
+        afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 }
+      },
+      { 
+        day: 'FRI', 
+        morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 },
+        afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 }
+      },
+      { 
+        day: 'SAT', 
+        morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 },
+        afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 }
+      },
+      { 
+        day: 'SUN', 
+        morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 },
+        afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 }
+      },
     ],
   });
 
@@ -131,7 +160,6 @@ const RegisterForm = () => {
       setCities([]);
       setFormData(prev => ({ ...prev, state: '', city: '' }));
     }
-    // eslint-disable-next-line
   }, [formData.country]);
 
   useEffect(() => {
@@ -145,7 +173,6 @@ const RegisterForm = () => {
       setCities([]);
       setFormData(prev => ({ ...prev, city: '' }));
     }
-    // eslint-disable-next-line
   }, [formData.country, formData.state]);
 
   const handleChange = async (e) => {
@@ -214,7 +241,7 @@ const RegisterForm = () => {
   };
 
   const handleVerifyOtp = async () => {
-      if (!otp || otp.length !== 6) {
+    if (!otp || otp.length !== 6) {
       toast.error('Please enter a valid 6-digit OTP.');
       return;
     }
@@ -315,9 +342,30 @@ const RegisterForm = () => {
     setFormData({ ...formData, appointment: updated });
   };
 
-  const handleTokenChange = (index, field, value) => {
+  const handleBreakChange = (appIndex, breakIndex, field, value) => {
+    const updated = [...formData.appointment];
+    updated[appIndex].breaks[breakIndex][field] = value;
+    setFormData({ ...formData, appointment: updated });
+  };
+
+  const toggleBreaks = (index) => {
+    const updated = [...formData.appointment];
+    if (!updated[index].showBreaks && updated[index].breaks.length === 0) {
+      updated[index].breaks.push({ startTime: '01:00 PM', endTime: '02:00 PM' });
+    }
+    updated[index].showBreaks = !updated[index].showBreaks;
+    setFormData({ ...formData, appointment: updated });
+  };
+
+  const addBreak = (index) => {
+    const updated = [...formData.appointment];
+    updated[index].breaks.push({ startTime: '01:00 PM', endTime: '02:00 PM' });
+    setFormData({ ...formData, appointment: updated });
+  };
+
+  const handleTokenChange = (index, session, field, value) => {
     const updatedTokens = [...formData.token];
-    updatedTokens[index][field] = value;
+    updatedTokens[index][session][field] = value;
     setFormData({ ...formData, token: updatedTokens });
   };
 
@@ -364,16 +412,28 @@ const RegisterForm = () => {
           longitude: parseFloat(formData.longitude) || 0,
           appointment: formData.appointment.map((item) => ({
             day: dayMapping[item.day],
-            startTime: item.startTime || '09:00 AM',
-            endTime: item.endTime || '09:00 PM',
-            duration: parseInt(item.duration) || 0,
-            individualCount: parseInt(item.individualCount) || 0,
-            groupCount: parseInt(item.groupCount) || 0,
+            availableFrom: item.availableFrom || '09:00 AM',
+            availableTo: item.availableTo || '05:00 PM',
+            slotDurationMins: parseInt(item.slotDurationMins) || 15,
+            breaks: item.breaks.map((b) => ({
+              startTime: b.startTime || '01:00 PM',
+              endTime: b.endTime || '02:00 PM',
+            })),
           })),
           token: formData.token.map((item) => ({
             day: dayMapping[item.day],
-            startTokenNo: parseInt(item.startTokenNo) || 0,
-            endTokenNo: parseInt(item.endTokenNo) || 0,
+            morning: {
+              startTime: item.morning.startTime || '08:00 AM',
+              endTime: item.morning.endTime || '12:00 PM',
+              startTokenNo: parseInt(item.morning.startTokenNo) || 0,
+              endTokenNo: parseInt(item.morning.endTokenNo) || 0,
+            },
+            afternoon: {
+              startTime: item.afternoon.startTime || '01:00 PM',
+              endTime: item.afternoon.endTime || '05:00 PM',
+              startTokenNo: parseInt(item.afternoon.startTokenNo) || 0,
+              endTokenNo: parseInt(item.afternoon.endTokenNo) || 0,
+            },
           })),
         };
 
@@ -635,77 +695,348 @@ const RegisterForm = () => {
             <option value="token">Token</option>
           </select>
         </div>
-        {(formData.type === 'appointment' || formData.type === 'both') && (
-          <>
-            <h4>Appointments</h4>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {/* {(formData.type === 'appointment' || formData.type === 'both') && (
+            <>
+              <h4>Appointments</h4>
               {formData.appointment.map((item, index) => (
-                <div key={index} className="appointment-row" style={{ marginBottom: '1rem' }}>
-                  <label style={{ marginRight: '1rem' }}>{item.day}</label>
-                  <TimePicker
-                    label="Start Time"
-                    value={item.startTime ? dayjs(`2024-01-01T${convertTo24Hour(item.startTime)}`) : null}
-                    onChange={(newValue) => {
-                      handleAppointmentChange(index, 'startTime', newValue ? newValue.format('hh:mm A') : '09:00 AM');
-                    }}
-                    ampm
-                    disabled={isLoading}
-                  />
-                  <TimePicker
-                    label="End Time"
-                    value={item.endTime ? dayjs(`2024-01-01T${convertTo24Hour(item.endTime)}`) : null}
-                    onChange={(newValue) => {
-                      handleAppointmentChange(index, 'endTime', newValue ? newValue.format('hh:mm A') : '09:00 PM');
-                    }}
-                    ampm
-                    disabled={isLoading}
-                  />
-                  <TextField
-                    type="number"
-                    label="Duration (min)"
-                    value={item.duration}
-                    onChange={(e) => handleAppointmentChange(index, 'duration', e.target.value)}
-                    InputProps={{ inputProps: { min: 0 } }}
-                    sx={{ width: '150px' }}
-                    disabled={isLoading}
-                  />
-                  <TextField
-                    type="number"
-                    label="Individual Count"
-                    value={item.individualCount}
-                    onChange={(e) => handleAppointmentChange(index, 'individualCount', e.target.value)}
-                    InputProps={{ inputProps: { min: 0 } }}
-                    sx={{ width: '150px' }}
-                    disabled={isLoading}
-                  />
-                  <TextField
-                    type="number"
-                    label="Group Count"
-                    value={item.groupCount}
-                    onChange={(e) => handleAppointmentChange(index, 'groupCount', e.target.value)}
-                    InputProps={{ inputProps: { min: 0 } }}
-                    sx={{ width: '150px' }}
-                    disabled={isLoading}
-                  />
+                <div key={index} className="appointment-row" style={{ marginBottom: '1rem', border: '1px solid #e0e0e0', padding: '10px', borderRadius: '4px' }}>
+                  <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+                    <Typography variant="body1" sx={{ minWidth: '60px' }}>{item.day}</Typography>
+                    <TimePicker
+                      label="Available From"
+                      value={item.availableFrom ? dayjs(`2024-01-01T${convertTo24Hour(item.availableFrom)}`) : null}
+                      onChange={(newValue) => {
+                        handleAppointmentChange(index, 'availableFrom', newValue ? newValue.format('hh:mm A') : '09:00 AM');
+                      }}
+                      ampm
+                      disabled={isLoading}
+                      sx={{ width: '150px' }}
+                    />
+                    <TimePicker
+                      label="Available To"
+                      value={item.availableTo ? dayjs(`2024-01-01T${convertTo24Hour(item.availableTo)}`) : null}
+                      onChange={(newValue) => {
+                        handleAppointmentChange(index, 'availableTo', newValue ? newValue.format('hh:mm A') : '05:00 PM');
+                      }}
+                      ampm
+                      disabled={isLoading}
+                      sx={{ width: '150px' }}
+                    />
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <TextField
+                        type="number"
+                        label="Slot Duration (min)"
+                        value={item.slotDurationMins}
+                        onChange={(e) => handleAppointmentChange(index, 'slotDurationMins', e.target.value)}
+                        InputProps={{ inputProps: { min: 0 } }}
+                        sx={{ width: '150px' }}
+                        disabled={isLoading}
+                      />
+                      <IconButton onClick={() => toggleBreaks(index)} disabled={isLoading}>
+                        <AddCircleIcon color={item.showBreaks ? 'secondary' : 'primary'} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                  <Collapse in={item.showBreaks}>
+                    <Box sx={{ mt: 2, p: 2, backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+                      <Typography variant="subtitle2">Breaks</Typography>
+                      {item.breaks.map((breakItem, breakIndex) => (
+                        <Box key={breakIndex} display="flex" gap={2} mt={1} flexWrap="wrap">
+                          <TimePicker
+                            label="Break Start"
+                            value={breakItem.startTime ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.startTime)}`) : null}
+                            onChange={(newValue) => {
+                              handleBreakChange(index, breakIndex, 'startTime', newValue ? newValue.format('hh:mm A') : '01:00 PM');
+                            }}
+                            ampm
+                            disabled={isLoading}
+                            sx={{ width: '150px' }}
+                          />
+                          <TimePicker
+                            label="Break End"
+                            value={breakItem.endTime ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.endTime)}`) : null}
+                            onChange={(newValue) => {
+                              handleBreakChange(index, breakIndex, 'endTime', newValue ? newValue.format('hh:mm A') : '02:00 PM');
+                            }}
+                            ampm
+                            disabled={isLoading}
+                            sx={{ width: '150px' }}
+                          />
+                        </Box>
+                      ))}
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => addBreak(index)}
+                        disabled={isLoading}
+                        sx={{ mt: 2 }}
+                      >
+                        Add Break
+                      </Button>
+                    </Box>
+                  </Collapse>
                 </div>
               ))}
-            </LocalizationProvider>
-          </>
-        )}
+            </>
+          )} */}
 
-        {formData.type === 'token' && (
-          <>
-            <h4>Token Numbers (Per Day)</h4>
-            {formData.token.map((item, index) => (
-              <div key={index} className="token-row">
-                <label>{item.day}</label>
+{(formData.type === 'appointment' || formData.type === 'both') && (
+  <>
+    <h4>Appointments</h4>
+    {formData.appointment.map((item, index) => (
+      <div key={index} className="appointment-row" style={{ marginBottom: '1rem', border: '1px solid #e0e0e0', padding: '10px', borderRadius: '4px' }}>
+          <Typography variant="body1" sx={{ minWidth: '60px' }}>{item.day}</Typography>
+        <Box className="appointment-main-row" display="flex" alignItems="center" gap={2}>
+          <TimePicker
+            label="Start Time"
+            value={item.availableFrom ? dayjs(`2024-01-01T${convertTo24Hour(item.availableFrom)}`) : null}
+            onChange={(newValue) => {
+              handleAppointmentChange(index, 'availableFrom', newValue ? newValue.format('hh:mm A') : '09:00 AM');
+            }}
+            ampm
+            disabled={isLoading}
+            sx={{ width: '150px' }}
+          />
+          <TimePicker
+            label="End Time"
+            value={item.availableTo ? dayjs(`2024-01-01T${convertTo24Hour(item.availableTo)}`) : null}
+            onChange={(newValue) => {
+              handleAppointmentChange(index, 'availableTo', newValue ? newValue.format('hh:mm A') : '05:00 PM');
+            }}
+            ampm
+            disabled={isLoading}
+            sx={{ width: '150px' }}
+          />
+          <Box display="flex" alignItems="center" gap={1} className="slot-duration-container">
+            <TextField
+              type="number"
+              label="Duration (min)"
+              value={item.slotDurationMins}
+              onChange={(e) => handleAppointmentChange(index, 'slotDurationMins', e.target.value)}
+              InputProps={{ inputProps: { min: 0 } }}
+              sx={{ width: '150px' }}
+              disabled={isLoading}
+            />
+            <IconButton onClick={() => toggleBreaks(index)} disabled={isLoading}>
+              <AddCircleIcon color={item.showBreaks ? 'secondary' : 'primary'} />
+            </IconButton>
+          </Box>
+        </Box>
+        <Collapse in={item.showBreaks}>
+          <Box className="breaks-container" sx={{ mt: 2, p: 2, backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+            <Typography variant="subtitle2">Breaks</Typography>
+            {item.breaks.map((breakItem, breakIndex) => (
+              <Box key={breakIndex} className="break-row" display="flex" flexDirection="column" gap={2} mt={1}>
+                <TimePicker
+                  label="Break Start"
+                  value={breakItem.startTime ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.startTime)}`) : null}
+                  onChange={(newValue) => {
+                    handleBreakChange(index, breakIndex, 'startTime', newValue ? newValue.format('hh:mm A') : '01:00 PM');
+                  }}
+                  ampm
+                  disabled={isLoading}
+                  sx={{ width: '150px' }}
+                />
+                <TimePicker
+                  label="Break End"
+                  value={breakItem.endTime ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.endTime)}`) : null}
+                  onChange={(newValue) => {
+                    handleBreakChange(index, breakIndex, 'endTime', newValue ? newValue.format('hh:mm A') : '02:00 PM');
+                  }}
+                  ampm
+                  disabled={isLoading}
+                  sx={{ width: '150px' }}
+                />
+              </Box>
+            ))}
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => addBreak(index)}
+              disabled={isLoading}
+              sx={{ mt: 2 }}
+            >
+              Add Break
+            </Button>
+          </Box>
+        </Collapse>
+      </div>
+    ))}
+  </>
+)}
+         {formData.type === 'token' && (
+  <>
+    <h4 style={{ marginBottom: '16px', fontSize: '1.25rem', fontWeight: 500 }}>Token Sessions</h4>
+    {formData.token.map((item, index) => (
+      <div
+        key={index}
+        className="token-row"
+        style={{
+          marginBottom: '24px',
+          border: '1px solid #e0e0e0',
+          padding: '20px',
+          borderRadius: '12px',
+          backgroundColor: '#ffffff',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600, color: '#333' }}
+        >
+          {item.day}
+        </Typography>
+        <Box
+          sx={{
+            mb: 3,
+            p: 3,
+            border: '1px solid #f0f0f0',
+            borderRadius: '8px',
+            backgroundColor: '#f9fafb',
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{ mb: 2, fontSize: '1rem', fontWeight: 500, color: '#555' }}
+          >
+            Morning Session
+          </Typography>
+          <Box display="flex" gap={2} flexWrap="wrap">
+            <TimePicker
+              label="Start Time"
+              value={
+                item.morning.startTime
+                  ? dayjs(`2024-01-01T${convertTo24Hour(item.morning.startTime)}`)
+                  : null
+              }
+              onChange={(newValue) => {
+                handleTokenChange(
+                  index,
+                  'morning',
+                  'startTime',
+                  newValue ? newValue.format('hh:mm A') : '08:00 AM'
+                );
+              }}
+              ampm
+              disabled={isLoading}
+              sx={{
+                width: '160px',
+                '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+              }}
+            />
+            <TimePicker
+              label="End Time"
+              value={
+                item.morning.endTime
+                  ? dayjs(`2024-01-01T${convertTo24Hour(item.morning.endTime)}`)
+                  : null
+              }
+              onChange={(newValue) => {
+                handleTokenChange(
+                  index,
+                  'morning',
+                  'endTime',
+                  newValue ? newValue.format('hh:mm A') : '12:00 PM'
+                );
+              }}
+              ampm
+              disabled={isLoading}
+              sx={{
+                width: '160px',
+                '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+              }}
+            />
+            <input
+                  type="number"
+                  min="0"
+                  placeholder="Start Token"
+                  value={item.morning.startTokenNo}
+                  onChange={(e) =>
+                    handleTokenChange(index,'morning', 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
+                  }
+                  disabled={isLoading}
+                />
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="End Token"
+                  value={item.morning.endTokenNo}
+                  onChange={(e) =>
+                    handleTokenChange(index,'morning', 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
+                  }
+                  disabled={isLoading}
+                />
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            p: 3,
+            border: '1px solid #f0f0f0',
+            borderRadius: '8px',
+            backgroundColor: '#f9fafb',
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{ mb: 2, fontSize: '1rem', fontWeight: 500, color: '#555' }}
+          >
+            Afternoon Session
+          </Typography>
+          <Box display="flex" gap={2} flexWrap="wrap">
+            <TimePicker
+              label="Start Time"
+              value={
+                item.afternoon.startTime
+                  ? dayjs(`2024-01-01T${convertTo24Hour(item.afternoon.startTime)}`)
+                  : null
+              }
+              onChange={(newValue) => {
+                handleTokenChange(
+                  index,
+                  'afternoon',
+                  'startTime',
+                  newValue ? newValue.format('hh:mm A') : '01:00 PM'
+                );
+              }}
+              ampm
+              disabled={isLoading}
+              sx={{
+                width: '160px',
+                '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+              }}
+            />
+            <TimePicker
+              label="End Time"
+              value={
+                item.afternoon.endTime
+                  ? dayjs(`2024-01-01T${convertTo24Hour(item.afternoon.endTime)}`)
+                  : null
+              }
+              onChange={(newValue) => {
+                handleTokenChange(
+                  index,
+                  'afternoon',
+                  'endTime',
+                  newValue ? newValue.format('hh:mm A') : '05:00 PM'
+                );
+              }}
+              ampm
+              disabled={isLoading}
+              sx={{
+                width: '160px',
+                '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+              }}
+            />
+         
                 <input
                   type="number"
                   min="0"
                   placeholder="Start Token No"
-                  value={item.startTokenNo}
+                  value={item.afternoon.startTokenNo}
                   onChange={(e) =>
-                    handleTokenChange(index, 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
+                    handleTokenChange(index,'afternoon', 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
                   }
                   disabled={isLoading}
                 />
@@ -713,19 +1044,22 @@ const RegisterForm = () => {
                   type="number"
                   min="0"
                   placeholder="End Token No"
-                  value={item.endTokenNo}
+                  value={item.afternoon.endTokenNo}
                   onChange={(e) =>
-                    handleTokenChange(index, 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
+                    handleTokenChange(index,'afternoon', 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
                   }
                   disabled={isLoading}
                 />
-              </div>
-            ))}
-          </>
-        )}
+          </Box>
+        </Box>
+      </div>
+    ))}
+  </>
+)}
+        </LocalizationProvider>
 
         <div className="form-actions">
-          <button type="submit" className="form-button" disabled={isLoading || !isOtpVerified || !isOtpVerified}>Submit</button>
+          <button type="submit" className="form-button" disabled={isLoading || !isOtpVerified}>Submit</button>
           <button type="button" className="form-button" onClick={handleCancel} disabled={isLoading}>Cancel</button>
         </div>
       </form>

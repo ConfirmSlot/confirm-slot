@@ -293,3 +293,77 @@ textarea,
     justify-content: flex-end;
   }
 }
+
+.appointment-row {
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.appointment-main-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.slot-duration-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breaks-container {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.break-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+/* Ensure the main row doesn't wrap on desktop and fits within container */
+@media (min-width: 768px) {
+  .appointment-main-row {
+    flex-wrap: nowrap;
+  }
+  .slot-duration-container {
+    flex-shrink: 0;
+  }
+  .appointment-row {
+    max-width: 100%;
+  }
+  .time-picker,
+  .slot-duration-container .MuiTextField-root {
+    width: 150px !important;
+  }
+}
+
+/* For smaller screens, allow wrapping and prevent overflow */
+@media (max-width: 767px) {
+  .appointment-main-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .appointment-row {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .time-picker,
+  .slot-duration-container .MuiTextField-root {
+    width: 100% !important;
+    max-width: 150px;
+  }
+  .break-row .MuiTextField-root {
+    width: 100% !important;
+    max-width: 150px;
+  }
+}
