@@ -788,8 +788,8 @@ const RegisterForm = () => {
   <>
     <h4>Appointments</h4>
     {formData.appointment.map((item, index) => (
-      <div key={index} className="appointment-row" style={{ marginBottom: '1rem', border: '1px solid #e0e0e0', padding: '10px', borderRadius: '4px' }}>
-          <Typography variant="body1" sx={{ minWidth: '60px' }}>{item.day}</Typography>
+      <div key={index} className="appointment-row" style={{ marginBottom: '1rem', border: '1px solid #e0e0e0', padding: '10px', borderRadius: '4px', display:'block' }}>
+          <Typography variant="body1" sx={{ minWidth: '60px',marginBottom:'10px' }}>{item.day}</Typography>
         <Box className="appointment-main-row" display="flex" alignItems="center" gap={2}>
           <TimePicker
             label="Start Time"
@@ -826,44 +826,70 @@ const RegisterForm = () => {
             </IconButton>
           </Box>
         </Box>
-        <Collapse in={item.showBreaks}>
-          <Box className="breaks-container" sx={{ mt: 2, p: 2, backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-            <Typography variant="subtitle2">Breaks</Typography>
-            {item.breaks.map((breakItem, breakIndex) => (
-              <Box key={breakIndex} className="break-row" display="flex" flexDirection="column" gap={2} mt={1}>
-                <TimePicker
-                  label="Break Start"
-                  value={breakItem.startTime ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.startTime)}`) : null}
-                  onChange={(newValue) => {
-                    handleBreakChange(index, breakIndex, 'startTime', newValue ? newValue.format('hh:mm A') : '01:00 PM');
-                  }}
-                  ampm
-                  disabled={isLoading}
-                  sx={{ width: '150px' }}
-                />
-                <TimePicker
-                  label="Break End"
-                  value={breakItem.endTime ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.endTime)}`) : null}
-                  onChange={(newValue) => {
-                    handleBreakChange(index, breakIndex, 'endTime', newValue ? newValue.format('hh:mm A') : '02:00 PM');
-                  }}
-                  ampm
-                  disabled={isLoading}
-                  sx={{ width: '150px' }}
-                />
-              </Box>
-            ))}
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => addBreak(index)}
-              disabled={isLoading}
-              sx={{ mt: 2 }}
-            >
-              Add Break
-            </Button>
-          </Box>
-        </Collapse>
+   <Collapse in={item.showBreaks}>
+  <Box className="breaks-container">
+    <Typography variant="subtitle2">Breaks</Typography>
+    {item.breaks.map((breakItem, breakIndex) => (
+      <Box
+  key={breakIndex}
+  className="break-row"
+  sx={{
+    flexDirection: { xs: 'column', sm: 'row' },
+    alignItems: 'center'
+  }}
+>
+  <TimePicker
+    label="Break Start"
+    value={
+      breakItem.startTime
+        ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.startTime)}`)
+        : null
+    }
+    onChange={(newValue) => {
+      handleBreakChange(
+        index,
+        breakIndex,
+        'startTime',
+        newValue ? newValue.format('hh:mm A') : '01:00 PM'
+      );
+    }}
+    ampm
+    disabled={isLoading}
+    sx={{ width: { xs: '100%', sm: '150px' } }}
+  />
+  <TimePicker
+    label="Break End"
+    value={
+      breakItem.endTime
+        ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.endTime)}`)
+        : null
+    }
+    onChange={(newValue) => {
+      handleBreakChange(
+        index,
+        breakIndex,
+        'endTime',
+        newValue ? newValue.format('hh:mm A') : '02:00 PM'
+      );
+    }}
+    ampm
+    disabled={isLoading}
+    sx={{ width: { xs: '100%', sm: '150px' } }}
+  />
+</Box>
+    ))}
+    <Button
+      variant="outlined"
+      size="small"
+      onClick={() => addBreak(index)}
+      disabled={isLoading}
+      className="add-break-btn"
+      style={{marginTop:"10px"}}
+    >
+      Add Break
+    </Button>
+  </Box>
+</Collapse>
       </div>
     ))}
   </>
