@@ -950,31 +950,51 @@ const RegisterForm = () => {
                 '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
               }}
             />
-            <input
-                  type="number"
-                  min="0"
-                  placeholder="Start Token"
-                  value={item.morning.startTokenNo}
-                  onChange={(e) =>
-                    handleTokenChange(index,'morning', 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
-                  }
-                  disabled={isLoading}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="End Token"
-                  value={item.morning.endTokenNo}
-                  onChange={(e) =>
-                    handleTokenChange(index,'morning', 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
-                  }
-                  disabled={isLoading}
-                />
+    <TextField
+  label="Start Token"
+  type="number"
+  placeholder="Enter start token"
+  value={item.morning.startTokenNo || ''}
+  onChange={(e) =>
+    handleTokenChange(
+      index,
+      'morning',
+      'startTokenNo',
+      Math.max(0, parseInt(e.target.value) || 0).toString()
+    )
+  }
+  disabled={isLoading}
+  sx={{
+    width: '160px',
+    '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+  }}
+/>
+
+<TextField
+  label="End Token"
+  type="number"
+  placeholder="Enter end token"
+  value={item.morning.endTokenNo || ''}
+  onChange={(e) =>
+    handleTokenChange(
+      index,
+      'morning',
+      'endTokenNo',
+      Math.max(0, parseInt(e.target.value) || 0).toString()
+    )
+  }
+  disabled={isLoading}
+  sx={{
+    width: '160px',
+    '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+  }}
+/>
           </Box>
         </Box>
         <Box
           sx={{
             p: 3,
+            mb:3,
             border: '1px solid #f0f0f0',
             borderRadius: '8px',
             backgroundColor: '#f9fafb',
@@ -1031,27 +1051,45 @@ const RegisterForm = () => {
                 '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
               }}
             />
-         
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Start Token No"
-                  value={item.afternoon.startTokenNo}
-                  onChange={(e) =>
-                    handleTokenChange(index,'afternoon', 'startTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
-                  }
-                  disabled={isLoading}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="End Token No"
-                  value={item.afternoon.endTokenNo}
-                  onChange={(e) =>
-                    handleTokenChange(index,'afternoon', 'endTokenNo', Math.max(0, parseInt(e.target.value) || 0).toString())
-                  }
-                  disabled={isLoading}
-                />
+         <TextField
+  label="Start Token No"
+  type="number"
+  placeholder="Enter start token"
+  value={item.afternoon.startTokenNo || ''}
+  onChange={(e) =>
+    handleTokenChange(
+      index,
+      'afternoon',
+      'startTokenNo',
+      Math.max(0, parseInt(e.target.value) || 0).toString()
+    )
+  }
+  disabled={isLoading}
+  sx={{
+    width: '160px',
+    '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+  }}
+/>
+
+<TextField
+  label="End Token No"
+  type="number"
+  placeholder="Enter end token"
+  value={item.afternoon.endTokenNo || ''}
+  onChange={(e) =>
+    handleTokenChange(
+      index,
+      'afternoon',
+      'endTokenNo',
+      Math.max(0, parseInt(e.target.value) || 0).toString()
+    )
+  }
+  disabled={isLoading}
+  sx={{
+    width: '160px',
+    '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fff' },
+  }}
+/>
           </Box>
         </Box>
       </div>
