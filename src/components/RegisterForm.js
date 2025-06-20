@@ -1,3 +1,4 @@
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, Box, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress, IconButton, Collapse } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -470,6 +471,17 @@ const RegisterForm = () => {
     setOpenConfirm(false);
   };
 
+const deleteBreak = (appointmentIndex, breakIndex) => {
+  const updatedAppointments = [...formData.appointment];
+  updatedAppointments[appointmentIndex].breaks.splice(breakIndex, 1);
+  setFormData({
+    ...formData,
+    appointment: updatedAppointments,
+  });
+};
+
+
+
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
@@ -788,8 +800,20 @@ const RegisterForm = () => {
   <>
     <h4>Appointments</h4>
     {formData.appointment.map((item, index) => (
-      <div key={index} className="appointment-row" style={{ marginBottom: '1rem', border: '1px solid #e0e0e0', padding: '10px', borderRadius: '4px', display:'block' }}>
-          <Typography variant="body1" sx={{ minWidth: '60px',marginBottom:'10px' }}>{item.day}</Typography>
+      <div
+        key={index}
+        className="appointment-row"
+        style={{
+          marginBottom: '1rem',
+          border: '1px solid #e0e0e0',
+          padding: '10px',
+          borderRadius: '4px',
+          display: 'block',
+        }}
+      >
+        <Typography variant="body1" sx={{ minWidth: '60px', marginBottom: '10px' }}>
+          {item.day}
+        </Typography>
         <Box className="appointment-main-row" display="flex" alignItems="center" gap={2}>
           <TimePicker
             label="Start Time"
@@ -826,70 +850,68 @@ const RegisterForm = () => {
             </IconButton>
           </Box>
         </Box>
-   <Collapse in={item.showBreaks}>
-  <Box className="breaks-container">
-    <Typography variant="subtitle2">Breaks</Typography>
-    {item.breaks.map((breakItem, breakIndex) => (
-      <Box
-  key={breakIndex}
-  className="break-row"
-  sx={{
-    flexDirection: { xs: 'column', sm: 'row' },
-    alignItems: 'center'
-  }}
->
-  <TimePicker
-    label="Break Start"
-    value={
-      breakItem.startTime
-        ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.startTime)}`)
-        : null
-    }
-    onChange={(newValue) => {
-      handleBreakChange(
-        index,
-        breakIndex,
-        'startTime',
-        newValue ? newValue.format('hh:mm A') : '01:00 PM'
-      );
-    }}
-    ampm
-    disabled={isLoading}
-    sx={{ width: { xs: '100%', sm: '150px' } }}
-  />
-  <TimePicker
-    label="Break End"
-    value={
-      breakItem.endTime
-        ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.endTime)}`)
-        : null
-    }
-    onChange={(newValue) => {
-      handleBreakChange(
-        index,
-        breakIndex,
-        'endTime',
-        newValue ? newValue.format('hh:mm A') : '02:00 PM'
-      );
-    }}
-    ampm
-    disabled={isLoading}
-    sx={{ width: { xs: '100%', sm: '150px' } }}
-  />
-</Box>
-    ))}
-    <Button
-      variant="outlined"
-      size="small"
-      onClick={() => addBreak(index)}
-      disabled={isLoading}
-      className="add-break-btn"
-      style={{marginTop:"10px"}}
-    >
-      Add Break
-    </Button>
-  </Box>
-</Collapse>
+        <Collapse in={item.showBreaks}>
+          <Box className="breaks-container" mt={1}>
+            <Typography variant="subtitle2">Breaks</Typography>
+            {item.breaks.map((breakItem, breakIndex) => (
+              <Box
+                key={breakIndex}
+                className="break-row"
+                sx={{
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: 'center',
+                  gap: 1,
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <TimePicker
+                  label="Break Start"
+                  value={
+                    breakItem.startTime
+                      ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.startTime)}`)
+                      : null
+                  }
+                  onChange={(newValue) => {
+                    handleBreakChange(index, breakIndex, 'startTime', newValue ? newValue.format('hh:mm A') : '01:00 PM');
+                  }}
+                  ampm
+                  disabled={isLoading}
+                  sx={{ width: { xs: '100%', sm: '150px' } }}
+                />
+                <TimePicker
+                  label="Break End"
+                  value={
+                    breakItem.endTime
+                      ? dayjs(`2024-01-01T${convertTo24Hour(breakItem.endTime)}`)
+                      : null
+                  }
+                  onChange={(newValue) => {
+                    handleBreakChange(index, breakIndex, 'endTime', newValue ? newValue.format('hh:mm A') : '02:00 PM');
+                  }}
+                  ampm
+                  disabled={isLoading}
+                  sx={{ width: { xs: '100%', sm: '150px' } }}
+                />
+                <IconButton
+                  onClick={() => deleteBreak(index, breakIndex)}
+                  disabled={isLoading}
+                >
+                  <DeleteIcon color="error" />
+                </IconButton>
+              </Box>
+            ))}
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => addBreak(index)}
+              disabled={isLoading}
+              className="add-break-btn"
+              style={{ marginTop: '10px' }}
+            >
+              Add Break
+            </Button>
+          </Box>
+        </Collapse>
       </div>
     ))}
   </>
