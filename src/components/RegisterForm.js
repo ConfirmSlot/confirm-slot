@@ -381,91 +381,183 @@ const RegisterForm = () => {
     setOpenConfirm(true);
   };
 
+  // const handleConfirmSubmit = async () => {
+  //   setOpenConfirm(false);
+  //   setIsLoading(true);
+
+  //   const loginPayload = {
+  //     mobile: `${selectedCode}${phone}`,
+  //   };
+
+  //   try {
+  //     const loginResponse = await axios.post(
+  //       `${process.env.REACT_APP_API_URL}/login`,
+  //       loginPayload,
+  //       {
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+
+  //     if (loginResponse.status === 201) {
+  //       const accessToken = loginResponse.data.accessToken;
+  //       const userId = loginResponse.data.user.id;
+
+  //       const country = countries.find(c => c.isoCode === formData.country);
+  //       const state = states.find(s => s.isoCode === formData.state);
+
+  //       const payload = {
+  //         ...formData,
+  //         userId: userId,
+  //         phoneNumber: `${selectedCode} ${phone}`,
+  //         country: country ? country.name : formData.country,
+  //         state: state ? state.name : formData.state,
+  //         latitude: parseFloat(formData.latitude) || 0,
+  //         longitude: parseFloat(formData.longitude) || 0,
+  //         appointment: formData.appointment.map((item) => ({
+  //           day: dayMapping[item.day],
+  //           availableFrom: item.availableFrom || '09:00 AM',
+  //           availableTo: item.availableTo || '05:00 PM',
+  //           slotDurationMins: parseInt(item.slotDurationMins) || 15,
+  //           breaks: item.breaks.map((b) => ({
+  //             startTime: b.startTime || '01:00 PM',
+  //             endTime: b.endTime || '02:00 PM',
+  //           })),
+  //         })),
+  //         token: formData.token.map((item) => ({
+  //           day: dayMapping[item.day],
+  //           morning: {
+  //             startTime: item.morning.startTime || '08:00 AM',
+  //             endTime: item.morning.endTime || '12:00 PM',
+  //             startTokenNo: parseInt(item.morning.startTokenNo) || 0,
+  //             endTokenNo: parseInt(item.morning.endTokenNo) || 0,
+  //           },
+  //           afternoon: {
+  //             startTime: item.afternoon.startTime || '01:00 PM',
+  //             endTime: item.afternoon.endTime || '05:00 PM',
+  //             startTokenNo: parseInt(item.afternoon.startTokenNo) || 0,
+  //             endTokenNo: parseInt(item.afternoon.endTokenNo) || 0,
+  //           },
+  //         })),
+  //       };
+
+  //       const serviceProviderResponse = await axios.post(
+  //         `${process.env.REACT_APP_API_URL}/service-provider`,
+  //         payload,
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //         }
+  //       );
+
+  //       if (serviceProviderResponse.status === 201) {
+  //         toast.success('Form submitted successfully!');
+  //       } else {
+  //         toast.error('Submission failed. Please try again.');
+  //       }
+  //     } else {
+  //       toast.error('Login failed. Please check your credentials.');
+  //     }
+  //   } catch (err) {
+  //     console.error('Error during submission:', err);
+  //     toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleConfirmSubmit = async () => {
-    setOpenConfirm(false);
-    setIsLoading(true);
+  setOpenConfirm(false);
+  setIsLoading(true);
 
-    const loginPayload = {
-      mobile: `${selectedCode}${phone}`,
-    };
+  const loginPayload = {
+    mobile: `${selectedCode}${phone}`,
+  };
 
-    try {
-      const loginResponse = await axios.post(
-        `${process.env.REACT_APP_API_URL}/login`,
-        loginPayload,
+  try {
+    const loginResponse = await axios.post(
+      `${process.env.REACT_APP_API_URL}/login`,
+      loginPayload,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    if (loginResponse.status === 201) {
+      const accessToken = loginResponse.data.accessToken;
+      const userId = loginResponse.data.user.id;
+
+      const country = countries.find(c => c.isoCode === formData.country);
+      const state = states.find(s => s.isoCode === formData.state);
+
+      const payload = {
+        ...formData,
+        userId: userId,
+        phoneNumber: `${selectedCode} ${phone}`,
+        country: country ? country.name : formData.country,
+        state: state ? state.name : formData.state,
+        latitude: parseFloat(formData.latitude) || 0,
+        longitude: parseFloat(formData.longitude) || 0,
+        dailySlotConfig: formData.appointment.map((item, index) => ({
+          day: dayMapping[item.day],
+          appointmentSessions: formData.type === 'appointment' || formData.type === 'both' ? [{
+            slotDuration: parseInt(item.slotDurationMins) || 15,
+            allowedPersons: 5, // Hardcoded as per requirement
+            groupsAllowed: 1, // Hardcoded as per requirement
+            groupSize: parseInt(formData.groupSize) || 5, // Use formData.groupSize or default to 5
+            bookingOpenTime: convertTo24Hour(item.availableFrom || '09:00 AM') + ':00',
+            breakTimes: item.breaks.map((b) => ({
+              startTime: convertTo24Hour(b.startTime || '01:00 PM'),
+              endTime: convertTo24Hour(b.endTime || '02:00 PM'),
+            })),
+          }] : [],
+          tokenSessions: formData.type === 'token' || formData.type === 'both' ? [
+            {
+              startTime: convertTo24Hour(formData.token[index].morning.startTime || '08:00 AM'),
+              endTime: convertTo24Hour(formData.token[index].morning.endTime || '12:00 PM'),
+              startTokenNo: parseInt(formData.token[index].morning.startTokenNo) || 1,
+              endTokenNo: parseInt(formData.token[index].morning.endTokenNo) || 1,
+              breakTimes: [], // Add break times for token morning session if needed
+            },
+            {
+              startTime: convertTo24Hour(formData.token[index].afternoon.startTime || '01:00 PM'),
+              endTime: convertTo24Hour(formData.token[index].afternoon.endTime || '05:00 PM'),
+              startTokenNo: parseInt(formData.token[index].afternoon.startTokenNo) || 1,
+              endTokenNo: parseInt(formData.token[index].afternoon.endTokenNo) || 1,
+              breakTimes: [], // Add break times for token afternoon session if needed
+            },
+          ] : [],
+          tokenOpenTime: convertTo24Hour(formData.token[index].morning.startTime || '08:00 AM') + ':00',
+        })),
+      };
+
+      const serviceProviderResponse = await axios.post(
+        `${process.env.REACT_APP_API_URL}/service-provider`,
+        payload,
         {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
       );
 
-      if (loginResponse.status === 201) {
-        const accessToken = loginResponse.data.accessToken;
-        const userId = loginResponse.data.user.id;
-
-        const country = countries.find(c => c.isoCode === formData.country);
-        const state = states.find(s => s.isoCode === formData.state);
-
-        const payload = {
-          ...formData,
-          userId: userId,
-          phoneNumber: `${selectedCode} ${phone}`,
-          country: country ? country.name : formData.country,
-          state: state ? state.name : formData.state,
-          latitude: parseFloat(formData.latitude) || 0,
-          longitude: parseFloat(formData.longitude) || 0,
-          appointment: formData.appointment.map((item) => ({
-            day: dayMapping[item.day],
-            availableFrom: item.availableFrom || '09:00 AM',
-            availableTo: item.availableTo || '05:00 PM',
-            slotDurationMins: parseInt(item.slotDurationMins) || 15,
-            breaks: item.breaks.map((b) => ({
-              startTime: b.startTime || '01:00 PM',
-              endTime: b.endTime || '02:00 PM',
-            })),
-          })),
-          token: formData.token.map((item) => ({
-            day: dayMapping[item.day],
-            morning: {
-              startTime: item.morning.startTime || '08:00 AM',
-              endTime: item.morning.endTime || '12:00 PM',
-              startTokenNo: parseInt(item.morning.startTokenNo) || 0,
-              endTokenNo: parseInt(item.morning.endTokenNo) || 0,
-            },
-            afternoon: {
-              startTime: item.afternoon.startTime || '01:00 PM',
-              endTime: item.afternoon.endTime || '05:00 PM',
-              startTokenNo: parseInt(item.afternoon.startTokenNo) || 0,
-              endTokenNo: parseInt(item.afternoon.endTokenNo) || 0,
-            },
-          })),
-        };
-
-        const serviceProviderResponse = await axios.post(
-          `${process.env.REACT_APP_API_URL}/service-provider`,
-          payload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (serviceProviderResponse.status === 201) {
-          toast.success('Form submitted successfully!');
-        } else {
-          toast.error('Submission failed. Please try again.');
-        }
+      if (serviceProviderResponse.status === 201) {
+        toast.success('Form submitted successfully!');
       } else {
-        toast.error('Login failed. Please check your credentials.');
+        toast.error('Submission failed. Please try again.');
       }
-    } catch (err) {
-      console.error('Error during submission:', err);
-      toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error('Login failed. Please check your credentials.');
     }
-  };
+  } catch (err) {
+    console.error('Error during submission:', err);
+    toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleCloseConfirm = () => {
     setOpenConfirm(false);
