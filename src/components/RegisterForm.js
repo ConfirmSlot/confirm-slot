@@ -533,7 +533,7 @@ const RegisterForm = () => {
       };
 
       const serviceProviderResponse = await axios.post(
-        `${process.env.REACT_APP_API_URL}/service-provider`,
+        `${process.env.REACT_APP_API_URL}/service-providers`,
         payload,
         {
           headers: {
