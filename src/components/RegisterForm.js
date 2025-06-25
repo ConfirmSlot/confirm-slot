@@ -102,6 +102,7 @@ const RegisterForm = () => {
   });
 
   const [countries, setCountries] = useState([]);
+  const [openSuccess, setOpenSuccess] = useState(false);
   const [countryCodes, setCountryCodes] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -231,7 +232,7 @@ const RegisterForm = () => {
       });
       if (response.status === 200 || response.status === 201) {
         setIsOtpSent(true);
-        toast.success('OTP sent successfully!');
+        toast.success('OTP sent to WhatsApp!');
       } else {
         toast.error('Failed to send OTP. Please try again.');
       }
@@ -544,7 +545,8 @@ const RegisterForm = () => {
       );
 
       if (serviceProviderResponse.status === 201) {
-        toast.success('Form submitted successfully!');
+        setOpenSuccess(true);
+        // toast.success('Form submitted successfully!');
       } else {
         toast.error('Submission failed. Please try again.');
       }
@@ -576,6 +578,25 @@ const deleteBreak = (appointmentIndex, breakIndex) => {
 
   return (
     <>
+    <Dialog
+  open={openSuccess}
+  onClose={() => setOpenSuccess(false)}
+  aria-labelledby="success-dialog-title"
+  aria-describedby="success-dialog-description"
+  sx={{ '& .MuiDialog-paper': { minWidth: '400px', padding: '20px', textAlign: 'center' } }}
+>
+  <DialogTitle id="success-dialog-title">Registration Successful</DialogTitle>
+  <DialogContent>
+    <DialogContentText id="success-dialog-description">
+      Your registration has been submitted successfully. Our backend team will contact you shortly.
+    </DialogContentText>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => { setOpenSuccess(false); navigate('/'); }} color="primary" autoFocus>
+      OK
+    </Button>
+  </DialogActions>
+</Dialog>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
       {isLoading && (
         <Box
