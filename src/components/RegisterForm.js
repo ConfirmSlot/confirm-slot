@@ -740,6 +740,9 @@ const deleteBreak = (appointmentIndex, breakIndex) => {
                 </IconButton>
               )}
             </div>
+            <Typography variant="caption" color="textSecondary" sx={{ width: '100%', mt: 1, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+              Please enter a valid WhatsApp number. OTP will be sent via WhatsApp only.
+            </Typography>
           </div>
           <div className="form-group">
             <input
