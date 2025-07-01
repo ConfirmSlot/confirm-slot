@@ -115,6 +115,7 @@ const RegisterForm = () => {
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -261,6 +262,8 @@ const RegisterForm = () => {
       });
       if (response.status === 200 || response.status === 201) {
         setIsOtpVerified(true);
+        setAccessToken(response.data.accessToken);
+        setFormData(prev => ({ ...prev, userId: response.data.user.id }));
         toast.success('OTP verified successfully!');
       } else {
         toast.error('OTP verification failed. Please try again.');
@@ -386,29 +389,12 @@ const RegisterForm = () => {
   setOpenConfirm(false);
   setIsLoading(true);
 
-  const loginPayload = {
-    mobile: `${selectedCode}${phone}`,
-  };
-
-  try {
-    const loginResponse = await axios.post(
-      `${process.env.REACT_APP_API_URL}/login`,
-      loginPayload,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-
-    if (loginResponse.status === 201) {
-      const accessToken = loginResponse.data.accessToken;
-      const userId = loginResponse.data.user.id;
-
+    try {
       const country = countries.find(c => c.isoCode === formData.country);
       const state = states.find(s => s.isoCode === formData.state);
 
       const payload = {
         ...formData,
-        userId: userId,
         phoneNumber: `${selectedCode} ${phone}`,
         country: country ? country.name : formData.country,
         state: state ? state.name : formData.state,
@@ -418,9 +404,9 @@ const RegisterForm = () => {
           day: dayMapping[item.day],
           appointmentSessions: formData.type === 'appointment' || formData.type === 'both' ? [{
             slotDuration: parseInt(item.slotDurationMins) || 15,
-            allowedPersons: 5, // Hardcoded as per requirement
-            groupsAllowed: 1, // Hardcoded as per requirement
-            groupSize: parseInt(formData.groupSize) || 5, // Use formData.groupSize or default to 5
+            allowedPersons: 5,
+            groupsAllowed: 1,
+            groupSize: parseInt(formData.groupSize) || 5,
             bookingOpenTime: convertTo24Hour(item.availableFrom || '09:00 AM') + ':00',
             breakTimes: item.breaks.map((b) => ({
               startTime: convertTo24Hour(b.startTime || '01:00 PM'),
@@ -433,14 +419,14 @@ const RegisterForm = () => {
               endTime: convertTo24Hour(formData.token[index].morning.endTime || '12:00 PM'),
               startTokenNo: parseInt(formData.token[index].morning.startTokenNo) || 1,
               endTokenNo: parseInt(formData.token[index].morning.endTokenNo) || 1,
-              breakTimes: [], // Add break times for token morning session if needed
+              breakTimes: [],
             },
             {
               startTime: convertTo24Hour(formData.token[index].afternoon.startTime || '01:00 PM'),
               endTime: convertTo24Hour(formData.token[index].afternoon.endTime || '05:00 PM'),
               startTokenNo: parseInt(formData.token[index].afternoon.startTokenNo) || 1,
               endTokenNo: parseInt(formData.token[index].afternoon.endTokenNo) || 1,
-              breakTimes: [], // Add break times for token afternoon session if needed
+              breakTimes: [],
             },
           ] : [],
           tokenOpenTime: convertTo24Hour(formData.token[index].morning.startTime || '08:00 AM') + ':00',
@@ -460,20 +446,16 @@ const RegisterForm = () => {
 
       if (serviceProviderResponse.status === 201) {
         setOpenSuccess(true);
-        // toast.success('Form submitted successfully!');
       } else {
         toast.error('Submission failed. Please try again.');
       }
-    } else {
-      toast.error('Login failed. Please check your credentials.');
+    } catch (err) {
+      console.error('Error during submission:', err);
+      toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.error('Error during submission:', err);
-    toast.error(`Error while submitting form: ${err.response?.data?.message || err.message}`);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const handleCloseConfirm = () => {
     setOpenConfirm(false);
