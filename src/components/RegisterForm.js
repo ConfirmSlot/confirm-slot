@@ -54,22 +54,22 @@ const RegisterForm = () => {
     userId: '',
     groupSize: '',
     appointment: [
-      { day: 'MON', active: true, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
-      { day: 'TUE', active: true, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
-      { day: 'WED', active: true, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
-      { day: 'THU', active: true, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
-      { day: 'FRI', active: true, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
-      { day: 'SAT', active: true, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
-      { day: 'SUN', active: true, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'MON', active: false, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'TUE', active: false, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'WED', active: false, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'THU', active: false, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'FRI', active: false, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'SAT', active: false, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
+      { day: 'SUN', active: false, availableFrom: '09:00 AM', availableTo: '05:00 PM', slotDurationMins: '15', breaks: [], showBreaks: false },
     ],
     token: [
-      { day: 'MON', active: true, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
-      { day: 'TUE', active: true, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
-      { day: 'WED', active: true, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
-      { day: 'THU', active: true, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
-      { day: 'FRI', active: true, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
-      { day: 'SAT', active: true, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
-      { day: 'SUN', active: true, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
+      { day: 'MON', active: false, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
+      { day: 'TUE', active: false, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
+      { day: 'WED', active: false, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
+      { day: 'THU', active: false, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
+      { day: 'FRI', active: false, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
+      { day: 'SAT', active: false, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
+      { day: 'SUN', active: false, morning: { startTime: '08:00 AM', endTime: '12:00 PM', startTokenNo: 1, endTokenNo: 1 }, afternoon: { startTime: '01:00 PM', endTime: '05:00 PM', startTokenNo: 1, endTokenNo: 1 } },
     ],
   });
 
@@ -766,6 +766,8 @@ const deleteBreak = (appointmentIndex, breakIndex) => {
                       labelPlacement="start"
                     />
                   </Box>
+                                    {item.active && (
+<>
                     <Box className="appointment-main-row" display="flex" alignItems="center" gap={2} flexWrap="wrap">
                       <TimePicker
                         label="Start Time"
@@ -802,7 +804,6 @@ const deleteBreak = (appointmentIndex, breakIndex) => {
                         </IconButton>
                       </Box>
                     </Box>
-                  {item.active && item.showBreaks && (
                     <Collapse in={item.showBreaks}>
                       <Box className="breaks-container" mt={1}>
                         <Typography variant="subtitle2">Breaks</Typography>
@@ -866,6 +867,7 @@ const deleteBreak = (appointmentIndex, breakIndex) => {
                         </Button>
                       </Box>
                     </Collapse>
+                    </>
                   )}
                 </div>
               ))}
@@ -901,6 +903,8 @@ const deleteBreak = (appointmentIndex, breakIndex) => {
                       labelPlacement="start"
                     />
                   </Box>
+                                                      {item.active && (
+
                   <Box sx={{ display: { xs: 'block', sm:'block', md: 'flex',lg:'flex', xl: 'flex' } }}>
                       <Box
                         sx={{
@@ -1103,6 +1107,7 @@ const deleteBreak = (appointmentIndex, breakIndex) => {
                         </Box>
                       </Box>
                     </Box>
+                                                      )}
                 </div>
               ))}
             </>
