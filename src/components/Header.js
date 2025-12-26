@@ -18,12 +18,12 @@ import { Link } from 'react-router-dom';
 import './Header.css';
 
 const navItems = [
-  { label: 'Home', href: '/#home' },
-  { label: 'About Us', href: '/#about' },
-  { label: 'Service', href: '/#services' },
-  { label: 'Our App', href: '/#ourapp' },
-  { label: 'Contact', href: '/#contact' }
-];
+    { label: 'Home', href: '/' },
+    { label: 'About Us', href: '/about-us' },
+    { label: 'Services', href: '/services' },
+    { label: 'Our App', href: '/our-app' },
+    { label: 'Contact', href: '/contact' }
+  ];
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -42,7 +42,7 @@ const Header = () => {
       <List>
         {navItems.map((item) => (
           <ListItem key={item.label} disablePadding>
-            <ListItemButton component="a" href={item.href}>
+            <ListItemButton component={Link} to={item.href}>
               <ListItemText primary={item.label} />
             </ListItemButton>
           </ListItem>
@@ -58,7 +58,7 @@ const Header = () => {
           {/* Logo */}
           <Box className="logo-container">
             <img
-              src="https://cdn4.vectorstock.com/i/1000x1000/76/53/confirm-rubber-stamp-vector-12827653.jpg"
+              src={process.env.PUBLIC_URL + '/logo.png'}
               alt="Confirm Slot Logo"
               className="logo-img"
             />
@@ -72,7 +72,8 @@ const Header = () => {
             {navItems.map((item) => (
               <Button
                 key={item.label}
-                href={item.href}
+                component={Link}
+                to={item.href}
                 color="inherit"
                 className="navbar-link"
               >

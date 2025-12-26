@@ -4,10 +4,13 @@ import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import MobileAppSection from './components/MobileAppSection';
 import Footer from './components/Footer';
-import AboutPage from './components/AboutPage';
-import AboutUs from './components/AboutUs';
+
 import PlatformBanner from './components/PlatformBanner';
 import RegisterForm from './components/RegisterForm';
+import ServicesPage from './components/ServicesPage';
+import AboutPage from './components/AboutPage';
+import OurAppPage from './components/OurAppPage';
+import ContactPage from './components/ContactPage';
 import './App.css';
 
 const HomePage = () => (
@@ -16,17 +19,7 @@ const HomePage = () => (
       <HeroSection />
     </section>
 
-    <section id="about">
-      <AboutUs />
-    </section>
-
-    <section id="services">
-      <AboutPage />
-    </section>
-
-    <section id="ourapp">
-      <MobileAppSection />
-    </section>
+    {/* About, Services, and Our App sections removed as requested */}
 
     <PlatformBanner />
 
@@ -54,6 +47,10 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/about-us" element={<AboutPage />} />
+          <Route path="/our-app" element={<OurAppPage />} />
+          <Route path="/contact" element={<ContactPage />} />
         </Routes>
       </div>
     </Router>
