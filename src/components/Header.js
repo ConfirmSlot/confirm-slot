@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -10,20 +10,20 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Box
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
-import { Link } from 'react-router-dom';
-import './Header.css';
+  Box,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import { Link } from "react-router-dom";
+import "./Header.css";
 
 const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'About Us', href: '/about-us' },
-    { label: 'Services', href: '/services' },
-    { label: 'Our App', href: '/our-app' },
-    { label: 'Contact', href: '/contact' }
-  ];
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about-us" },
+  { label: "Services", href: "/services" },
+  { label: "Our App", href: "/our-app" },
+  { label: "Contact", href: "/contact" },
+];
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -53,12 +53,12 @@ const Header = () => {
 
   return (
     <>
-      <AppBar position="sticky" sx={{ backgroundColor: '#fff', color: '#000' }}>
+      <AppBar position="sticky" sx={{ backgroundColor: "#fff", color: "#000" }}>
         <Toolbar className="header-toolbar">
           {/* Logo */}
           <Box className="logo-container">
             <img
-              src={process.env.PUBLIC_URL + '/logo.png'}
+              src={process.env.PUBLIC_URL + "/logo.png"}
               alt="Confirm Slot Logo"
               className="logo-img"
             />
@@ -68,7 +68,10 @@ const Header = () => {
           </Box>
 
           {/* Desktop Navigation */}
-          <Box className="nav-links" sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <Box
+            className="nav-links"
+            sx={{ display: { xs: "none", md: "flex" } }}
+          >
             {navItems.map((item) => (
               <Button
                 key={item.label}
@@ -83,7 +86,7 @@ const Header = () => {
           </Box>
 
           {/* Register Button (Visible on all screens) */}
-          <Box sx={{ flexGrow: { xs: 1, md: 0 }, display: 'flex', justifyContent: { xs: 'flex-end', md: 'flex-start' } }}>
+          {/* <Box sx={{ flexGrow: { xs: 1, md: 0 }, display: 'flex', justifyContent: { xs: 'flex-end', md: 'flex-start' } }}>
             <Button
               variant="contained"
               component={Link}
@@ -93,14 +96,14 @@ const Header = () => {
             >
               Register
             </Button>
-          </Box>
+          </Box> */}
 
           {/* Hamburger Icon (Mobile only) */}
           <IconButton
             color="inherit"
             edge="end"
             className="menu-icon"
-            sx={{ display: { xs: 'block', md: 'none' }, ml: 1 }}
+            sx={{ display: { xs: "block", md: "none" }, ml: 1 }}
             onClick={toggleDrawer}
           >
             <MenuIcon />
