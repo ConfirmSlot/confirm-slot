@@ -25,7 +25,6 @@ const HomePage = () => (
     </section>
   </div>
 );
-
 const App = () => {
   useEffect(() => {
     // Check if the current URL is api.confirmslot.com/
