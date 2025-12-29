@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from "react"; 
 import WhatsAppFloatingButton from "./components/WhatsAppFloatingButton";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import Routes instead of Switch
 import Header from "./components/Header";
