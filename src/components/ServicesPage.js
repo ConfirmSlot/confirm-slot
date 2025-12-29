@@ -313,13 +313,7 @@ const ServicesPage = () => {
             >
               Schedule a Demo
             </motion.a>
-            <motion.button
-              className="cta-btn secondary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              View Pricing
-            </motion.button>
+
           </div>
         </motion.div>
       </section>

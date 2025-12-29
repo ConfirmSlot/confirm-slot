@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import './HeroSection.css';
 
 const HeroSection = () => {
@@ -53,20 +54,24 @@ const HeroSection = () => {
           </p>
 
           <div className="hero-buttons">
-            <motion.button
-              className="talk-button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Schedule a Demo
-            </motion.button>
-            <motion.button
-              className="talk-button secondary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Learn More
-            </motion.button>
+            <Link to="/contact">
+              <motion.button
+                className="talk-button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Schedule a Demo
+              </motion.button>
+            </Link>
+            <Link to="/about-us">
+              <motion.button
+                className="talk-button secondary"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Learn More
+              </motion.button>
+            </Link>
           </div>
         </motion.div>
 
@@ -188,20 +193,23 @@ const HeroSection = () => {
           <h2>Ready to Transform Your Queue Management?</h2>
           <p>Join hundreds of businesses already using our platform to improve customer experience</p>
           <div className="cta-buttons">
-            <motion.button
-              className="talk-button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Get Started Free
-            </motion.button>
-            <motion.button
+            <Link to="/contact">
+              <motion.button
+                className="talk-button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Get Started Free
+              </motion.button>
+            </Link>
+            <motion.a
+              href="tel:+919176122210"
               className="talk-button secondary"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               Contact
-            </motion.button>
+            </motion.a>
           </div>
         </motion.div>
       </section>

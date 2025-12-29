@@ -20,10 +20,6 @@ const HomePage = () => (
     {/* About, Services, and Our App sections removed as requested */}
 
     <PlatformBanner />
-
-    <section id="contact">
-      <Footer />
-    </section>
   </div>
 );
 const App = () => {
@@ -49,6 +45,7 @@ const App = () => {
           <Route path="/our-app" element={<OurAppPage />} />
           <Route path="/contact" element={<ContactPage />} />
         </Routes>
+        <Footer />
         <WhatsAppFloatingButton />
       </div>
     </Router>
