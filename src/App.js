@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import WhatsAppFloatingButton from "./components/WhatsAppFloatingButton";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import Routes instead of Switch
 import Header from "./components/Header";
 import HeroSection from "./components/HeroSection";
@@ -48,6 +49,7 @@ const App = () => {
           <Route path="/our-app" element={<OurAppPage />} />
           <Route path="/contact" element={<ContactPage />} />
         </Routes>
+        <WhatsAppFloatingButton />
       </div>
     </Router>
   );
