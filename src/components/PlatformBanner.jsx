@@ -7,7 +7,7 @@ const SmartTokenMarqueeSection = () => {
       <div className="marquee-wrapper">
         <div className="marquee-track">
           <div className="marquee-text">
-            You're viewing a product from <span className="platform-name">Quixent Solutions</span>&nbsp;
+            You're viewing a product from <a className="platform-name" href="https://quixentsolutions.com/" target="_blank" rel="noopener noreferrer">Quixent Solutions</a>&nbsp;
           </div>
         </div>
       </div>

@@ -23,8 +23,8 @@ const HeroSection = () => {
   ];
 
   const stats = [
-    { value: '10,000+', label: 'Appointments Daily' },
-    { value: '500+', label: 'Active Businesses' },
+    { value: '100+', label: 'Appointments Daily' },
+    { value: '5+', label: 'Active Businesses' },
     { value: '99.9%', label: 'Uptime Guaranteed' },
     { value: '4.9/5', label: 'Customer Rating' }
   ];
@@ -200,7 +200,7 @@ const HeroSection = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Contact Sales
+              Contact
             </motion.button>
           </div>
         </motion.div>
