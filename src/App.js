@@ -9,6 +9,7 @@ import ServicesPage from "./components/ServicesPage";
 import AboutPage from "./components/AboutPage";
 import OurAppPage from "./components/OurAppPage";
 import ContactPage from "./components/ContactPage";
+import EnquiryPage from "./components/EnquiryPage";
 import "./App.css";
 
 const HomePage = () => (
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/about-us" element={<AboutPage />} />
           <Route path="/our-app" element={<OurAppPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/enquiry" element={<EnquiryPage />} />
         </Routes>
         <Footer />
         <WhatsAppFloatingButton />
