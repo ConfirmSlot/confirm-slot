@@ -10,6 +10,6 @@ https://api.confirmslot.com/  https://api.confirmslot.com/api-docs  301
 # Proxy API requests for the subdomain
 https://api.confirmslot.com/*  http://13.204.0.41:3000/:splat  200
 # Proxy API requests for the subdomain - ecs
-https://api-ecs.confirmslot.com/*  http://confirmslot-api-v1-8e5f9a11a47b8bb7.elb.ap-south-1.amazonaws.com/:splat  200
+https://api-ecs.confirmslot.com/*  http://13.204.0.41:3000/:splat  200
 # Serve React app for the main domain
 https://confirmslot.com/*  /index.html  200
