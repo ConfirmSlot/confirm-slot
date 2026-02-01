@@ -8,4 +8,4 @@ https://confirmslot.com/*  /index.html  200
 
 
 # ECS API (NEW)
-https://api-ecs.confirmslot.com/*  https://confirmslot-api-v1-8e5f9a11a47b8bb7.elb.ap-south-1.amazonaws.com/:splat  200
+https://api-ecs.confirmslot.com/*  http://confirmslot-api-v1-8e5f9a11a47b8bb7.elb.ap-south-1.amazonaws.com/:splat  200
