@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import './mobileAppSection.css'; 
-import mobileapp from "./mobileapp.png";
+import mobileapp from "./mobile.jpeg";
 
 const MobileAppSection = () => {
   return (
@@ -41,8 +41,8 @@ const MobileAppSection = () => {
 </p>
           <div className="store-buttons">
             <a
-              href="https://apps.apple.com/us/app/quixent/id123456789"
-              target="_self"
+              href="https://apps.apple.com/in/app/confirmslot/id6758349903"
+              target="_blank" 
               rel="noopener noreferrer"
             >
               <img
@@ -51,8 +51,8 @@ const MobileAppSection = () => {
               />
             </a>
             <a
-              href="https://play.google.com/store/apps/dev?id=5363834578851195995"
-              target="_self"
+              href="https://play.google.com/store/apps/details?id=com.identifier.confirmslot"
+              target="_blank" 
               rel="noopener noreferrer"
             >
               <img
