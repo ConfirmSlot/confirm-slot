@@ -1,6 +1,6 @@
 
 # Redirect root of api.xxx.com to api-docs
-<!-- https://api.confirmslot.com/  https://api.confirmslot.com/api-docs  301 -->
+# https://api.confirmslot.com/  https://api.confirmslot.com/api-docs  301 
 # Proxy API requests for the subdomain
 https://api.confirmslot.com/*  http://13.204.0.41:3000/:splat  200 
 # Serve React app for the main domain
