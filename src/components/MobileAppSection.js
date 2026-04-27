@@ -1,24 +1,60 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import './mobileAppSection.css'; 
+import axios from 'axios';
+import './mobileAppSection.css';
 import mobileapp from "./mobile.jpeg";
+import { API_ENDPOINTS } from '../config/api';
+
+const IOS_URL = "https://apps.apple.com/in/app/confirmslot/id6758349903";
+const ANDROID_URL = "https://play.google.com/store/apps/details?id=com.identifier.confirmslot";
+
+function getDeviceInfo() {
+  return {
+    userAgent: navigator.userAgent || "",
+    screenResolution: `${window.screen.width}x${window.screen.height}`,
+    language: navigator.language || "",
+    referrer: document.referrer || "",
+  };
+}
+
+async function logVisit(type, store = null) {
+  try {
+    await axios.post(API_ENDPOINTS.APP_VISIT_LOG, {
+      type,
+      ...(store && { store }),
+      ...getDeviceInfo(),
+    });
+  } catch {
+    // fire-and-forget — never block the user experience
+  }
+}
 
 const MobileAppSection = () => {
-  
+
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const ua = navigator.userAgent || navigator.vendor || window.opera;
-      
-      const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-      const isAndroid = /android/i.test(ua);
-      
-      if (isIOS) {
-        window.location.href = "https://apps.apple.com/in/app/confirmslot/id6758349903";
-      } else if (isAndroid) {
-        window.location.href = "https://play.google.com/store/apps/details?id=com.identifier.confirmslot";
-      }
+    if (typeof window === 'undefined') return;
+
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isAndroid = /android/i.test(ua);
+
+    if (isIOS) {
+      logVisit('page_visit').finally(() => {
+        window.location.href = IOS_URL;
+      });
+    } else if (isAndroid) {
+      logVisit('page_visit').finally(() => {
+        window.location.href = ANDROID_URL;
+      });
+    } else {
+      // desktop / tablet — just log, no redirect
+      logVisit('page_visit');
     }
   }, []);
+
+  const handleStoreClick = (store) => {
+    logVisit('store_click', store);
+  };
 
   return (
     <motion.section
@@ -49,14 +85,15 @@ const MobileAppSection = () => {
         <div className="mobile-app-content">
           <h2>Communicate Easily<br />With Our Mobile App</h2>
           <p>
-            Stay connected with certified professionals anytime, anywhere using our user-friendly mobile app. 
+            Stay connected with certified professionals anytime, anywhere using our user-friendly mobile app.
             Experience seamless consultations, secure chat, and real-time care — all from your phone.
           </p>
           <div className="store-buttons">
             <a
-              href="https://apps.apple.com/in/app/confirmslot/id6758349903"
-              target="_blank" 
+              href={IOS_URL}
+              target="_blank"
               rel="noopener noreferrer"
+              onClick={() => handleStoreClick('ios')}
             >
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiNQc5CapoSJE3sujvojLNNXipoAGDZYgUWw&s"
@@ -64,9 +101,10 @@ const MobileAppSection = () => {
               />
             </a>
             <a
-              href="https://play.google.com/store/apps/details?id=com.identifier.confirmslot"
-              target="_blank" 
+              href={ANDROID_URL}
+              target="_blank"
               rel="noopener noreferrer"
+              onClick={() => handleStoreClick('android')}
             >
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
