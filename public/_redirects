@@ -6,6 +6,9 @@
 # Serve React app for the main domain
 https://confirmslot.com/*  /index.html  200
 
+# EC2-  Admin of confirmslot portal
+https://admin.confirmslot.com/* http://13.204.96.6:5000/:splat  200
+
 
 # ECS API (NEW)
 # https://api.confirmslot.com/*  http://confirmslot-api-v1-8e5f9a11a47b8bb7.elb.ap-south-1.amazonaws.com/:splat  200
