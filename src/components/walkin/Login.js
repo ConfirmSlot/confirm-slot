@@ -27,7 +27,7 @@ export default function Login() {
         body:    JSON.stringify({ countryCode: '+91', phoneNo: phone.replace(/\D/g, '') }),
       });
       const data = await res.json();
-      if (!data.success) { setError(data.message || 'Failed to send OTP'); return; }
+      if (!res.ok) { setError(data.message || 'Failed to send OTP'); return; }
       setStep('otp');
     } catch { setError('Could not connect. Please try again.'); }
     finally   { setLoading(false); }
