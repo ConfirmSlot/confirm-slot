@@ -24,8 +24,7 @@ export default function WalkinLanding() {
     window.location.href = DEEP_LINK(spId);
   }, [spId]);
 
-  const isIOS     = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isAndroid = /Android/.test(navigator.userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   const handleDownload = () => {
     window.open(isIOS ? IOS_URL : ANDROID_URL, '_blank');
