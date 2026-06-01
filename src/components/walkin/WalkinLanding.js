@@ -19,15 +19,15 @@ export default function WalkinLanding() {
       .then(d => { if (d.success) setVenue(d.venue); })
       .catch(() => {})
       .finally(() => setLoading(false));
-
-    // Try to open the app via deep link silently
-    window.location.href = DEEP_LINK(spId);
   }, [spId]);
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   const handleDownload = () => {
-    window.open(isIOS ? IOS_URL : ANDROID_URL, '_blank');
+    // Try deep link first — if app installed it opens, otherwise redirect to store
+    const storeUrl = isIOS ? IOS_URL : ANDROID_URL;
+    window.location.href = DEEP_LINK(spId);
+    setTimeout(() => { window.open(storeUrl, '_blank'); }, 1500);
   };
 
   const handleContinue = () => {
