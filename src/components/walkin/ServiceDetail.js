@@ -1,0 +1,253 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
+import { useAuth } from '../../contexts/AuthContext';
+import { API_BASE_URL } from '../../config/api';
+
+export default function ServiceDetail() {
+  const { spId }    = useParams();
+  const navigate    = useNavigate();
+  const { user, apiFetch } = useAuth();
+
+  const [venue,    setVenue]    = useState(null);
+  const [queue,    setQueue]    = useState(null);
+  const [loading,  setLoading]  = useState(true);
+  const [adults,   setAdults]   = useState(1);
+  const [children, setChildren] = useState(0);
+  const [joining,  setJoining]  = useState(false);
+  const [error,    setError]    = useState('');
+
+  // result state
+  const [joined,       setJoined]       = useState(false);
+  const [tokenNo,      setTokenNo]      = useState(0);
+  const [waitingAhead, setWaitingAhead] = useState(0);
+  const [tokenId,      setTokenId]      = useState('');
+  const [leaving,      setLeaving]      = useState(false);
+
+  const fetchInfo = useCallback(() => {
+    fetch(`${API_BASE_URL}/v1/tokens/walkin/${spId}/info`)
+      .then(r => r.json())
+      .then(d => { if (d.success) { setVenue(d.venue); setQueue(d.queue); } })
+      .catch(() => {});
+  }, [spId]);
+
+  // On load: check if user already has an active token for this venue today
+  useEffect(() => {
+    const init = async () => {
+      try {
+        // Fetch venue info
+        fetchInfo();
+
+        // Check for existing active token
+        const res  = await apiFetch(`${API_BASE_URL}/v1/tokens/my-tokens`);
+        const data = await res.json();
+        if (data.success) {
+          const today   = new Date().toDateString();
+          const existing = (data.tokens || data.data || []).find(t =>
+            t.serviceProviderId === spId &&
+            t.status === 'ACTIVE' &&
+            new Date(t.date).toDateString() === today
+          );
+          if (existing) {
+            // Already in queue — restore their state
+            setTokenId(existing._id);
+            setTokenNo(existing.tokenNo);
+            setWaitingAhead(existing.waitingAhead ?? 0);
+            setJoined(true);
+          }
+        }
+      } catch (e) {
+        if (e.message !== 'SESSION_EXPIRED') { /* ignore */ }
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
+    const interval = setInterval(fetchInfo, 30000);
+    return () => clearInterval(interval);
+  }, [spId, fetchInfo, apiFetch]);
+
+  const handleJoin = async () => {
+    setError(''); setJoining(true);
+    try {
+      let lat, lng;
+      if (venue?.locationRestriction?.type === 'nearby' && navigator.geolocation) {
+        await new Promise(resolve => {
+          navigator.geolocation.getCurrentPosition(
+            pos => { lat = pos.coords.latitude; lng = pos.coords.longitude; resolve(); },
+            () => resolve(),
+            { timeout: 5000 }
+          );
+        });
+      }
+
+      const res  = await apiFetch(`${API_BASE_URL}/v1/tokens/walkin/${spId}/join-auth`, {
+        method:  'POST',
+        body:    JSON.stringify({
+          adults:   venue?.collectAdults   ? adults   : undefined,
+          children: venue?.collectChildren ? children : undefined,
+          lat, lng,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) { setError(data.message || 'Could not join queue'); return; }
+      setTokenNo(data.tokenNo);
+      setWaitingAhead(data.waitingAhead);
+      setTokenId(data.tokenId);
+      setJoined(true);
+    } catch (e) {
+      if (e.message !== 'SESSION_EXPIRED') setError('Could not connect. Please try again.');
+    } finally {
+      setJoining(false);
+    }
+  };
+
+  const handleLeave = async () => {
+    if (!window.confirm('Leave the queue?')) return;
+    setLeaving(true);
+    try {
+      await fetch(`${API_BASE_URL}/v1/tokens/walkin/${tokenId}/leave`, { method: 'PATCH' });
+      setJoined(false);
+    } finally { setLeaving(false); }
+  };
+
+  const imgSrc = (path) =>
+    !path ? null :
+    path.startsWith('http') ? path :
+    `https://d3some4qkj9p5u.cloudfront.net/${path}`;
+
+  if (loading) return (
+    <div style={s.container}><CircularProgress style={{ color: '#6366f1' }} /></div>
+  );
+
+  if (!venue) return (
+    <div style={s.container}>
+      <div style={s.card}>
+        <p style={{ color: '#ef4444', fontWeight: 700 }}>Venue not found.</p>
+        <button style={s.backLink} onClick={() => navigate(-1)}>Go back</button>
+      </div>
+    </div>
+  );
+
+  if (joined) return (
+    <div style={s.container}>
+      <div style={s.card}>
+        {imgSrc(venue.icon) && <img src={imgSrc(venue.icon)} alt={venue.name} style={s.icon} onError={e => e.target.style.display='none'} />}
+        <h2 style={s.venueName}>{venue.name}</h2>
+        <p style={{ color: '#64748b', fontSize: 14, margin: '0 0 32px' }}>You are in the queue</p>
+
+        <div style={s.tokenCircle}>
+          <span style={{ color: '#fff', fontSize: 13, fontWeight: 600, opacity: 0.85 }}>YOUR TOKEN</span>
+          <span style={{ color: '#fff', fontSize: 56, fontWeight: 900, lineHeight: 1 }}>{tokenNo}</span>
+        </div>
+
+        <div style={s.statsRow}>
+          <div style={s.statBox}>
+            <span style={s.statLabel}>AHEAD OF YOU</span>
+            <span style={s.statValue}>{waitingAhead}</span>
+          </div>
+          <div style={s.statBox}>
+            <span style={s.statLabel}>YOUR NAME</span>
+            <span style={{ ...s.statValue, fontSize: 16 }}>
+              {`${user?.info?.fName || ''} ${user?.info?.lName || ''}`.trim() || 'You'}
+            </span>
+          </div>
+        </div>
+
+        <p style={{ color: '#94a3b8', fontSize: 13, textAlign: 'center', marginBottom: 24 }}>
+          Please stay nearby. You will be called when it is your turn.
+        </p>
+
+        <button style={s.myBookingsBtn} onClick={() => navigate('/my-bookings')}>
+          View in My Bookings
+        </button>
+
+        <button style={s.leaveBtn} onClick={handleLeave} disabled={leaving}>
+          {leaving ? <CircularProgress size={16} style={{ color: '#ef4444' }} /> : 'Leave Queue'}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={s.container}>
+      <div style={s.card}>
+        {/* Venue header */}
+        {imgSrc(venue.icon) && (
+          <img src={imgSrc(venue.icon)} alt={venue.name} style={s.icon} onError={e => e.target.style.display='none'} />
+        )}
+        <h2 style={s.venueName}>{venue.name}</h2>
+
+        {queue && (
+          <div style={s.queueBadge}>
+            <span style={s.queueText}>{queue.waiting} waiting</span>
+            {queue.lastTokenNo > 0 && (
+              <span style={{ ...s.queueText, marginLeft: 12 }}>Last token: #{queue.lastTokenNo}</span>
+            )}
+          </div>
+        )}
+
+        <div style={s.divider} />
+
+        {/* Adults / Children */}
+        {(venue.collectAdults || venue.collectChildren) && (
+          <div style={{ width: '100%', display: 'flex', gap: 12, marginBottom: 16 }}>
+            {venue.collectAdults && (
+              <Counter label="Adults" value={adults} onChange={setAdults} />
+            )}
+            {venue.collectChildren && (
+              <Counter label="Children" value={children} onChange={setChildren} />
+            )}
+          </div>
+        )}
+
+        {error && <p style={s.error}>{error}</p>}
+
+        <button style={s.joinBtn} onClick={handleJoin} disabled={joining}>
+          {joining ? <CircularProgress size={18} style={{ color: '#fff' }} /> : 'Join Queue'}
+        </button>
+
+        <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 12, textAlign: 'center' }}>
+          Joining as {`${user?.info?.fName || ''} ${user?.info?.lName || ''}`.trim() || `+91 ${user?.phoneNo || ''}`}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Counter({ label, value, onChange }) {
+  return (
+    <div style={{
+      flex: 1, border: '1.5px solid #e2e8f0', borderRadius: 12,
+      padding: '12px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+    }}>
+      <span style={{ fontSize: 12, fontWeight: 600, color: '#64748b' }}>{label}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <button onClick={() => onChange(Math.max(0, value - 1))} style={s.counterBtn}>−</button>
+        <span style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', minWidth: 28, textAlign: 'center' }}>{value}</span>
+        <button onClick={() => onChange(value + 1)} style={{ ...s.counterBtn, backgroundColor: '#6366f1', color: '#fff' }}>+</button>
+      </div>
+    </div>
+  );
+}
+
+const s = {
+  container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', padding: 24 },
+  card: { backgroundColor: '#fff', borderRadius: 20, padding: '36px 28px', maxWidth: 380, width: '100%', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column', alignItems: 'center' },
+  icon: { width: 80, height: 80, borderRadius: 20, objectFit: 'cover', marginBottom: 16 },
+  venueName: { fontSize: 22, fontWeight: 800, color: '#0f172a', margin: '0 0 12px', textAlign: 'center' },
+  queueBadge: { backgroundColor: '#f1f5f9', borderRadius: 20, padding: '6px 16px', marginBottom: 20, display: 'flex', gap: 4 },
+  queueText: { fontSize: 13, fontWeight: 600, color: '#64748b' },
+  divider: { width: '100%', height: 1, backgroundColor: '#e2e8f0', marginBottom: 20 },
+  error: { color: '#ef4444', fontSize: 13, margin: '0 0 8px', alignSelf: 'flex-start' },
+  joinBtn: { width: '100%', padding: 14, borderRadius: 12, backgroundColor: '#6366f1', color: '#fff', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  tokenCircle: { width: 160, height: 160, borderRadius: 80, backgroundColor: '#6366f1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 32, boxShadow: '0 8px 32px rgba(99,102,241,0.4)' },
+  statsRow: { display: 'flex', gap: 16, width: '100%', marginBottom: 24 },
+  statBox: { flex: 1, border: '1px solid #e2e8f0', borderRadius: 16, padding: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 },
+  statLabel: { fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: 1 },
+  statValue: { fontSize: 32, fontWeight: 800, color: '#0f172a' },
+  myBookingsBtn: { width: '100%', padding: 13, borderRadius: 12, backgroundColor: '#f1f5f9', color: '#6366f1', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer', marginBottom: 10 },
+  leaveBtn: { background: 'none', border: '1.5px solid #ef4444', borderRadius: 12, padding: '10px 32px', color: '#ef4444', fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  counterBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#e2e8f0', border: 'none', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  backLink: { background: 'none', border: 'none', color: '#6366f1', cursor: 'pointer', fontSize: 14, fontWeight: 600, marginTop: 8 },
+};
