@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "YOURTEAMID.com.identifier.confirmslot",
+        "appID": "7J4CKS2JTJ.com.identifier.confirmslot",
         "paths": ["/walkin/*", "/service/*", "/my-bookings"]
       }
     ]
