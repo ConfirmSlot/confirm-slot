@@ -14,6 +14,7 @@ export default function ServiceDetail() {
   const [loading,  setLoading]  = useState(true);
   const [adults,   setAdults]   = useState(1);
   const [children, setChildren] = useState(0);
+  const [showForm, setShowForm] = useState(false);
   const [joining,  setJoining]  = useState(false);
   const [error,    setError]    = useState('');
 
@@ -170,46 +171,78 @@ export default function ServiceDetail() {
   );
 
   return (
-    <div style={s.container}>
-      <div style={s.card}>
-        {/* Venue header */}
-        {imgSrc(venue.icon) && (
-          <img src={imgSrc(venue.icon)} alt={venue.name} style={s.icon} onError={e => e.target.style.display='none'} />
-        )}
-        <h2 style={s.venueName}>{venue.name}</h2>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      {/* Cover image */}
+      {imgSrc(venue.images?.[0] || venue.icon) && (
+        <img
+          src={imgSrc(venue.images?.[0] || venue.icon)}
+          alt={venue.name}
+          style={{ width: '100%', height: 220, objectFit: 'cover', display: 'block' }}
+          onError={e => e.target.style.display='none'}
+        />
+      )}
 
+      <div style={{ padding: '20px 16px', maxWidth: 480, margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+          {imgSrc(venue.icon) && (
+            <img src={imgSrc(venue.icon)} alt={venue.name} style={{ width: 56, height: 56, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} onError={e => e.target.style.display='none'} />
+          )}
+          <div>
+            <h2 style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', margin: 0 }}>{venue.name}</h2>
+            {venue.address && <p style={{ fontSize: 13, color: '#64748b', margin: '2px 0 0' }}>{venue.address}</p>}
+          </div>
+        </div>
+
+        {/* Queue stats */}
         {queue && (
-          <div style={s.queueBadge}>
-            <span style={s.queueText}>{queue.waiting} waiting</span>
-            {queue.lastTokenNo > 0 && (
-              <span style={{ ...s.queueText, marginLeft: 12 }}>Last token: #{queue.lastTokenNo}</span>
-            )}
+          <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+            <div style={{ flex: 1, backgroundColor: '#fff', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+              <div style={{ fontSize: 28, fontWeight: 800, color: '#6366f1' }}>{queue.waiting}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#64748b' }}>Waiting</div>
+            </div>
+            <div style={{ flex: 1, backgroundColor: '#fff', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+              <div style={{ fontSize: 28, fontWeight: 800, color: '#0f172a' }}>#{queue.lastTokenNo || 0}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#64748b' }}>Last Token</div>
+            </div>
           </div>
         )}
 
-        <div style={s.divider} />
-
-        {/* Adults / Children */}
-        {(venue.collectAdults || venue.collectChildren) && (
-          <div style={{ width: '100%', display: 'flex', gap: 12, marginBottom: 16 }}>
-            {venue.collectAdults && (
-              <Counter label="Adults" value={adults} onChange={setAdults} />
-            )}
-            {venue.collectChildren && (
-              <Counter label="Children" value={children} onChange={setChildren} />
-            )}
+        {/* Description */}
+        {venue.description && (
+          <div style={{ backgroundColor: '#fff', borderRadius: 12, padding: 16, border: '1px solid #e2e8f0', marginBottom: 20 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px' }}>About</p>
+            <p style={{ fontSize: 14, color: '#0f172a', lineHeight: 1.6, margin: 0 }}>{venue.description}</p>
           </div>
         )}
 
-        {error && <p style={s.error}>{error}</p>}
+        {/* Walk-in form — shown after tapping button */}
+        {showForm ? (
+          <div style={{ backgroundColor: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', marginBottom: 16 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: '0 0 16px' }}>Join the Queue</h3>
 
-        <button style={s.joinBtn} onClick={handleJoin} disabled={joining}>
-          {joining ? <CircularProgress size={18} style={{ color: '#fff' }} /> : 'Join Queue'}
-        </button>
+            {(venue.collectAdults || venue.collectChildren) && (
+              <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+                {venue.collectAdults   && <Counter label="Adults"   value={adults}   onChange={setAdults} />}
+                {venue.collectChildren && <Counter label="Children" value={children} onChange={setChildren} />}
+              </div>
+            )}
 
-        <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 12, textAlign: 'center' }}>
-          Joining as {`${user?.info?.fName || ''} ${user?.info?.lName || ''}`.trim() || `+91 ${user?.phoneNo || ''}`}
-        </p>
+            {error && <p style={s.error}>{error}</p>}
+
+            <button style={s.joinBtn} onClick={handleJoin} disabled={joining}>
+              {joining ? <CircularProgress size={18} style={{ color: '#fff' }} /> : 'Confirm & Join Queue'}
+            </button>
+
+            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 12, textAlign: 'center' }}>
+              Joining as {`${user?.info?.fName || ''} ${user?.info?.lName || ''}`.trim() || `+91 ${user?.phoneNo || ''}`}
+            </p>
+          </div>
+        ) : (
+          <button style={{ ...s.joinBtn, marginBottom: 0 }} onClick={() => setShowForm(true)}>
+            Join Walk-in Queue
+          </button>
+        )}
       </div>
     </div>
   );
