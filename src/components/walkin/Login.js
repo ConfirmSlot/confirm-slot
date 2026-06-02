@@ -40,7 +40,7 @@ export default function Login() {
       const res  = await fetch(`${API_BASE_URL}/v1/auth/verify-code`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ countryCode: '+91', phoneNo: phone.replace(/\D/g, ''), code: otp }),
+        body:    JSON.stringify({ countryCode: '+91', phoneNo: phone.replace(/\D/g, ''), otp }),
       });
       const data = await res.json();
       if (!data.success) { setError(data.message || 'Invalid OTP'); return; }

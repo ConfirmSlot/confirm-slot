@@ -4,7 +4,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.identifier.confirmslot",
-      "sha256_cert_fingerprints": ["YOUR_SHA256_FINGERPRINT"]
+      "sha256_cert_fingerprints": ["EA:E1:06:C2:B6:F7:F9:B1:82:6C:87:98:F9:82:D7:13:AA:58:B2:A6:41:63:49:88:09:A2:8E:61:37:B9:5E:F9"]
     }
   }
 ]
