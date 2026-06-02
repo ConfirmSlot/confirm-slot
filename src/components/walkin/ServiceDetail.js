@@ -172,15 +172,34 @@ export default function ServiceDetail() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
-      {/* Cover image */}
-      {imgSrc(venue.images?.[0] || venue.icon) && (
-        <img
-          src={imgSrc(venue.images?.[0] || venue.icon)}
-          alt={venue.name}
-          style={{ width: '100%', height: 220, objectFit: 'cover', display: 'block' }}
-          onError={e => e.target.style.display='none'}
-        />
-      )}
+      {/* Image carousel */}
+      {(() => {
+        const imgs = (venue.images || []).map(imgSrc).filter(Boolean);
+        if (!imgs.length && venue.icon) { const ic = imgSrc(venue.icon); if (ic) imgs.push(ic); }
+        if (!imgs.length) return null;
+        return (
+          <div style={{ position: 'relative', height: 240, overflow: 'hidden', backgroundColor: '#e2e8f0' }}>
+            <div style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', height: '100%', scrollbarWidth: 'none' }}>
+              {imgs.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`${venue.name} ${i + 1}`}
+                  style={{ minWidth: '100%', height: '100%', objectFit: 'cover', scrollSnapAlign: 'start', flexShrink: 0 }}
+                  onError={e => e.target.style.display='none'}
+                />
+              ))}
+            </div>
+            {imgs.length > 1 && (
+              <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 6 }}>
+                {imgs.map((_, i) => (
+                  <div key={i} style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.8)' }} />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <div style={{ padding: '20px 16px', maxWidth: 480, margin: '0 auto' }}>
         {/* Header */}
