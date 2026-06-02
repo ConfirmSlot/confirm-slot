@@ -11,12 +11,13 @@ export default function WalkinLanding() {
   const { spId }    = useParams();
   const navigate    = useNavigate();
   const [venue, setVenue]   = useState(null);
+  const [queue, setQueue]   = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/v1/tokens/walkin/${spId}/info`)
       .then(r => r.json())
-      .then(d => { if (d.success) setVenue(d.venue); })
+      .then(d => { if (d.success) { setVenue(d.venue); setQueue(d.queue); } })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [spId]);
@@ -59,7 +60,7 @@ export default function WalkinLanding() {
 
         <div style={styles.queueBadge}>
           <span style={styles.queueText}>
-            {venue ? `${0} waiting` : '—'}
+            {queue != null ? `${queue.waiting} waiting` : '—'}
           </span>
         </div>
 
