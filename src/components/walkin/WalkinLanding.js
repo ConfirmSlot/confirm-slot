@@ -48,7 +48,7 @@ export default function WalkinLanding() {
         {/* Venue info */}
         {venue?.icon && (
           <img
-            src={venue.icon.startsWith('http') ? venue.icon : `https://d3some4qkj9p5u.cloudfront.net/${venue.icon}`}
+            src={venue.icon.startsWith('http') ? venue.icon : `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${venue.icon}`}
             alt={venue?.name}
             style={styles.icon}
             onError={e => { e.target.style.display = 'none'; }}

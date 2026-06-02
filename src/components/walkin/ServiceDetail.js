@@ -115,7 +115,7 @@ export default function ServiceDetail() {
   const imgSrc = (path) =>
     !path ? null :
     path.startsWith('http') ? path :
-    `https://d3some4qkj9p5u.cloudfront.net/${path}`;
+    `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${path}`;
 
   if (loading) return (
     <div style={s.container}><CircularProgress style={{ color: '#6366f1' }} /></div>
