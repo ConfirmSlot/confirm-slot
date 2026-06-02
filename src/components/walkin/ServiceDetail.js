@@ -150,7 +150,7 @@ export default function ServiceDetail() {
           <div style={s.statBox}>
             <span style={s.statLabel}>YOUR NAME</span>
             <span style={{ ...s.statValue, fontSize: 16 }}>
-              {`${user?.info?.fName || ''} ${user?.info?.lName || ''}`.trim() || 'You'}
+              {`${user?.info?.fName || ''} ${user?.info?.lName || ''}`.trim() || `+91 ${user?.phoneNo || ''}`}
             </span>
           </div>
         </div>
