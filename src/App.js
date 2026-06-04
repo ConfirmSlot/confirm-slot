@@ -40,7 +40,6 @@ const CarnivalDetail   = lazy(() => import('./pages/CarnivalDetail'));
 const CustomerDetails  = lazy(() => import('./pages/CustomerDetails'));
 
 const MARKETING_PATHS = ['/', '/services', '/about-us', '/our-app', '/contact', '/enquiry'];
-const APP_PATHS = ['/home', '/category', '/sp/', '/book', '/payment', '/my-bookings', '/profile', '/notifications', '/favourites', '/terms', '/carnival'];
 
 function Layout({ children }) {
   const { pathname } = useLocation();

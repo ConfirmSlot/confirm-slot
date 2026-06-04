@@ -72,7 +72,7 @@ export default function Terms() {
   const [accepted, setAccepted] = useState({ terms: false, privacy: false });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user, login, token } = useAuth();
+  useAuth();
 
   const handleAccept = async () => {
     if (!accepted.terms || !accepted.privacy) return;

@@ -73,7 +73,7 @@ export default function SpProfile() {
       } finally { setLoading(false); }
     };
     load();
-  }, [spId, user?._id]);
+  }, [spId, user?._id, isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Appointment: fetch slots when date changes ────────────────────────────
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function SpProfile() {
         if (list.length > 0) setSelectedTime(list[0].time);
       })
       .finally(() => setLoadingSlots(false));
-  }, [selectedDate, sp]);
+  }, [selectedDate, sp, spId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Token: check availability when date selected ──────────────────────────
   useEffect(() => {
@@ -122,7 +122,7 @@ export default function SpProfile() {
       setNextToken(todayTokens.length + 1);
     }).catch(() => setAvailableTokens(0))
       .finally(() => setCheckingTokens(false));
-  }, [selectedTokenDate, sp]);
+  }, [selectedTokenDate, sp, spId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const buildTokenDates = (opDays) => {
     const dates = [];

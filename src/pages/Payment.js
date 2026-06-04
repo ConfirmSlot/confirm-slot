@@ -23,7 +23,7 @@ export default function Payment() {
   useEffect(() => {
     if (!bookingData || !customer) { navigate('/home'); return; }
     initiatePayment();
-  }, []);
+  }, [bookingData, customer, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-submit PayU form once formData is set
   useEffect(() => {

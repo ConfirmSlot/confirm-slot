@@ -25,7 +25,7 @@ export default function CustomerDetails() {
 
   useEffect(() => {
     if (!bookingData) navigate('/home');
-  }, []);
+  }, [bookingData, navigate]);
 
   const setF = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
 

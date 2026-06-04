@@ -12,7 +12,7 @@ export default function CategoryPage() {
   const [selectedCat, setSelectedCat] = useState(id === 'all' ? null : id);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState('');
+  const [sort] = useState('');
 
   useEffect(() => {
     api.get('/v1/categories').then(r => { if (r.success) setCategories(r.categories || r.data || []); });

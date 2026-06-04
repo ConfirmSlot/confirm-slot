@@ -22,7 +22,7 @@ export default function BookAppointment() {
     api.get(`/v1/serviceproviders/${spId}`).then(r => {
       if (r.success) setSp(r.provider);
     });
-  }, [spId]);
+  }, [spId, date, time, navigate]);
 
   const duration    = sp?.appointment?.duration || 60;
   const extras      = sp?.appointment?.extra || sp?.appointment?.extras || [];

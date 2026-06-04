@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 export default function CarnivalDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  useAuth();
   const [carnival, setCarnival] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
