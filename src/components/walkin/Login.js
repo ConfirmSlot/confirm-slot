@@ -8,7 +8,7 @@ export default function Login() {
   const navigate       = useNavigate();
   const [params]       = useSearchParams();
   const { login }      = useAuth();
-  const redirectTo     = params.get('redirect') || '/';
+  const redirectTo     = params.get('redirect') || '/home';
   const expired        = params.get('expired') === '1';
 
   const [step,    setStep]    = useState('phone');
@@ -45,7 +45,12 @@ export default function Login() {
       const data = await res.json();
       if (!data.success) { setError(data.message || 'Invalid OTP'); return; }
       login(data.token, data.user);
-      navigate(redirectTo, { replace: true });
+      const hasAcceptedTerms = (data.user?.acceptedPolicies || []).length > 0;
+      if (!hasAcceptedTerms && redirectTo.startsWith('/')) {
+        navigate('/terms', { replace: true });
+      } else {
+        navigate(redirectTo, { replace: true });
+      }
     } catch { setError('Could not connect. Please try again.'); }
     finally   { setLoading(false); }
   };
@@ -63,8 +68,8 @@ export default function Login() {
 
         {step === 'phone' ? (
           <>
-            <h2 style={s.title}>One app for all your bookings</h2>
-            <p style={s.subtitle}>Sign in to join the queue</p>
+            <h2 style={s.title}>Welcome to Onezy</h2>
+            <p style={s.subtitle}>Sign in to book appointments & manage your queue</p>
 
             {expired && (
               <div style={s.expiredBanner}>

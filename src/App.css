@@ -4,6 +4,18 @@
   padding: 0;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
 body {
   font-family: 'Arial', sans-serif;
   background: #f5f7fa;
