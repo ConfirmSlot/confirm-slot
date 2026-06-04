@@ -1,8 +1,8 @@
 // src/config/api.js
 
 export const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || 'https://api.confirmslot.com';
-
+  (process.env.REACT_APP_API_BASE_URL || 'https://api.confirmslot.com/').replace(/\/$/, '');
+ 
 // API endpoints
 export const API_ENDPOINTS = {
   ENQUIRY:          `${API_BASE_URL}/v1/enquiry`,

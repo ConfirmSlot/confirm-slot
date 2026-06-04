@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
+import { toast } from 'react-toastify';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const DAY_KEYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -46,7 +47,8 @@ export default function SpProfile() {
   useEffect(() => {
     const load = async () => {
       try {
-        const spRes = await api.get(`/v1/serviceproviders/${spId}`);
+        // Public calls — no login required, never redirect on 401
+        const spRes = await api.open(`/v1/serviceproviders/${spId}`);
         if (spRes.success && spRes.provider) {
           const p = spRes.provider;
           setSp(p);
@@ -55,8 +57,8 @@ export default function SpProfile() {
         }
 
         const [ratingRes, reviewsRes] = await Promise.all([
-          api.get(`/v1/reviews/serviceProvider/rating/${spId}`),
-          api.get(`/v1/reviews/service/${spId}`),
+          api.open(`/v1/reviews/serviceProvider/rating/${spId}`),
+          api.open(`/v1/reviews/service/${spId}`),
         ]);
         if (ratingRes.avgRating !== undefined) {
           setAvgRating(ratingRes.avgRating || 0);
@@ -64,6 +66,7 @@ export default function SpProfile() {
         }
         if (reviewsRes.reviews) setReviews(reviewsRes.reviews);
 
+        // Favourites — only if logged in
         if (isLoggedIn && user?._id) {
           const favRes = await api.get(`/v1/favourites?userId=${user._id}`);
           const list = favRes.data || favRes.favourites || [];
@@ -86,7 +89,7 @@ export default function SpProfile() {
 
     setLoadingSlots(true);
     setSelectedTime(null);
-    api.get(`/v1/appointments/available-slots?date=${dateStr}&serviceProviderId=${spId}&duration=${dur}`)
+    api.open(`/v1/appointments/available-slots?date=${dateStr}&serviceProviderId=${spId}&duration=${dur}`)
       .then(r => {
         let list = r.slots || [];
         const isToday = selectedDate.getTime() === today.getTime();
@@ -110,7 +113,7 @@ export default function SpProfile() {
   useEffect(() => {
     if (!selectedTokenDate || !sp || sp.option !== 'token') return;
     setCheckingTokens(true);
-    api.get(`/v1/tokens/service-provider/${spId}`).then(r => {
+    api.open(`/v1/tokens/service-provider/${spId}`).then(r => {
       const list = Array.isArray(r) ? r : (r.data || []);
       const dateStr = fmt(selectedTokenDate);
       const todayTokens = list.filter(t => {
@@ -140,7 +143,10 @@ export default function SpProfile() {
   // ── Favourites toggle ─────────────────────────────────────────────────────
   const requireLogin = () => {
     if (!isLoggedIn) {
-      navigate(`/login?redirect=${encodeURIComponent(`/sp/${spId}`)}`);
+      toast.info('Please login to continue with your booking', {
+        icon: '🔐',
+        onClose: () => navigate(`/login?redirect=${encodeURIComponent(`/sp/${spId}`)}`),
+      });
       return false;
     }
     return true;
@@ -152,11 +158,15 @@ export default function SpProfile() {
     setFavLoading(true);
     try {
       if (isFav && favId) {
-        await api.patch(`/v1/favourites/${favId}`, { isDeleted: true });
+        await api.patch(`/v1/favourites/${favId}`, { isDeleted: true, updatedBy: user._id });
         setIsFav(false); setFavId(null);
+        localStorage.setItem('cs_hasFavs', '0');
       } else {
-        const res = await api.post('/v1/favourites', { serviceProviderId: spId });
-        if (res.success || res._id) { setIsFav(true); setFavId(res._id || res.data?._id); }
+        const res = await api.post('/v1/favourites', { serviceProviderId: spId, userId: user._id, createdBy: user._id });
+        if (res.success || res._id) {
+          setIsFav(true); setFavId(res._id || res.data?._id);
+          localStorage.setItem('cs_hasFavs', '1');
+        }
       }
     } finally { setFavLoading(false); }
   };
@@ -183,7 +193,7 @@ export default function SpProfile() {
       if (res.success || res.tokenNo) {
         navigate('/my-bookings');
       } else {
-        alert(res.message || 'Booking failed');
+        toast.error(res.message || 'Booking failed. Please try again.');
       }
     } finally { setBookingToken(false); }
   };
@@ -304,7 +314,17 @@ export default function SpProfile() {
               )}
             </div>
             {/* Share */}
-            <button onClick={() => { navigator.clipboard?.writeText(window.location.href); }} style={s.shareBtn} title="Copy link">🔗</button>
+            <button
+              onClick={() => {
+                if (navigator.clipboard) {
+                  navigator.clipboard.writeText(window.location.href)
+                    .then(() => toast.success('Link copied!'))
+                    .catch(() => toast.error('Could not copy link'));
+                } else {
+                  toast.error('Copy not supported in this browser');
+                }
+              }}
+              style={s.shareBtn} title="Copy link">🔗</button>
           </div>
 
           {/* ── Business address card ── */}
@@ -523,9 +543,6 @@ export default function SpProfile() {
 
       {/* ── Sticky Bottom Button ── */}
       <div style={s.bottomBar}>
-        {biz.phone && (
-          <a href={`tel:${biz.phone}`} style={s.callBtn}>📞</a>
-        )}
         {isToken ? (
           <button
             onClick={() => { if (requireLogin()) handleBookToken(); }}
@@ -540,7 +557,7 @@ export default function SpProfile() {
         ) : (
           <button
             onClick={() => {
-              if (!selectedTime || !selectedDate) { alert('Please select a date and time slot'); return; }
+              if (!selectedTime || !selectedDate) { toast.warning('Please select a date and time slot'); return; }
               if (!requireLogin()) return;
               navigate(`/sp/${spId}/appointment`, { state: { date: fmt(selectedDate), time: selectedTime } });
             }}
@@ -585,6 +602,5 @@ const s = {
   slotBtn: { padding: '10px 4px', borderRadius: 10, border: `1.5px solid ${C.BORDER}`, background: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: C.TEXT1 },
   slotActive: { backgroundColor: C.PRIMARY, borderColor: C.PRIMARY, color: '#fff' },
   bottomBar: { position: 'fixed', bottom: 64, left: 0, right: 0, padding: '12px 16px', backgroundColor: '#fff', borderTop: `1px solid ${C.BORDER}`, display: 'flex', gap: 10, zIndex: 90 },
-  callBtn: { width: 50, height: 50, borderRadius: 14, backgroundColor: C.PRIMARY_LIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, textDecoration: 'none', flexShrink: 0 },
   bookBtn: { flex: 1, padding: 15, borderRadius: 14, backgroundColor: C.PRIMARY, color: '#fff', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer' },
 };

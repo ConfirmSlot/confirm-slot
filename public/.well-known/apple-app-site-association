@@ -4,7 +4,22 @@
     "details": [
       {
         "appID": "7J4CKS2JTJ.com.identifier.confirmslot",
-        "paths": ["/walkin/*", "/service/*", "/my-bookings"]
+        "paths": [
+          "/walkin/*",
+          "/sp/*",
+          "/home",
+          "/category/*",
+          "/my-bookings",
+          "/profile",
+          "/notifications",
+          "/favourites",
+          "/carnival/*",
+          "/payment/*",
+          "/booking-confirmation",
+          "/customer-details",
+          "/terms",
+          "/login"
+        ]
       }
     ]
   }

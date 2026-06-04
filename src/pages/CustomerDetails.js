@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 import { C } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
+import { toast } from 'react-toastify';
 
 export default function CustomerDetails() {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ export default function CustomerDetails() {
             state: { booking: res.appointment || res.token || res.session || res.data, type },
           });
         } else {
-          alert(res.message || 'Booking failed. Please try again.');
+          toast.error(res.message || 'Booking failed. Please try again.');
         }
       }
     } finally { setSubmitting(false); }

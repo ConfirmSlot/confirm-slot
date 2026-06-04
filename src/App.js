@@ -44,7 +44,7 @@ const MARKETING_PATHS = ['/', '/services', '/about-us', '/our-app', '/contact', 
 function Layout({ children }) {
   const { pathname } = useLocation();
   const isMarketing = MARKETING_PATHS.includes(pathname);
-  const isWalkin = ['/walkin', '/login', '/service'].some(p => pathname.startsWith(p));
+  const isWalkin = ['/walkin', '/login', '/service/'].some(p => pathname.startsWith(p));
 
   if (isWalkin) return <>{children}</>;
   if (isMarketing) return (
@@ -100,13 +100,17 @@ const App = () => {
               <Route path="/walkin/:spId"  element={<WalkinLanding />} />
               <Route path="/service/:spId" element={<ProtectedRoute><ServiceDetail /></ProtectedRoute>} />
 
-              {/* App — customer pages */}
-              <Route path="/home"                    element={<ProtectedRoute><Home /></ProtectedRoute>} />
-              <Route path="/category/:id"            element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
+              {/* ── PUBLIC pages — browse freely, no login needed ── */}
+              <Route path="/home"                    element={<Home />} />
+              <Route path="/category/:id"            element={<CategoryPage />} />
               <Route path="/sp/:spId"                element={<SpProfile />} />
               <Route path="/sp/:spId/appointment"    element={<BookAppointment />} />
               <Route path="/sp/:spId/token"          element={<BookToken />} />
               <Route path="/sp/:spId/session"        element={<BookSession />} />
+              <Route path="/carnival"                element={<CarnivalList />} />
+              <Route path="/carnival/:id"            element={<CarnivalDetail />} />
+
+              {/* ── PROTECTED pages — personal data, login required ── */}
               <Route path="/customer-details"        element={<ProtectedRoute><CustomerDetails /></ProtectedRoute>} />
               <Route path="/payment"                 element={<ProtectedRoute><Payment /></ProtectedRoute>} />
               <Route path="/payment/success"         element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
@@ -116,8 +120,6 @@ const App = () => {
               <Route path="/profile"                 element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/notifications"           element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
               <Route path="/favourites"              element={<ProtectedRoute><Favourites /></ProtectedRoute>} />
-              <Route path="/carnival"                element={<ProtectedRoute><CarnivalList /></ProtectedRoute>} />
-              <Route path="/carnival/:id"            element={<ProtectedRoute><CarnivalDetail /></ProtectedRoute>} />
             </Routes>
           </Suspense>
         </Layout>

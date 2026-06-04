@@ -24,6 +24,7 @@ const navItems = [
   { label: "Enquiry", href: "/enquiry" },
   { label: "Our App", href: "/our-app" },
   { label: "Contact", href: "/contact" },
+  { label: "Browse Services ", href: "/home", highlight: true },
 ];
 
 const Header = () => {
@@ -80,6 +81,15 @@ const Header = () => {
                 to={item.href}
                 color="inherit"
                 className="navbar-link"
+                sx={item.highlight ? {
+                  backgroundColor: '#6D28D9',
+                  color: '#fff !important',
+                  borderRadius: '10px',
+                  px: 2,
+                  fontWeight: 700,
+                  ml: 1,
+                  '&:hover': { backgroundColor: '#5B21B6' }
+                } : {}}
               >
                 {item.label}
               </Button>

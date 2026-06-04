@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
-import bookingAnimation from '../assets/booking-animation.json';
+import bookingAnimation from '../assets/appointment-animation.json';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
@@ -14,8 +14,8 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/v1/categories'),
-      api.get('/v1/featuredservices'),
+      api.open('/v1/categories'),
+      api.open('/v1/featuredservices'),
     ]).then(([cats, feat]) => {
       if (cats.success) setCategories(cats.categories || cats.data || []);
       if (feat.success) setFeatured(feat.featuredServices || feat.data || []);

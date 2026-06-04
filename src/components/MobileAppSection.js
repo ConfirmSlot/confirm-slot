@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import './mobileAppSection.css';
-import mobileapp from "./mobile.jpeg";
+import mobileapp from "./mobile.png";
 import { API_ENDPOINTS } from '../config/api';
 
 const IOS_URL = "https://apps.apple.com/in/app/confirmslot/id6758349903";

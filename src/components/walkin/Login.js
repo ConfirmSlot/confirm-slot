@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { API_BASE_URL } from '../../config/api';
 
 export default function Login() {
   const navigate       = useNavigate();
+  const location       = useLocation();
   const [params]       = useSearchParams();
   const { login }      = useAuth();
-  const redirectTo     = params.get('redirect') || '/home';
+  // Support both ?redirect= param and navigation state returnTo
+  const redirectTo     = params.get('redirect') || location.state?.returnTo || '/home';
   const expired        = params.get('expired') === '1';
 
   const [step,    setStep]    = useState('phone');

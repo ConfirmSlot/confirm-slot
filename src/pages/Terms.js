@@ -95,11 +95,11 @@ export default function Terms() {
   return (
     <div style={s.page}>
       <div style={s.header}>
-        <div style={{ width: 40, height: 40, borderRadius: 12, background: C.PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: 20 }}>📋</span>
+        <div style={{ backgroundColor: '#fff', borderRadius: 20, padding: 4, marginBottom: 4, boxShadow: '0 2px 8px rgba(0,0,0,0.12)', display: 'inline-flex' }}>
+          <img src="/logo.png" alt="Onezy" style={{ width: 90, height: 90, objectFit: 'contain', borderRadius: 16 }} />
         </div>
-        <h1 style={s.title}>Legal</h1>
-        <p style={s.sub}>Please read and accept before continuing</p>
+        <h1 style={s.title}>Almost there!</h1>
+        <p style={s.sub}>Please review and accept our policies to get started.</p>
       </div>
 
       <div style={s.tabs}>

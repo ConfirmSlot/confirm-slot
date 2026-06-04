@@ -15,7 +15,7 @@ export default function CategoryPage() {
   const [sort] = useState('');
 
   useEffect(() => {
-    api.get('/v1/categories').then(r => { if (r.success) setCategories(r.categories || r.data || []); });
+    api.open('/v1/categories').then(r => { if (r.success) setCategories(r.categories || r.data || []); });
   }, []);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function CategoryPage() {
     const params = new URLSearchParams();
     if (selectedCat) params.set('catId', selectedCat);
     if (sort) params.set('sort', sort);
-    api.get(`/v1/serviceproviders?${params}`)
+    api.open(`/v1/serviceproviders?${params}`)
       .then(r => setProviders(r.providers || r.data || r.serviceProviders || []))
       .finally(() => setLoading(false));
   }, [selectedCat, search, sort]);

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { API_BASE_URL } from '../../config/api';
+import { toast } from 'react-toastify';
 
 export default function ServiceDetail() {
   const { spId }    = useParams();
@@ -24,6 +25,7 @@ export default function ServiceDetail() {
   const [waitingAhead, setWaitingAhead] = useState(0);
   const [tokenId,      setTokenId]      = useState('');
   const [leaving,      setLeaving]      = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
 
   const fetchInfo = useCallback(() => {
     fetch(`${API_BASE_URL}/v1/tokens/walkin/${spId}/info`)
@@ -103,8 +105,10 @@ export default function ServiceDetail() {
     }
   };
 
-  const handleLeave = async () => {
-    if (!window.confirm('Leave the queue?')) return;
+  const handleLeave = () => setConfirmLeave(true);
+
+  const confirmLeaveQueue = async () => {
+    setConfirmLeave(false);
     setLeaving(true);
     try {
       await fetch(`${API_BASE_URL}/v1/tokens/walkin/${tokenId}/leave`, { method: 'PATCH' });
@@ -163,9 +167,23 @@ export default function ServiceDetail() {
           View in My Bookings
         </button>
 
-        <button style={s.leaveBtn} onClick={handleLeave} disabled={leaving}>
-          {leaving ? <CircularProgress size={16} style={{ color: '#ef4444' }} /> : 'Leave Queue'}
-        </button>
+        {!confirmLeave ? (
+          <button style={s.leaveBtn} onClick={handleLeave} disabled={leaving}>
+            {leaving ? <CircularProgress size={16} style={{ color: '#ef4444' }} /> : 'Leave Queue'}
+          </button>
+        ) : (
+          <div style={{ backgroundColor: '#FEF2F2', borderRadius: 12, padding: '14px', border: '1px solid #FEC5C5', marginTop: 8 }}>
+            <p style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 600, color: '#1E1B4B', textAlign: 'center' }}>Leave the queue?</p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={confirmLeaveQueue} style={{ flex: 1, padding: '10px', borderRadius: 10, backgroundColor: '#EF4444', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer' }}>
+                Yes, Leave
+              </button>
+              <button onClick={() => setConfirmLeave(false)} style={{ flex: 1, padding: '10px', borderRadius: 10, backgroundColor: '#F3F4F6', color: '#1E1B4B', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
+                Stay
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

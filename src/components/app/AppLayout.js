@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { C } from '../../styles/colors';
 import ChatBot from '../ChatBot';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PAGE_TITLES = {
   '/my-bookings':  'My Bookings',
@@ -25,12 +27,16 @@ export default function AppLayout({ children, title }) {
     || (pathname.startsWith('/category') ? 'Category' : null)
     || (pathname.startsWith('/sp/') ? null : null);
 
-  const tabs = [
+  const hasFavs = isLoggedIn && localStorage.getItem('cs_hasFavs') === '1';
+
+  const allTabs = [
     { path: '/home',        icon: '🏠', label: 'Home' },
     { path: '/my-bookings', icon: '📅', label: 'Bookings' },
-    { path: '/favourites',  icon: '❤️',  label: 'Saved' },
+    ...(hasFavs ? [{ path: '/favourites', icon: '❤️', label: 'Saved' }] : []),
     { path: '/profile',     icon: '👤', label: 'Profile' },
   ];
+
+  const tabs = isLoggedIn ? allTabs : allTabs.slice(0, 1);
 
   const active = (p) => pathname.startsWith(p);
 
@@ -44,22 +50,19 @@ export default function AppLayout({ children, title }) {
         position: 'sticky', top: 0, zIndex: 100,
       }}>
         {isHome ? (
-          /* Home header: Logo + name on left, bell + avatar on right */
+          /* Home header */
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/home')}>
               <img src="/logo192.png" alt="Onezy" style={s.logoImg} onError={e => e.target.style.display='none'} />
               <span style={{ color: '#fff', fontWeight: 800, fontSize: 18 }}>Onezy</span>
             </div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-              <button onClick={() => navigate('/notifications')} style={s.navCircleBtn}>
-                <span style={{ fontSize: 16 }}>🔔</span>
-              </button>
-              {isLoggedIn && (
-                <div onClick={() => navigate('/profile')} style={s.avatarCircle}>
-                  {user?.info?.fName?.[0]?.toUpperCase() || '?'}
-                </div>
-              )}
-            </div>
+            {isLoggedIn ? (
+              <div onClick={() => navigate('/profile')} style={s.avatarCircle}>
+                {user?.info?.fName?.[0]?.toUpperCase() || <span style={{ fontSize: 16 }}>👤</span>}
+              </div>
+            ) : (
+              <button onClick={() => navigate('/login')} style={s.loginBtn}>Login</button>
+            )}
           </div>
         ) : (
           /* Inner page header: Logo circle | Title | Bell circle */
@@ -68,9 +71,7 @@ export default function AppLayout({ children, title }) {
               <img src="/logo192.png" alt="" style={{ width: 24, height: 24, borderRadius: 6 }} onError={e => e.target.style.display='none'} />
             </button>
             <span style={s.pageTitle}>{pageTitle || 'Onezy'}</span>
-            <button onClick={() => navigate('/notifications')} style={s.navCircleBtn}>
-              <span style={{ fontSize: 16 }}>🔔</span>
-            </button>
+            <div style={{ width: 38 }} />
           </div>
         )}
       </div>
@@ -80,6 +81,9 @@ export default function AppLayout({ children, title }) {
 
       {/* ChatBot */}
       <ChatBot />
+
+      {/* Global toasts */}
+      <ToastContainer position="top-center" autoClose={2000} hideProgressBar closeOnClick pauseOnHover={false} style={{ top: 70, zIndex: 9999 }} />
 
       {/* Bottom tab bar */}
       <div style={s.tabBar}>
@@ -113,6 +117,13 @@ const s = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
     flexShrink: 0,
+  },
+  loginBtn: {
+    padding: '8px 18px', borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    border: 'none', cursor: 'pointer',
+    fontSize: 13, fontWeight: 700, color: C.PRIMARY,
+    boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
   },
   avatarCircle: {
     width: 34, height: 34, borderRadius: 17,

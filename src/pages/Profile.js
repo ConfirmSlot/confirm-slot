@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
+import { toast } from 'react-toastify';
 
 export default function Profile() {
   const { user, login, logout, token } = useAuth();
@@ -38,6 +39,8 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [picPreview, setPicPreview] = useState(null);
   const [pincodeLoading, setPincodeLoading] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const avatar = picPreview || IMG(info.picture);
   const initials = `${info.fName?.[0] || ''}${info.lName?.[0] || ''}`.toUpperCase() || '?';
@@ -123,20 +126,23 @@ export default function Profile() {
   };
 
   /* ── Logout / Delete ──────────────────────── */
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      logout();
-      navigate('/login', { replace: true });
-    }
+  const handleLogout = () => setShowLogoutConfirm(true);
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
+    logout();
+    navigate('/login', { replace: true });
   };
 
-  const handleDeleteAccount = () => {
-    if (window.confirm('This action is irreversible. It will delete your personal account, services, and all activity. Are you sure?')) {
-      api.patch('/v1/users/me/delete', {}).then(() => {
-        logout();
-        navigate('/login', { replace: true });
-      });
-    }
+  const handleDeleteAccount = () => setShowDeleteConfirm(true);
+
+  const confirmDelete = () => {
+    setShowDeleteConfirm(false);
+    api.patch('/v1/users/me/delete', {}).then(() => {
+      toast.success('Account deleted.');
+      logout();
+      navigate('/login', { replace: true });
+    }).catch(() => toast.error('Failed to delete account. Try again.'));
   };
 
   const setF = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
@@ -262,6 +268,30 @@ export default function Profile() {
         </div>
       </div>
 
+      {/* ── Logout confirm ── */}
+      {showLogoutConfirm && (
+        <div style={s.overlay}>
+          <div style={s.modal}>
+            <p style={s.modalTitle}>Logout?</p>
+            <p style={s.modalSub}>You'll need to login again to access your account.</p>
+            <button onClick={confirmLogout} style={s.modalDanger}>Yes, Logout</button>
+            <button onClick={() => setShowLogoutConfirm(false)} style={s.modalCancel}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Delete confirm ── */}
+      {showDeleteConfirm && (
+        <div style={s.overlay}>
+          <div style={s.modal}>
+            <p style={s.modalTitle}>Delete Account?</p>
+            <p style={s.modalSub}>This is irreversible. All your data, bookings and settings will be permanently deleted.</p>
+            <button onClick={confirmDelete} style={s.modalDanger}>Yes, Delete</button>
+            <button onClick={() => setShowDeleteConfirm(false)} style={s.modalCancel}>Cancel</button>
+          </div>
+        </div>
+      )}
+
       {/* ── Sticky Save Changes ── */}
       <div style={s.saveBar}>
         {saved && <p style={{ margin:'0 0 6px', color:C.SUCCESS, fontWeight:600, fontSize:13, textAlign:'center' }}>✓ Saved successfully</p>}
@@ -381,6 +411,12 @@ const s = {
     fontSize:13, fontWeight:700, padding:'4px 10px', borderRadius:8,
   },
 
+  overlay: { position:'fixed', inset:0, backgroundColor:'rgba(0,0,0,0.5)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:200, padding:'0 24px' },
+  modal: { backgroundColor:'#fff', borderRadius:20, padding:'28px 24px', width:'100%', maxWidth:360, display:'flex', flexDirection:'column', gap:12 },
+  modalTitle: { margin:0, fontSize:18, fontWeight:800, color:C.TEXT1, textAlign:'center' },
+  modalSub: { margin:0, fontSize:13, color:'#6B7280', textAlign:'center', lineHeight:1.5 },
+  modalDanger: { padding:'13px', borderRadius:12, backgroundColor:C.ERROR, color:'#fff', border:'none', fontSize:15, fontWeight:700, cursor:'pointer' },
+  modalCancel: { padding:'13px', borderRadius:12, backgroundColor:'#F3F4F6', color:C.TEXT1, border:'none', fontSize:15, fontWeight:600, cursor:'pointer' },
   saveBar: {
     position:'fixed', bottom:64, left:0, right:0,
     backgroundColor:'#fff', padding:'10px 16px 12px',
