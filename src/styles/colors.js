@@ -20,6 +20,12 @@ export const C = {
 
 export const IMG = (path) => {
   if (!path) return null;
+  // Normalize old virtual-hosted S3 URLs (confirmslot.com.s3.amazonaws.com/key)
+  // to path-style (s3.ap-south-1.amazonaws.com/confirmslot.com/key)
+  if (path.includes('confirmslot.com.s3.amazonaws.com/')) {
+    const key = path.split('confirmslot.com.s3.amazonaws.com/')[1];
+    return `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${key}`;
+  }
   if (path.startsWith('http')) return path;
   return `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${path}`;
 };

@@ -56,7 +56,7 @@ export default function MyBookings() {
     setCancellingId(null);
     try {
       const isToken = b.type === 'TOKEN' || b.tokenNo != null;
-      if (isToken) await api.patch(`/v1/tokens/${b._id}`, { status: 'CANCELLED' });
+      if (isToken) await api.put(`/v1/tokens/${b._id}`, { status: 'CANCELLED' });
       else          await api.post('/v1/mybookings/cancel', { appointmentId: b._id });
       setAll(prev => prev.map(x => x._id === b._id ? { ...x, status: 'CANCELLED' } : x));
       toast.success('Booking cancelled.');

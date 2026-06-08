@@ -63,6 +63,19 @@ export const api = {
       body: JSON.stringify(body),
     }).then((r) => r.json()),
 
+  put: (path, body) =>
+    fetch(`${API_BASE_URL}${path}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
+      },
+      body: JSON.stringify(body),
+    }).then(async (r) => {
+      if (r.status === 401) { handle401(); throw new Error('SESSION_EXPIRED'); }
+      return r.json();
+    }),
+
   upload: (path, formData) =>
     fetch(`${API_BASE_URL}${path}`, {
       method: 'POST',
