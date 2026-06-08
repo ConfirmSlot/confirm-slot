@@ -38,6 +38,7 @@ const Terms            = lazy(() => import('./pages/Terms'));
 const CarnivalList     = lazy(() => import('./pages/CarnivalList'));
 const CarnivalDetail   = lazy(() => import('./pages/CarnivalDetail'));
 const CustomerDetails  = lazy(() => import('./pages/CustomerDetails'));
+const BranchSelection  = lazy(() => import('./pages/BranchSelection'));
 
 const MARKETING_PATHS = ['/', '/services', '/about-us', '/our-app', '/contact', '/enquiry'];
 
@@ -104,6 +105,7 @@ const App = () => {
               <Route path="/home"                    element={<Home />} />
               <Route path="/category/:id"            element={<CategoryPage />} />
               <Route path="/sp/:spId"                element={<SpProfile />} />
+              <Route path="/sp/:spId/branch"         element={<BranchSelection />} />
               <Route path="/sp/:spId/appointment"    element={<BookAppointment />} />
               <Route path="/sp/:spId/token"          element={<BookToken />} />
               <Route path="/sp/:spId/session"        element={<BookSession />} />

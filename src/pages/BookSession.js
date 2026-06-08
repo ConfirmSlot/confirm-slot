@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
@@ -7,6 +7,16 @@ import AppLayout from '../components/app/AppLayout';
 export default function BookSession() {
   const { spId } = useParams();
   const navigate = useNavigate();
+  const { state: locState } = useLocation();
+  const branchId         = locState?.branchId;
+  const branchName       = locState?.branchName || '';
+  const branchPhone      = locState?.branchPhone || '';
+  const branchAddrLine1  = locState?.branchAddressLine1 || '';
+  const branchCity       = locState?.branchCity || '';
+  const branchStateVal   = locState?.branchState || '';
+  const branchPincode    = locState?.branchPincode || '';
+  const employeeId       = locState?.employeeId;
+  const employeeName     = locState?.employeeName || '';
   const [sp, setSp] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -47,6 +57,8 @@ export default function BookSession() {
         sessionId: selected._id,
         date, time: selectedSlot,
         payment: { price: total, currencyId: 'INR', status: paymentMode === 'ONLINE' ? 0 : 1, paymentMode: paymentMode || 'OFFLINE', referenceNo: `WEB_SESS_${Date.now()}` },
+        ...(branchId && { branchId, branchName, branchPhone, branchAddressLine1: branchAddrLine1, branchCity, branchState: branchStateVal, branchPincode }),
+        ...(employeeId && { employeeId, employeeName }),
       };
       if (paymentMode === 'ONLINE' && total > 0) {
         navigate('/payment', { state: { bookingData: bookData, type: 'session', spId } });

@@ -9,9 +9,17 @@ export default function BookAppointment() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Date & time pre-selected on SpProfile
-  const date = location.state?.date || '';
-  const time = location.state?.time || '';
+  const date             = location.state?.date || '';
+  const time             = location.state?.time || '';
+  const branchId         = location.state?.branchId;
+  const branchName       = location.state?.branchName || '';
+  const branchPhone      = location.state?.branchPhone || '';
+  const branchAddrLine1  = location.state?.branchAddressLine1 || '';
+  const branchCity       = location.state?.branchCity || '';
+  const branchStateVal   = location.state?.branchState || '';
+  const branchPincode    = location.state?.branchPincode || '';
+  const employeeId       = location.state?.employeeId;
+  const employeeName     = location.state?.employeeName || '';
 
   const [sp, setSp] = useState(null);
   const [selectedExtras, setSelectedExtras] = useState([]);
@@ -65,6 +73,8 @@ export default function BookAppointment() {
           referenceNo: `REF-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         },
         extra: extraPayload,
+        ...(branchId && { branchId, branchName, branchPhone, branchAddressLine1: branchAddrLine1, branchCity, branchState: branchStateVal, branchPincode }),
+        ...(employeeId && { employeeId, employeeName }),
       };
 
       // Go to customer details before posting

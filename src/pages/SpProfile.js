@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
@@ -12,6 +12,7 @@ const DAY_KEYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 export default function SpProfile() {
   const { spId } = useParams();
   const navigate = useNavigate();
+  const { state: navState } = useLocation();
   const { user, isLoggedIn } = useAuth();
 
   const [sp, setSp] = useState(null);
@@ -42,6 +43,14 @@ export default function SpProfile() {
   const [bookingToken, setBookingToken] = useState(false);
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
+
+  // ── Resume token booking after branch selection ───────────────────────────
+  useEffect(() => {
+    if (navState?.resumeTokenBranch && sp) {
+      const { tokenDate, resumeTokenBranch, ...branchParams } = navState;
+      handleBookToken(branchParams, tokenDate ? new Date(tokenDate) : null);
+    }
+  }, [navState, sp]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Load provider + reviews + favourites ──────────────────────────────────
   useEffect(() => {
@@ -172,13 +181,20 @@ export default function SpProfile() {
   };
 
   // ── Token booking ─────────────────────────────────────────────────────────
-  const handleBookToken = async () => {
-    if (!selectedTokenDate || availableTokens <= 0) return;
+  const handleBookToken = async (branchParams, dateOverride) => {
+    const bookingDate = dateOverride || selectedTokenDate;
+    if (!bookingDate) return;
+    if (!dateOverride && availableTokens <= 0) return;
+    const hasBranches = (sp?.business?.branches || sp?.buisness?.branches || []).length > 0;
+    if (hasBranches && !branchParams) {
+      navigate(`/sp/${spId}/branch`, { state: { bookingType: 'token', tokenDate: bookingDate.toISOString(), sp } });
+      return;
+    }
     setBookingToken(true);
     try {
-      const issuanceTime = sp?.token?.issuanceTime ? new Date(sp.token.issuanceTime) : selectedTokenDate;
+      const issuanceTime = sp?.token?.issuanceTime ? new Date(sp.token.issuanceTime) : bookingDate;
       const res = await api.post('/v1/tokens', {
-        date: selectedTokenDate.toISOString(),
+        date: bookingDate.toISOString(),
         time: issuanceTime.toISOString(),
         serviceProviderId: spId,
         status: 'ACTIVE',
@@ -189,6 +205,16 @@ export default function SpProfile() {
           paymentMode: sp?.paymentMode || 'OFFLINE',
           referenceNo: `TOKEN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         },
+        ...(branchParams?.branchId && {
+          branchId: branchParams.branchId,
+          branchName: branchParams.branchName,
+          branchPhone: branchParams.branchPhone,
+          branchAddressLine1: branchParams.branchAddressLine1,
+          branchCity: branchParams.branchCity,
+          branchState: branchParams.branchState,
+          branchPincode: branchParams.branchPincode,
+        }),
+        ...(branchParams?.employeeId && { employeeId: branchParams.employeeId, employeeName: branchParams.employeeName }),
       });
       if (res.success || res.tokenNo) {
         navigate('/my-bookings');
@@ -551,7 +577,15 @@ export default function SpProfile() {
             {bookingToken ? 'Booking...' : `Get Token${sp.priceRange?.min ? ` - ${currency}${sp.priceRange.min}` : ''}`}
           </button>
         ) : isSession ? (
-          <button onClick={() => { if (requireLogin()) navigate(`/sp/${spId}/session`); }} style={s.bookBtn}>
+          <button onClick={() => {
+            if (!requireLogin()) return;
+            const hasBranches = (sp.business?.branches || sp.buisness?.branches || []).length > 0;
+            if (hasBranches) {
+              navigate(`/sp/${spId}/branch`, { state: { bookingType: 'session', sp } });
+            } else {
+              navigate(`/sp/${spId}/session`);
+            }
+          }} style={s.bookBtn}>
             Book Session - {currency}{sp.priceRange?.min || 0}
           </button>
         ) : (
@@ -559,7 +593,12 @@ export default function SpProfile() {
             onClick={() => {
               if (!selectedTime || !selectedDate) { toast.warning('Please select a date and time slot'); return; }
               if (!requireLogin()) return;
-              navigate(`/sp/${spId}/appointment`, { state: { date: fmt(selectedDate), time: selectedTime } });
+              const hasBranches = (sp.business?.branches || sp.buisness?.branches || []).length > 0;
+              if (hasBranches) {
+                navigate(`/sp/${spId}/branch`, { state: { bookingType: 'appointment', date: fmt(selectedDate), time: selectedTime, sp } });
+              } else {
+                navigate(`/sp/${spId}/appointment`, { state: { date: fmt(selectedDate), time: selectedTime } });
+              }
             }}
             disabled={!selectedTime}
             style={{ ...s.bookBtn, opacity: selectedTime ? 1 : 0.6 }}>

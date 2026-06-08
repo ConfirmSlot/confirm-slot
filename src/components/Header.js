@@ -65,7 +65,7 @@ const Header = () => {
               className="logo-img"
             />
             <Typography variant="h6" noWrap>
-              Confirm Slot
+              Onezy
             </Typography>
           </Box>
 

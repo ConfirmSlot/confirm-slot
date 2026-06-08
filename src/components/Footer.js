@@ -11,7 +11,7 @@ const Footer = () => {
           
           {/* About Section */}
           <div className="footer-column">
-            <h4>Confirm Slot</h4>
+            <h4>Onezy</h4>
             <p className="footer-desc">
               Streamline your appointment scheduling with our advanced token management system.
             </p>
@@ -57,7 +57,7 @@ const Footer = () => {
         
         {/* Bottom Bar */}
         <div className="footer-bottom">
-          <p>© 2025 Confirm Slot. All rights reserved.</p>
+          <p>© 2025 Onezy. All rights reserved.</p>
         </div>
       </div>
     </footer>
