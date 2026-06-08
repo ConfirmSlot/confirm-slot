@@ -10,8 +10,8 @@ export default function CarnivalList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/v1/carnival').then(r => {
-      setCarnivals(r.carnivals || r.data || []);
+    api.open('/v1/carnival').then(r => {
+      setCarnivals(r.data?.data || r.carnivals || r.data || []);
     }).finally(() => setLoading(false));
   }, []);
 
@@ -40,7 +40,7 @@ export default function CarnivalList() {
                     )}
                   </div>
                   <div style={{ padding: '12px 14px' }}>
-                    <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: 16, color: C.TEXT1 }}>{c.name}</p>
+                    <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: 16, color: C.TEXT1 }}>{c.title || c.name}</p>
                     {c.description && <p style={{ margin: '0 0 8px', fontSize: 13, color: C.TEXT3 }}>{c.description}</p>}
                     <div style={{ display: 'flex', gap: 8 }}>
                       {c.startDate && <span style={s.badge}>📅 {new Date(c.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>}
