@@ -36,7 +36,7 @@ const isPast = (b) => {
 
 const fmtDate = (iso) => {
   if (!iso) return '';
-  const [y, m, d] = iso.split('-').map(Number);
+  const [, m, d] = iso.split('-').map(Number);
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return `${d} ${months[m-1]}`;
 };
