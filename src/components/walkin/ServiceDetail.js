@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { API_BASE_URL } from '../../config/api';
-import { toast } from 'react-toastify';
 
 export default function ServiceDetail() {
   const { spId }    = useParams();
