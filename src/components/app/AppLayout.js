@@ -1,10 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { C } from '../../styles/colors';
 import ChatBot from '../ChatBot';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+const IOS_URL     = 'https://apps.apple.com/in/app/confirmslot/id6758349903';
+const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.identifier.confirmslot';
+
+function AppBanner() {
+  const [dismissed, setDismissed] = useState(() => sessionStorage.getItem('app_banner_dismissed') === '1');
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!isMobile || dismissed) return null;
+
+  const isIOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
+
+  const handleOpen = () => {
+    if (isIOS) {
+      window.open(IOS_URL, '_blank');
+    } else {
+      // Android: intent URL opens app if installed, falls back to Play Store automatically
+      window.location.href = `intent://home#Intent;scheme=confirmslot;package=com.identifier.confirmslot;S.browser_fallback_url=${encodeURIComponent(ANDROID_URL)};end`;
+    }
+  };
+
+  const handleDismiss = () => {
+    sessionStorage.setItem('app_banner_dismissed', '1');
+    setDismissed(true);
+  };
+
+  return (
+    <div style={sb.banner}>
+      <img src="/logo192.png" alt="Onezy" style={sb.logo} onError={e => e.target.style.display='none'} />
+      <div style={{ flex: 1 }}>
+        <p style={sb.title}>Onezy App</p>
+        <p style={sb.sub}>Better experience on the app</p>
+      </div>
+      <button onClick={handleOpen} style={sb.openBtn}>Open</button>
+      <button onClick={handleDismiss} style={sb.closeBtn}>✕</button>
+    </div>
+  );
+}
+
+const sb = {
+  banner:  { display:'flex', alignItems:'center', gap:10, backgroundColor:'#fff', padding:'8px 12px', borderBottom:'1px solid #E5E7EB', position:'sticky', top:56, zIndex:99 },
+  logo:    { width:36, height:36, borderRadius:10, flexShrink:0 },
+  title:   { margin:0, fontSize:13, fontWeight:700, color:'#1E1B4B' },
+  sub:     { margin:0, fontSize:11, color:'#6B7280' },
+  openBtn: { padding:'6px 14px', borderRadius:20, backgroundColor:C.PRIMARY, color:'#fff', border:'none', fontSize:12, fontWeight:700, cursor:'pointer', flexShrink:0 },
+  closeBtn:{ background:'none', border:'none', fontSize:16, color:'#9CA3AF', cursor:'pointer', padding:'0 4px', flexShrink:0 },
+};
 
 const PAGE_TITLES = {
   '/my-bookings':  'My Bookings',
@@ -75,6 +121,9 @@ export default function AppLayout({ children, title }) {
           </div>
         )}
       </div>
+
+      {/* App download banner — mobile only */}
+      <AppBanner />
 
       {/* Page content */}
       <div>{children}</div>
