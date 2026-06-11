@@ -7,7 +7,7 @@
 /.well-known/*  /.well-known/:splat  200!
 
 # Serve React app for the main domain
-https://confirmslot.com/*  /index.html  200
+https://onezy.net/*  /index.html  200
 
 # EC2-  Admin of confirmslot portal
 https://admin.confirmslot.com/* http://13.204.96.6:5000/:splat  200
