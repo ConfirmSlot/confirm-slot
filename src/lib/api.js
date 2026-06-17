@@ -9,7 +9,6 @@ const handle401 = () => {
   window.location.href = '/login?expired=1';
 };
 
-
 export const api = {
   // Authenticated GET — redirects to login on 401
   get: (path) =>
