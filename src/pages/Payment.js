@@ -65,30 +65,35 @@ export default function Payment() {
       if (res.success) {
         const payuUrl = getPayuUrl(res.key);
 
-        // Build form HTML for the popup
-        const fields = { key: res.key, txnid: res.txnid, amount: res.amount,
-          productinfo: res.productinfo, firstname: res.firstname, email: res.email,
-          phone: res.phone || '', surl: res.surl, furl: res.furl, hash: res.hash,
-          udf1: res.udf1 || '', udf2: res.udf2 || '', udf3: res.udf3 || '' };
-
-        const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-        const formHtml = `<!DOCTYPE html><html><body>
-          <form id="pf" method="POST" action="${payuUrl}">
-            ${Object.entries(fields).map(([k,v]) => `<input type="hidden" name="${k}" value="${esc(v)}">`).join('')}
-          </form>
-          <script>document.getElementById('pf').submit();</script>
-        </body></html>`;
-
-        // Open popup (same as mobile WebView)
+        // Open named popup first, then POST into it via a form targeted at that window
         const popup = window.open('', 'payu_payment', 'width=480,height=700,top=100,left=200');
         if (!popup) {
           setError('Popup blocked. Please allow popups for this site and try again.');
           setLoading(false);
           return;
         }
-        popup.document.write(formHtml);
         popupRef.current = popup;
+
+        // Build a real DOM form and submit it into the named popup (avoids HTML encoding issues)
+        const fields = { key: res.key, txnid: res.txnid, amount: res.amount,
+          productinfo: res.productinfo, firstname: res.firstname, email: res.email,
+          phone: res.phone || '', surl: res.surl, furl: res.furl, hash: res.hash,
+          udf1: res.udf1 || '', udf2: res.udf2 || '', udf3: res.udf3 || '' };
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = payuUrl;
+        form.target = 'payu_payment';
+        Object.entries(fields).forEach(([k, v]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = k;
+          input.value = v;
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
 
         // Fallback: if popup is closed manually without completing
         const checkClosed = setInterval(() => {
