@@ -3,10 +3,12 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function BookSession() {
   const { spId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { state: locState } = useLocation();
   const branchId         = locState?.branchId;
   const branchName       = locState?.branchName || '';
@@ -61,7 +63,23 @@ export default function BookSession() {
         ...(employeeId && { employeeId, employeeName }),
       };
       if (paymentMode === 'ONLINE' && total > 0) {
-        navigate('/payment', { state: { bookingData: bookData, type: 'session', spId } });
+        // Create a pending session booking first — backend needs the ID in udf5
+        const pendingRes = await api.post('/v1/session-booking', {
+          ...bookData,
+          paymentMethod: 'online',
+          customerName:  `${user?.info?.fName || ''} ${user?.info?.lName || ''}`.trim() || 'Customer',
+          customerEmail: user?.info?.email || '',
+          customerPhone: String(user?.phoneNo || ''),
+          customerCountryCode: user?.countryCode || '+91',
+        });
+        if (!pendingRes.success) {
+          alert(pendingRes.message || 'Could not reserve slot. Please try again.');
+          return;
+        }
+        navigate('/customer-details', { state: {
+          bookingData: bookData, type: 'session', spId,
+          sessionBookingId: (pendingRes.booking || pendingRes.data)?._id,
+        }});
       } else {
         const res = await api.post('/v1/session-booking', bookData);
         if (res.success) navigate('/booking-confirmation', { state: { booking: res.booking || res.data, type: 'session' } });

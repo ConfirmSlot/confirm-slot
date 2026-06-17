@@ -11,7 +11,7 @@ export default function CustomerDetails() {
   const { state } = useLocation();
   const { user } = useAuth();
 
-  const { bookingData, type, spId, serviceTitle, date, time, total, currency } = state || {};
+  const { bookingData, type, spId, serviceTitle, date, time, total, currency, sessionBookingId } = state || {};
 
   const [form, setForm] = useState({
     fName: user?.info?.fName || '',
@@ -64,7 +64,7 @@ export default function CustomerDetails() {
       const paymentMode = bookingData?.payment?.paymentMode || 'OFFLINE';
 
       if (paymentMode === 'ONLINE' && (total || 0) > 0) {
-        navigate('/payment', { state: { bookingData, type, spId, customer } });
+        navigate('/payment', { state: { bookingData, type, spId, customer, sessionBookingId } });
       } else {
         // Offline — post booking directly
         let res;

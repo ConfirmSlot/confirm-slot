@@ -15,7 +15,7 @@ export default function Payment() {
   const [error, setError] = useState('');
   const popupRef = useRef(null);
 
-  const { bookingData, type, spId, customer } = state || {};
+  const { bookingData, type, spId, customer, sessionBookingId } = state || {};
 
   useEffect(() => {
     if (!bookingData || !customer) { navigate('/home'); return; }
@@ -51,15 +51,34 @@ export default function Payment() {
         return;
       }
 
+      // Build UDF fields exactly as the backend expects for createBookingFromPayment
+      const pad = n => String(n).padStart(2, '0');
+      let udf1 = '', udf2 = '', udf3 = spId || bookingData.serviceProviderId || '', udf4 = 'APPOINTMENT', udf5 = '';
+
+      if (type === 'token') {
+        udf1 = bookingData.date || '';
+        udf2 = 'TOKEN';
+        udf4 = 'TOKEN';
+      } else if (type === 'session') {
+        udf1 = bookingData.date || '';
+        udf2 = bookingData.time || '';
+        udf4 = 'SESSION';
+        udf5 = sessionBookingId || '';
+      } else {
+        // appointment
+        const start = new Date(bookingData.startTime);
+        udf1 = `${start.getFullYear()}-${pad(start.getMonth()+1)}-${pad(start.getDate())}`;
+        udf2 = `${pad(start.getHours())}:${pad(start.getMinutes())}`;
+        udf4 = 'APPOINTMENT';
+      }
+
       const res = await api.post('/v1/general/payments/initiate', {
         amount:      bookingData.payment.price,
         firstname,
         email,
         phone,
         productinfo: `Booking - ${type || 'appointment'}`,
-        udf1:        JSON.stringify(bookingData),
-        udf2:        type || 'appointment',
-        udf3:        spId || '',
+        udf1, udf2, udf3, udf4, udf5,
       });
 
       if (res.success) {
@@ -78,7 +97,8 @@ export default function Payment() {
         const fields = { key: res.key, txnid: res.txnid, amount: res.amount,
           productinfo: res.productinfo, firstname: res.firstname, email: res.email,
           phone: res.phone || '', surl: res.surl, furl: res.furl, hash: res.hash,
-          udf1: res.udf1 || '', udf2: res.udf2 || '', udf3: res.udf3 || '' };
+          udf1: res.udf1 || '', udf2: res.udf2 || '', udf3: res.udf3 || '',
+          udf4: res.udf4 || '', udf5: res.udf5 || '' };
 
         const form = document.createElement('form');
         form.method = 'POST';
