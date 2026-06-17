@@ -75,7 +75,7 @@ export default function Payment() {
           <form id="pf" method="POST" action="${payuUrl}">
             ${Object.entries(fields).map(([k,v]) => `<input type="hidden" name="${k}" value="${v}">`).join('')}
           </form>
-          <script>document.getElementById('pf').submit();<\/script>
+          <script>document.getElementById('pf').submit();</script>
         </body></html>`;
 
         // Open popup (same as mobile WebView)
