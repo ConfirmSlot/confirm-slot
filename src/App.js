@@ -115,8 +115,8 @@ const App = () => {
               {/* ── PROTECTED pages — personal data, login required ── */}
               <Route path="/customer-details"        element={<ProtectedRoute><CustomerDetails /></ProtectedRoute>} />
               <Route path="/payment"                 element={<ProtectedRoute><Payment /></ProtectedRoute>} />
-              <Route path="/payment/success"         element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
-              <Route path="/payment/failure"         element={<ProtectedRoute><PaymentFailure /></ProtectedRoute>} />
+              <Route path="/payment/success"         element={<PaymentSuccess />} />
+              <Route path="/payment/failure"         element={<PaymentFailure />} />
               <Route path="/booking-confirmation"    element={<ProtectedRoute><BookingConfirm /></ProtectedRoute>} />
               <Route path="/my-bookings"             element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
               <Route path="/profile"                 element={<ProtectedRoute><Profile /></ProtectedRoute>} />

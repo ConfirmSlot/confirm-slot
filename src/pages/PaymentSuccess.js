@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { C } from '../styles/colors';
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const t = setTimeout(() => navigate('/my-bookings'), 3000);
+    return () => clearTimeout(t);
+  }, [navigate]);
   return (
     <div style={s.page}>
       <div style={s.card}>
