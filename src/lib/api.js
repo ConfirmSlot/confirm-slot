@@ -1,12 +1,31 @@
 import { API_BASE_URL } from '../config/api';
 
-
 const getToken = () => localStorage.getItem('cs_token');
 
 const handle401 = () => {
-  localStorage.removeItem('cs_token');
-  localStorage.removeItem('cs_user');
-  window.location.href = '/login?expired=1';
+  const oldToken = getToken();
+  if (oldToken) {
+    fetch(`${API_BASE_URL}/v1/auth/refresh-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: oldToken }),
+    }).then(r => r.ok ? r.json() : null).then(data => {
+      if (data?.token) {
+        localStorage.setItem('cs_token', data.token);
+        window.location.reload();
+      } else {
+        localStorage.removeItem('cs_token');
+        localStorage.removeItem('cs_user');
+        window.location.href = '/login?expired=1';
+      }
+    }).catch(() => {
+      localStorage.removeItem('cs_token');
+      localStorage.removeItem('cs_user');
+      window.location.href = '/login?expired=1';
+    });
+  } else {
+    window.location.href = '/login?expired=1';
+  }
 };
 
 export const api = {

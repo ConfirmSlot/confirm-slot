@@ -1,7 +1,7 @@
 // src/config/api.js
 
 export const API_BASE_URL =
-  (process.env.REACT_APP_API_BASE_URL || 'https://api.confirmslot.com/').replace(/\/$/, '');
+  (process.env.REACT_APP_API_BASE_URL || 'https://api.onezy.net/').replace(/\/$/, '');
  
 // API endpoints
 export const API_ENDPOINTS = {

@@ -100,11 +100,11 @@ export default function Login() {
 
             <p style={s.terms}>
               By continuing, you agree to our{' '}
-              <a href="https://confirmslot.com/terms-and-conditions" target="_blank" rel="noreferrer" style={s.link}>
+              <a href="https://onezy.net/terms-and-conditions" target="_blank" rel="noreferrer" style={s.link}>
                 Terms of Service
               </a>{' '}
               &amp;{' '}
-              <a href="https://confirmslot.com/privacy-policy" target="_blank" rel="noreferrer" style={s.link}>
+              <a href="https://onezy.net/privacy-policy" target="_blank" rel="noreferrer" style={s.link}>
                 Privacy Policy
               </a>
             </p>

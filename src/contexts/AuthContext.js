@@ -11,23 +11,41 @@ export function AuthProvider({ children }) {
   const [authChecked, setAuthChecked] = useState(false);
   const onUnauthorizedRef             = useRef(null);
 
-  // On mount — verify stored token is still valid
+  // On mount — verify token, auto-refresh if expired
   useEffect(() => {
     if (!token) { setAuthChecked(true); return; }
     fetch(`${API_BASE_URL}/v1/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(r => {
+      .then(async r => {
+        if (r.status === 401) {
+          // Token expired — try to refresh silently
+          const refreshRes = await fetch(`${API_BASE_URL}/v1/auth/refresh-token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token }),
+          }).catch(() => null);
+          if (refreshRes?.ok) {
+            const refreshData = await refreshRes.json().catch(() => null);
+            if (refreshData?.token) {
+              localStorage.setItem('cs_token', refreshData.token);
+              setToken(refreshData.token);
+              return null; // skip further user update
+            }
+          }
+          // Refresh failed — clear session
+          clearSession();
+          return null;
+        }
         return r.json();
       })
       .then(data => {
         if (data?.success && data.phoneNo) {
-          // Refresh user data from backend
           setUser(prev => ({ ...prev, ...data }));
           localStorage.setItem('cs_user', JSON.stringify({ ...user, ...data }));
         }
       })
-      .catch(() => { /* network error — keep session, will fail on next API call */ })
+      .catch(() => { /* network error — keep session */ })
       .finally(() => setAuthChecked(true));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

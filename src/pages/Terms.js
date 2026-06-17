@@ -32,7 +32,7 @@ Onezy acts as a marketplace connecting customers and service providers. We are n
 8. CHANGES TO TERMS
 We reserve the right to modify these terms at any time. Continued use of the platform constitutes acceptance of any changes.
 
-Contact us at support@confirmslot.com for any queries.`;
+Contact us at support@onezy.net for any queries.`;
 
 const PRIVACY = `This Privacy Policy describes how Onezy (ConfirmSlot) collects, uses, and protects your information.
 
@@ -59,13 +59,13 @@ We do not sell your personal data. We share data only with:
 We implement industry-standard security measures to protect your data.
 
 5. YOUR RIGHTS
-You have the right to access, correct, or delete your personal information. Contact us at support@confirmslot.com.
+You have the right to access, correct, or delete your personal information. Contact us at support@onezy.net.
 
 6. COOKIES
 We use cookies and similar technologies to improve your experience.
 
 7. CONTACT
-For privacy concerns, contact us at privacy@confirmslot.com.`;
+For privacy concerns, contact us at privacy@onezy.net.`;
 
 export default function Terms() {
   const [tab, setTab] = useState('terms');

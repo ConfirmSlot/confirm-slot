@@ -4,7 +4,6 @@ import { api } from '../lib/api';
 import { C } from '../styles/colors';
 import { useAuth } from '../contexts/AuthContext';
 
-// PayU test key is 'gtKFFx' — anything else is a production key
 const getPayuUrl = (key) =>
   key === 'gtKFFx' ? 'https://test.payu.in/_payment' : 'https://secure.payu.in/_payment';
 
@@ -14,23 +13,31 @@ export default function Payment() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const formRef = useRef(null);
-  const [formData, setFormData] = useState(null);
-  const [payuUrl, setPayuUrl] = useState('https://secure.payu.in/_payment');
+  const popupRef = useRef(null);
 
   const { bookingData, type, spId, customer } = state || {};
 
   useEffect(() => {
     if (!bookingData || !customer) { navigate('/home'); return; }
     initiatePayment();
-  }, [bookingData, customer, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-submit PayU form once formData is set
+  // Listen for postMessage from the PayU popup
   useEffect(() => {
-    if (formData && formRef.current) {
-      formRef.current.submit();
-    }
-  }, [formData]);
+    const onMessage = (event) => {
+      if (event.origin !== 'https://api.onezy.net' && event.origin !== 'https://api.confirmslot.com') return;
+      if (event.data?.type === 'PAYMENT_SUCCESS') {
+        if (popupRef.current) { popupRef.current.close(); popupRef.current = null; }
+        navigate('/my-bookings');
+      } else if (event.data?.type === 'PAYMENT_FAILURE') {
+        if (popupRef.current) { popupRef.current.close(); popupRef.current = null; }
+        setError('Payment failed. Please try again.');
+        setLoading(false);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [navigate]);
 
   const initiatePayment = async () => {
     try {
@@ -56,22 +63,39 @@ export default function Payment() {
       });
 
       if (res.success) {
-        setPayuUrl(getPayuUrl(res.key));
-        setFormData({
-          key:         res.key,
-          txnid:       res.txnid,
-          amount:      res.amount,
-          productinfo: res.productinfo,
-          firstname:   res.firstname,
-          email:       res.email,
-          phone:       res.phone || '',
-          surl:        res.surl,
-          furl:        res.furl,
-          hash:        res.hash,
-          udf1:        res.udf1 || '',
-          udf2:        res.udf2 || '',
-          udf3:        res.udf3 || '',
-        });
+        const payuUrl = getPayuUrl(res.key);
+
+        // Build form HTML for the popup
+        const fields = { key: res.key, txnid: res.txnid, amount: res.amount,
+          productinfo: res.productinfo, firstname: res.firstname, email: res.email,
+          phone: res.phone || '', surl: res.surl, furl: res.furl, hash: res.hash,
+          udf1: res.udf1 || '', udf2: res.udf2 || '', udf3: res.udf3 || '' };
+
+        const formHtml = `<!DOCTYPE html><html><body>
+          <form id="pf" method="POST" action="${payuUrl}">
+            ${Object.entries(fields).map(([k,v]) => `<input type="hidden" name="${k}" value="${v}">`).join('')}
+          </form>
+          <script>document.getElementById('pf').submit();<\/script>
+        </body></html>`;
+
+        // Open popup (same as mobile WebView)
+        const popup = window.open('', 'payu_payment', 'width=480,height=700,top=100,left=200');
+        if (!popup) {
+          setError('Popup blocked. Please allow popups for this site and try again.');
+          setLoading(false);
+          return;
+        }
+        popup.document.write(formHtml);
+        popupRef.current = popup;
+
+        // Fallback: if popup is closed manually without completing
+        const checkClosed = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(checkClosed);
+            setError('Payment cancelled. Please try again.');
+            setLoading(false);
+          }
+        }, 1000);
       } else {
         setError(res.error || res.message || 'Could not initiate payment');
         setLoading(false);
@@ -84,22 +108,13 @@ export default function Payment() {
 
   return (
     <div style={s.page}>
-      {/* Hidden PayU auto-submit form */}
-      {formData && (
-        <form ref={formRef} method="POST" action={payuUrl} style={{ display: 'none' }}>
-          {Object.entries(formData).map(([k, v]) => (
-            <input key={k} type="hidden" name={k} value={v} />
-          ))}
-        </form>
-      )}
-
       <div style={s.card}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>{loading ? '💳' : '❌'}</div>
         <h2 style={{ color: C.TEXT1, fontWeight: 800, fontSize: 20, margin: '0 0 8px' }}>
-          {loading ? 'Redirecting to Payment...' : 'Payment Error'}
+          {loading ? 'Payment Opening...' : 'Payment Error'}
         </h2>
         <p style={{ color: C.TEXT3, fontSize: 14, textAlign: 'center', margin: '0 0 24px' }}>
-          {loading ? 'Please wait, do not close this page.' : error}
+          {loading ? 'Complete payment in the popup window.' : error}
         </p>
         {loading && <div style={s.spinner} />}
         {!loading && (

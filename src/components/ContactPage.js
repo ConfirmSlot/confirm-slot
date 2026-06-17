@@ -12,7 +12,7 @@ const ContactPage = () => {
       address: "34785 Pickford Dr, Farmington Hills<br />MI - 48335",
       mapQuery: "34785 Pickford Dr, Farmington Hills, MI 48335",
       phone: "+1 (248) 555-1234",
-      email: "us-sales@confirmslot.com"
+      email: "us-sales@onezy.net"
     },
     {
       id: "chennai",
@@ -20,7 +20,7 @@ const ContactPage = () => {
       address: "Wimco Nagar<br />Chennai - 600019",
       mapQuery: "Wimco Nagar Metro Station, Chennai 600019",
       phone: "+91 91761 22210",
-      email: "in-sales@confirmslot.com"
+      email: "in-sales@onezy.net"
     },
     { 
       id: "bengaluru", 
@@ -28,7 +28,7 @@ const ContactPage = () => {
       address: "Brigade Gardens, Church Street<br />Bengaluru",
       mapQuery: "Brigade Gardens, Church Street, Bengaluru",
       phone: "+91 98765 43210",
-      email: "in-sales@confirmslot.com"
+      email: "in-sales@onezy.net"
     },
   ];
 
