@@ -71,9 +71,11 @@ export default function Payment() {
           phone: res.phone || '', surl: res.surl, furl: res.furl, hash: res.hash,
           udf1: res.udf1 || '', udf2: res.udf2 || '', udf3: res.udf3 || '' };
 
+        const esc = (v) => String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
         const formHtml = `<!DOCTYPE html><html><body>
           <form id="pf" method="POST" action="${payuUrl}">
-            ${Object.entries(fields).map(([k,v]) => `<input type="hidden" name="${k}" value="${v}">`).join('')}
+            ${Object.entries(fields).map(([k,v]) => `<input type="hidden" name="${k}" value="${esc(v)}">`).join('')}
           </form>
           <script>document.getElementById('pf').submit();</script>
         </body></html>`;
