@@ -18,7 +18,6 @@ export function AuthProvider({ children }) {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => {
-        if (r.status === 401) { clearSession(); }
         return r.json();
       })
       .then(data => {
