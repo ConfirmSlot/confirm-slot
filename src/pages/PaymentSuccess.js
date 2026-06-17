@@ -1,14 +1,23 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { C } from '../styles/colors';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
+  const { isLoggedIn, authChecked } = useAuth();
 
   useEffect(() => {
-    const t = setTimeout(() => navigate('/my-bookings'), 3000);
+    if (!authChecked) return;
+    const t = setTimeout(() => {
+      if (isLoggedIn) {
+        navigate('/my-bookings');
+      } else {
+        navigate('/login?redirect=%2Fmy-bookings');
+      }
+    }, 3000);
     return () => clearTimeout(t);
-  }, [navigate]);
+  }, [navigate, isLoggedIn, authChecked]);
   return (
     <div style={s.page}>
       <div style={s.card}>
