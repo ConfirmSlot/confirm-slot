@@ -21,7 +21,7 @@ function AppBanner() {
       window.open(IOS_URL, '_blank');
     } else {
       // Android: intent URL opens app if installed, falls back to Play Store automatically
-      window.location.href = `intent://home#Intent;scheme=confirmslot;package=com.identifier.confirmslot;S.browser_fallback_url=${encodeURIComponent(ANDROID_URL)};end`;
+      window.location.href = `intent://#Intent;scheme=confirmslot;package=com.identifier.confirmslot;S.browser_fallback_url=${encodeURIComponent(ANDROID_URL)};end`;
     }
   };
 
