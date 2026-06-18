@@ -7,6 +7,7 @@ import Header      from "./components/Header";
 import HeroSection from "./components/HeroSection";
 import Footer      from "./components/Footer";
 import PlatformBanner from "./components/PlatformBanner";
+import { AppBanner } from "./components/app/AppLayout";
 import ServicesPage from "./components/ServicesPage";
 import AboutPage    from "./components/AboutPage";
 import OurAppPage   from "./components/OurAppPage";
@@ -45,18 +46,24 @@ const MARKETING_PATHS = ['/', '/services', '/about-us', '/our-app', '/contact', 
 function Layout({ children }) {
   const { pathname } = useLocation();
   const isMarketing = MARKETING_PATHS.includes(pathname);
-  const isWalkin = ['/walkin', '/login', '/service/'].some(p => pathname.startsWith(p));
+  const isWalkin = ['/service/'].some(p => pathname.startsWith(p));
 
   if (isWalkin) return <>{children}</>;
   if (isMarketing) return (
     <>
       <Header />
+      <AppBanner />
       {children}
       <Footer />
       <WhatsAppFloatingButton />
     </>
   );
-  return <>{children}</>;
+  return (
+    <>
+      <AppBanner />
+      {children}
+    </>
+  );
 }
 
 const Loading = () => (
@@ -94,8 +101,10 @@ const App = () => {
               <Route path="/enquiry"   element={<EnquiryPage />} />
 
               {/* Auth */}
-              <Route path="/login"     element={<Login />} />
-              <Route path="/terms"     element={<Terms />} />
+              <Route path="/login"                element={<Login />} />
+              <Route path="/terms"               element={<Terms />} />
+              <Route path="/terms-and-conditions" element={<Terms />} />
+              <Route path="/privacy-policy"       element={<Terms />} />
 
               {/* Walk-in (existing) */}
               <Route path="/walkin/:spId"  element={<WalkinLanding />} />

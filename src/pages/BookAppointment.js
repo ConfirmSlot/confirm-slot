@@ -3,11 +3,14 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
+import { useAuth } from '../contexts/AuthContext';
+import LoginModal from '../components/LoginModal';
 
 export default function BookAppointment() {
   const { spId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isLoggedIn } = useAuth();
 
   const date             = location.state?.date || '';
   const time             = location.state?.time || '';
@@ -24,6 +27,7 @@ export default function BookAppointment() {
   const [sp, setSp] = useState(null);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [booking, setBooking] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     if (!date || !time) { navigate(-1); return; }
@@ -48,49 +52,42 @@ export default function BookAppointment() {
   const toggleExtra = (id) =>
     setSelectedExtras(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
-  const handleBook = async () => {
+  const doBook = () => {
+    const [h, m] = time.split(':').map(Number);
+    const start = new Date(date); start.setHours(h, m, 0, 0);
+    const end   = new Date(start.getTime() + duration * 60000);
+
+    const extraPayload = extras
+      .filter(e => selectedExtras.includes(e._id))
+      .map(e => ({ id: e._id, name: e.name, currencyId, price: e.price }));
+
+    const body = {
+      serviceProviderId: spId,
+      startTime: start.toISOString(),
+      endTime:   end.toISOString(),
+      status:    'ACTIVE',
+      serviceType: sp?.serviceType || 'premise',
+      payment: {
+        currencyId,
+        price: total,
+        status: 1,
+        paymentMode,
+        referenceNo: `REF-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      },
+      extra: extraPayload,
+      ...(branchId && { branchId, branchName, branchPhone, branchAddressLine1: branchAddrLine1, branchCity, branchState: branchStateVal, branchPincode }),
+      ...(employeeId && { employeeId, employeeName }),
+    };
+
+    navigate('/customer-details', {
+      state: { bookingData: body, type: 'appointment', spId, serviceTitle: sp?.title, date, time, total, currency },
+    });
+  };
+
+  const handleBook = () => {
+    if (!isLoggedIn) { setShowLogin(true); return; }
     setBooking(true);
-    try {
-      const [h, m] = time.split(':').map(Number);
-      const start = new Date(date); start.setHours(h, m, 0, 0);
-      const end   = new Date(start.getTime() + duration * 60000);
-
-      const extraPayload = extras
-        .filter(e => selectedExtras.includes(e._id))
-        .map(e => ({ id: e._id, name: e.name, currencyId, price: e.price }));
-
-      const body = {
-        serviceProviderId: spId,
-        startTime: start.toISOString(),
-        endTime:   end.toISOString(),
-        status:    'ACTIVE',
-        serviceType: sp?.serviceType || 'premise',
-        payment: {
-          currencyId,
-          price: total,
-          status: 1,
-          paymentMode,
-          referenceNo: `REF-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        },
-        extra: extraPayload,
-        ...(branchId && { branchId, branchName, branchPhone, branchAddressLine1: branchAddrLine1, branchCity, branchState: branchStateVal, branchPincode }),
-        ...(employeeId && { employeeId, employeeName }),
-      };
-
-      // Go to customer details before posting
-      navigate('/customer-details', {
-        state: {
-          bookingData: body,
-          type: 'appointment',
-          spId,
-          serviceTitle: sp?.title,
-          date,
-          time,
-          total,
-          currency,
-        },
-      });
-    } finally { setBooking(false); }
+    try { doBook(); } finally { setBooking(false); }
   };
 
   if (!sp) return (
@@ -182,6 +179,13 @@ export default function BookAppointment() {
           {booking ? 'Booking...' : 'Complete Booking'}
         </button>
       </div>
+
+      {showLogin && (
+        <LoginModal
+          onSuccess={() => { setShowLogin(false); doBook(); }}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </AppLayout>
   );
 }

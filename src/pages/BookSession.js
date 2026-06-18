@@ -4,11 +4,12 @@ import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
 import { useAuth } from '../contexts/AuthContext';
+import LoginModal from '../components/LoginModal';
 
 export default function BookSession() {
   const { spId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const { state: locState } = useLocation();
   const branchId         = locState?.branchId;
   const branchName       = locState?.branchName || '';
@@ -27,6 +28,7 @@ export default function BookSession() {
   const [selectedSlot, setSelectedSlot] = useState('');
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [booking, setBooking] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function BookSession() {
 
   const spInfo = sp?.serviceProvider || sp;
 
-  const handleBook = async () => {
+  const doBook = async () => {
     setBooking(true);
     try {
       const total = selected?.price || 0;
@@ -63,7 +65,6 @@ export default function BookSession() {
         ...(employeeId && { employeeId, employeeName }),
       };
       if (paymentMode === 'ONLINE' && total > 0) {
-        // Create a pending session booking first — backend needs the ID in udf5
         const pendingRes = await api.post('/v1/session-booking', {
           ...bookData,
           paymentMethod: 'online',
@@ -85,6 +86,11 @@ export default function BookSession() {
         if (res.success) navigate('/booking-confirmation', { state: { booking: res.booking || res.data, type: 'session' } });
       }
     } finally { setBooking(false); }
+  };
+
+  const handleBook = () => {
+    if (!isLoggedIn) { setShowLogin(true); return; }
+    doBook();
   };
 
   return (
@@ -159,6 +165,13 @@ export default function BookSession() {
           </div>
         )}
       </div>
+
+      {showLogin && (
+        <LoginModal
+          onSuccess={() => { setShowLogin(false); doBook(); }}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </AppLayout>
   );
 }

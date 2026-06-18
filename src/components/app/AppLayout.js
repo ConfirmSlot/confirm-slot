@@ -9,24 +9,32 @@ import 'react-toastify/dist/ReactToastify.css';
 const IOS_URL     = 'https://apps.apple.com/in/app/confirmslot/id6758349903';
 const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.identifier.confirmslot';
 
-function AppBanner() {
-  const [dismissed, setDismissed] = useState(() => sessionStorage.getItem('app_banner_dismissed') === '1');
+export function AppBanner() {
+  const [dismissed, setDismissed] = useState(() => {
+    const ts = localStorage.getItem('app_banner_dismissed_ts');
+    return ts && Date.now() - Number(ts) < 24 * 60 * 60 * 1000;
+  });
+  const { isLoggedIn } = useAuth();
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if (!isMobile || dismissed) return null;
 
   const isIOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
 
   const handleOpen = () => {
+    // Logged in → open app at home (root), not logged in → open app at login screen
+    const deepPath = isLoggedIn ? '' : 'login';
     if (isIOS) {
-      window.open(IOS_URL, '_blank');
+      // Try deep link first; if app not installed, fall back to App Store after delay
+      window.location.href = `confirmslot://${deepPath}`;
+      setTimeout(() => { window.location.href = IOS_URL; }, 1500);
     } else {
       // Android: intent URL opens app if installed, falls back to Play Store automatically
-      window.location.href = `intent://#Intent;scheme=confirmslot;package=com.identifier.confirmslot;S.browser_fallback_url=${encodeURIComponent(ANDROID_URL)};end`;
+      window.location.href = `intent://${deepPath}#Intent;scheme=confirmslot;package=com.identifier.confirmslot;S.browser_fallback_url=${encodeURIComponent(ANDROID_URL)};end`;
     }
   };
 
   const handleDismiss = () => {
-    sessionStorage.setItem('app_banner_dismissed', '1');
+    localStorage.setItem('app_banner_dismissed_ts', String(Date.now()));
     setDismissed(true);
   };
 
@@ -99,7 +107,9 @@ export default function AppLayout({ children, title }) {
           /* Home header */
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/home')}>
-              <img src="/logo192.png" alt="Onezy" style={s.logoImg} onError={e => e.target.style.display='none'} />
+              <div style={s.navCircleBtn}>
+                <img src="/logo192.png" alt="Onezy" style={{ width: 24, height: 24, borderRadius: 6 }} onError={e => e.target.style.display='none'} />
+              </div>
               <span style={{ color: '#fff', fontWeight: 800, fontSize: 18 }}>Onezy</span>
             </div>
             {isLoggedIn ? (
@@ -122,8 +132,7 @@ export default function AppLayout({ children, title }) {
         )}
       </div>
 
-      {/* App download banner — mobile only */}
-      <AppBanner />
+      {/* App download banner is rendered at root App.js level */}
 
       {/* Page content */}
       <div>{children}</div>
@@ -158,7 +167,7 @@ export default function AppLayout({ children, title }) {
 }
 
 const s = {
-  logoImg: { width: 34, height: 34, borderRadius: 10 },
+  logoImg: { width: 34, height: 34, borderRadius: 10, backgroundColor: '#fff', padding: 3, boxSizing: 'border-box' },
   navCircleBtn: {
     width: 38, height: 38, borderRadius: 19,
     backgroundColor: 'rgba(255,255,255,0.9)',

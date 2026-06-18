@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
 import { toast } from 'react-toastify';
+import LoginModal from '../components/LoginModal';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const DAY_KEYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -149,20 +150,20 @@ export default function SpProfile() {
     if (first) setSelectedTokenDate(first.date);
   };
 
-  // ── Favourites toggle ─────────────────────────────────────────────────────
-  const requireLogin = () => {
-    if (!isLoggedIn) {
-      toast.info('Please login to continue with your booking', {
-        icon: '🔐',
-        onClose: () => navigate(`/login?redirect=${encodeURIComponent(`/sp/${spId}`)}`),
-      });
-      return false;
-    }
-    return true;
+  const [showLogin, setShowLogin] = useState(false);
+  const pendingAction = useRef(null);
+
+  // Shows login modal if not logged in; runs action immediately if already logged in
+  const requireLogin = (action) => {
+    if (isLoggedIn) { action(); return; }
+    pendingAction.current = action;
+    setShowLogin(true);
   };
 
+  // ── Favourites toggle ─────────────────────────────────────────────────────
+
   const toggleFav = async () => {
-    if (!requireLogin()) return;
+    if (!isLoggedIn) { requireLogin(toggleFav); return; }
     if (favLoading) return;
     setFavLoading(true);
     try {
@@ -567,38 +568,48 @@ export default function SpProfile() {
         </div>
       </div>
 
+      {showLogin && (
+        <LoginModal
+          onSuccess={() => {
+            setShowLogin(false);
+            if (pendingAction.current) { pendingAction.current(); pendingAction.current = null; }
+          }}
+          onClose={() => { setShowLogin(false); pendingAction.current = null; }}
+        />
+      )}
+
       {/* ── Sticky Bottom Button ── */}
       <div style={s.bottomBar}>
         {isToken ? (
           <button
-            onClick={() => { if (requireLogin()) handleBookToken(); }}
+            onClick={() => requireLogin(() => handleBookToken())}
             disabled={bookingToken || !selectedTokenDate || availableTokens === 0}
             style={{ ...s.bookBtn, opacity: (bookingToken || !selectedTokenDate || availableTokens === 0) ? 0.6 : 1 }}>
             {bookingToken ? 'Booking...' : `Get Token${sp.priceRange?.min ? ` - ${currency}${sp.priceRange.min}` : ''}`}
           </button>
         ) : isSession ? (
-          <button onClick={() => {
-            if (!requireLogin()) return;
+          <button onClick={() => requireLogin(() => {
             const hasBranches = (sp.business?.branches || sp.buisness?.branches || []).length > 0;
             if (hasBranches) {
               navigate(`/sp/${spId}/branch`, { state: { bookingType: 'session', sp } });
             } else {
               navigate(`/sp/${spId}/session`);
             }
-          }} style={s.bookBtn}>
+          })} style={s.bookBtn}>
             Book Session - {currency}{sp.priceRange?.min || 0}
           </button>
         ) : (
           <button
             onClick={() => {
               if (!selectedTime || !selectedDate) { toast.warning('Please select a date and time slot'); return; }
-              if (!requireLogin()) return;
-              const hasBranches = (sp.business?.branches || sp.buisness?.branches || []).length > 0;
-              if (hasBranches) {
-                navigate(`/sp/${spId}/branch`, { state: { bookingType: 'appointment', date: fmt(selectedDate), time: selectedTime, sp } });
-              } else {
-                navigate(`/sp/${spId}/appointment`, { state: { date: fmt(selectedDate), time: selectedTime } });
-              }
+              requireLogin(() => {
+                const hasBranches = (sp.business?.branches || sp.buisness?.branches || []).length > 0;
+                if (hasBranches) {
+                  navigate(`/sp/${spId}/branch`, { state: { bookingType: 'appointment', date: fmt(selectedDate), time: selectedTime, sp } });
+                } else {
+                  navigate(`/sp/${spId}/appointment`, { state: { date: fmt(selectedDate), time: selectedTime } });
+                }
+              });
             }}
             disabled={!selectedTime}
             style={{ ...s.bookBtn, opacity: selectedTime ? 1 : 0.6 }}>

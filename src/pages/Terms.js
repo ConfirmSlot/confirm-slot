@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, useMatch } from 'react-router-dom';
 import { C } from '../styles/colors';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
-const TERMS = `Welcome to Onezy (ConfirmSlot). By using our app and services, you agree to the following terms.
+const TERMS = `Welcome to Onezy. By using our app and services, you agree to the following terms.
 
 1. ACCEPTANCE OF TERMS
 By accessing or using Onezy, you agree to be bound by these Terms and our Privacy Policy.
@@ -34,7 +34,7 @@ We reserve the right to modify these terms at any time. Continued use of the pla
 
 Contact us at support@onezy.net for any queries.`;
 
-const PRIVACY = `This Privacy Policy describes how Onezy (ConfirmSlot) collects, uses, and protects your information.
+const PRIVACY = `This Privacy Policy describes how Onezy collects, uses, and protects your information.
 
 1. INFORMATION WE COLLECT
 - Phone number (for authentication)
@@ -68,66 +68,75 @@ We use cookies and similar technologies to improve your experience.
 For privacy concerns, contact us at privacy@onezy.net.`;
 
 export default function Terms() {
-  const [tab, setTab] = useState('terms');
-  const [accepted, setAccepted] = useState({ terms: false, privacy: false });
+  const isPrivacyRoute = !!useMatch('/privacy-policy');
+  const isReadingMode  = !!useMatch('/terms-and-conditions') || isPrivacyRoute;
+
+  const [tab,     setTab]     = useState(isPrivacyRoute ? 'privacy' : 'terms');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = location.state?.returnTo || '/home';
   useAuth();
 
   const handleAccept = async () => {
-    if (!accepted.terms || !accepted.privacy) return;
     setLoading(true);
     try {
-      await api.post('/v1/users/me/accept-terms', {
-        policies: [
-          { type: 'terms', version: '1.0' },
-          { type: 'privacy', version: '1.0' },
-        ],
-      });
-      navigate('/home', { replace: true });
+      await api.post('/v1/users/me/accept-terms', { acceptTerms: true, acceptDataMarketing: true });
+      navigate(returnTo, { replace: true });
     } catch {
-      navigate('/home', { replace: true });
+      navigate(returnTo, { replace: true });
     } finally {
       setLoading(false);
     }
   };
 
+  /* ── Reading mode: /terms-and-conditions or /privacy-policy ── */
+  if (isReadingMode) {
+    return (
+      <div style={s.page}>
+        <div style={s.readHeader}>
+          <button style={s.backArrow} onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/home')}>
+            ← Back
+          </button>
+          <span style={s.readTitle}>{tab === 'terms' ? 'Terms of Service' : 'Privacy Policy'}</span>
+          <span style={{ width: 60 }} />
+        </div>
+
+        <div style={s.tabs}>
+          {['terms', 'privacy'].map(t => (
+            <button key={t} onClick={() => setTab(t)} style={{ ...s.tab, ...(tab === t ? s.tabActive : {}) }}>
+              {t === 'terms' ? 'Terms of Service' : 'Privacy Policy'}
+            </button>
+          ))}
+        </div>
+
+        <div style={s.readContent}>
+          <pre style={s.text}>{tab === 'terms' ? TERMS : PRIVACY}</pre>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Acceptance mode: /terms (new user signup flow) ── */
   return (
     <div style={s.page}>
-      <div style={s.header}>
-        <div style={{ backgroundColor: '#fff', borderRadius: 20, padding: 4, marginBottom: 4, boxShadow: '0 2px 8px rgba(0,0,0,0.12)', display: 'inline-flex' }}>
-          <img src="/logo.png" alt="Onezy" style={{ width: 90, height: 90, objectFit: 'contain', borderRadius: 16 }} />
+      <div style={s.acceptWrap}>
+        <div style={{ backgroundColor: '#fff', borderRadius: 20, padding: 4, marginBottom: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.12)', display: 'inline-flex' }}>
+          <img src="/logo.png" alt="Onezy" style={{ width: 80, height: 80, objectFit: 'contain', borderRadius: 16 }} />
         </div>
         <h1 style={s.title}>Almost there!</h1>
-        <p style={s.sub}>Please review and accept our policies to get started.</p>
-      </div>
+        <p style={s.sub}>One last step before you start booking</p>
 
-      <div style={s.tabs}>
-        {['terms', 'privacy'].map(t => (
-          <button key={t} onClick={() => setTab(t)} style={{ ...s.tab, ...(tab === t ? s.tabActive : {}) }}>
-            {t === 'terms' ? 'Terms of Service' : 'Privacy Policy'}
-          </button>
-        ))}
-      </div>
+        <div style={s.agreebox}>
+          <p style={s.agreeText}>
+            By tapping "Accept & Continue", you agree to Onezy's{' '}
+            <a href="/terms-and-conditions" target="_blank" rel="noreferrer" style={s.link}>Terms of Service</a>
+            {' '}and{' '}
+            <a href="/privacy-policy" target="_blank" rel="noreferrer" style={s.link}>Privacy Policy</a>.
+          </p>
+        </div>
 
-      <div style={s.content}>
-        <pre style={s.text}>{tab === 'terms' ? TERMS : PRIVACY}</pre>
-      </div>
-
-      <div style={s.footer}>
-        <label style={s.check}>
-          <input type="checkbox" checked={accepted.terms} onChange={e => setAccepted(a => ({ ...a, terms: e.target.checked }))} />
-          <span>I accept the <strong>Terms of Service</strong></span>
-        </label>
-        <label style={s.check}>
-          <input type="checkbox" checked={accepted.privacy} onChange={e => setAccepted(a => ({ ...a, privacy: e.target.checked }))} />
-          <span>I accept the <strong>Privacy Policy</strong></span>
-        </label>
-        <button
-          onClick={handleAccept}
-          disabled={!accepted.terms || !accepted.privacy || loading}
-          style={{ ...s.btn, opacity: (!accepted.terms || !accepted.privacy) ? 0.5 : 1 }}
-        >
+        <button onClick={handleAccept} disabled={loading} style={s.btn}>
           {loading ? 'Please wait...' : 'Accept & Continue'}
         </button>
       </div>
@@ -136,16 +145,20 @@ export default function Terms() {
 }
 
 const s = {
-  page: { minHeight: '100vh', backgroundColor: C.BG, display: 'flex', flexDirection: 'column' },
-  header: { padding: '32px 20px 20px', textAlign: 'center' },
-  title: { fontSize: 24, fontWeight: 800, color: C.TEXT1, margin: '12px 0 4px' },
-  sub: { fontSize: 14, color: C.TEXT3, margin: 0 },
-  tabs: { display: 'flex', margin: '0 16px 16px', backgroundColor: '#fff', borderRadius: 12, padding: 4, border: `1px solid ${C.BORDER}` },
-  tab: { flex: 1, padding: '10px 8px', border: 'none', background: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', color: C.TEXT3 },
-  tabActive: { backgroundColor: C.PRIMARY, color: '#fff' },
-  content: { flex: 1, margin: '0 16px', backgroundColor: '#fff', borderRadius: 16, padding: 16, border: `1px solid ${C.BORDER}`, overflow: 'auto', maxHeight: 360 },
-  text: { fontSize: 13, color: C.TEXT1, lineHeight: 1.7, whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 },
-  footer: { padding: '16px 20px 32px', display: 'flex', flexDirection: 'column', gap: 12 },
-  check: { display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: C.TEXT1, cursor: 'pointer' },
-  btn: { width: '100%', padding: 15, borderRadius: 14, backgroundColor: C.PRIMARY, color: '#fff', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 8 },
+  page:        { minHeight: '100vh', backgroundColor: C.BG, display: 'flex', flexDirection: 'column' },
+  title:       { fontSize: 24, fontWeight: 800, color: C.TEXT1, margin: '0 0 6px' },
+  sub:         { fontSize: 14, color: C.TEXT3, margin: '0 0 24px' },
+  readHeader:  { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: `1px solid ${C.BORDER}`, backgroundColor: '#fff' },
+  backArrow:   { background: 'none', border: 'none', color: '#6D28D9', fontSize: 14, fontWeight: 600, cursor: 'pointer', padding: 0, width: 60 },
+  readTitle:   { fontSize: 16, fontWeight: 700, color: C.TEXT1 },
+  tabs:        { display: 'flex', margin: '16px 16px 0', backgroundColor: '#fff', borderRadius: 12, padding: 4, border: `1px solid ${C.BORDER}` },
+  tab:         { flex: 1, padding: '10px 8px', border: 'none', background: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', color: C.TEXT3 },
+  tabActive:   { backgroundColor: C.PRIMARY, color: '#fff' },
+  readContent: { flex: 1, margin: '16px 16px 24px', backgroundColor: '#fff', borderRadius: 16, padding: 16, border: `1px solid ${C.BORDER}`, overflow: 'auto' },
+  text:        { fontSize: 13, color: C.TEXT1, lineHeight: 1.7, whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 },
+  acceptWrap:  { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', textAlign: 'center' },
+  agreebox:    { backgroundColor: '#fff', borderRadius: 16, padding: '20px', border: `1px solid ${C.BORDER}`, marginBottom: 24, width: '100%', maxWidth: 380, boxSizing: 'border-box' },
+  agreeText:   { margin: 0, fontSize: 14, color: '#374151', lineHeight: 1.7 },
+  link:        { color: '#6D28D9', fontWeight: 600, textDecoration: 'none' },
+  btn:         { width: '100%', maxWidth: 380, padding: 15, borderRadius: 14, backgroundColor: C.PRIMARY, color: '#fff', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer' },
 };

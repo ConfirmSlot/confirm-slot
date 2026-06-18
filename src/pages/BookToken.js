@@ -3,14 +3,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import { C, IMG } from '../styles/colors';
 import AppLayout from '../components/app/AppLayout';
+import { useAuth } from '../contexts/AuthContext';
+import LoginModal from '../components/LoginModal';
 
 export default function BookToken() {
   const { spId } = useParams();
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [sp, setSp] = useState(null);
   const [date, setDate] = useState('');
   const [booking, setBooking] = useState(false);
   const [result, setResult] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
   const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
@@ -19,8 +23,7 @@ export default function BookToken() {
     });
   }, [spId]);
 
-  const handleBook = async () => {
-    if (!date) return;
+  const doBook = async () => {
     setBooking(true);
     try {
       const res = await api.post('/v1/tokens', {
@@ -30,10 +33,14 @@ export default function BookToken() {
         payment: { price: 0, currencyId: 'INR', status: 1, paymentMode: 'OFFLINE', referenceNo: `WEB_TOKEN_${Date.now()}` },
         status: 'ACTIVE',
       });
-      if (res.success) {
-        setResult(res.token || res.data);
-      }
+      if (res.success) setResult(res.token || res.data);
     } finally { setBooking(false); }
+  };
+
+  const handleBook = () => {
+    if (!date) return;
+    if (!isLoggedIn) { setShowLogin(true); return; }
+    doBook();
   };
 
   const spInfo = sp?.serviceProvider || sp;
@@ -96,6 +103,13 @@ export default function BookToken() {
           {booking ? 'Booking...' : 'Get Token'}
         </button>
       </div>
+
+      {showLogin && (
+        <LoginModal
+          onSuccess={() => { setShowLogin(false); doBook(); }}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </AppLayout>
   );
 }
