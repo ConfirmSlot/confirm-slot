@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../config/api';
-import { api } from '../lib/api';
 
 const PRIMARY   = '#6D28D9';
 const PRIMARY_D = '#4C1D95';
