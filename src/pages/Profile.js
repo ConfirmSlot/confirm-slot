@@ -51,7 +51,6 @@ export default function Profile() {
   const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    new FileReader().onload = (ev) => setPicPreview(ev.target.result);
     const fr = new FileReader();
     fr.onload = (ev) => setPicPreview(ev.target.result);
     fr.readAsDataURL(file);
@@ -64,7 +63,13 @@ export default function Profile() {
       if (res.success && res.key) {
         await api.patch('/v1/users/me', { info: { picture: res.key } });
         login(token, { ...user, info: { ...info, picture: res.key } });
+      } else {
+        setPicPreview(null);
+        toast.error('Failed to upload photo. Please try again.');
       }
+    } catch {
+      setPicPreview(null);
+      toast.error('Failed to upload photo. Please try again.');
     } finally { setUploading(false); }
   };
 

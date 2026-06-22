@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { API_BASE_URL } from '../../config/api';
+import { IMG } from '../../styles/colors';
 
 export default function ServiceDetail() {
   const { spId }    = useParams();
@@ -115,10 +116,7 @@ export default function ServiceDetail() {
     } finally { setLeaving(false); }
   };
 
-  const imgSrc = (path) =>
-    !path ? null :
-    path.startsWith('http') ? path :
-    `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${path}`;
+  const imgSrc = (path) => IMG(path);
 
   if (loading) return (
     <div style={s.container}><CircularProgress style={{ color: '#6366f1' }} /></div>

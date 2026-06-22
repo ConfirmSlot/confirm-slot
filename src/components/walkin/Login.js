@@ -167,10 +167,6 @@ export default function Login() {
             <h2 style={s.title}>Verify Your Number</h2>
             <p style={s.subtitle}>Enter the 6-digit code sent to +91&nbsp;{phone}</p>
 
-            <p style={{ fontSize: 13, color: '#6B7280', margin: '0 0 12px', fontWeight: 500, alignSelf: 'flex-start' }}>
-              Verification Code
-            </p>
-
             {/* 6 OTP boxes */}
             <div style={s.otpRow}>
               {otp.map((digit, i) => (

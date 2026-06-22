@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { API_BASE_URL } from '../../config/api';
+import { IMG } from '../../styles/colors';
 
 const IOS_URL     = 'https://apps.apple.com/in/app/confirmslot/id6758349903';
 const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.identifier.confirmslot';
@@ -49,7 +50,7 @@ export default function WalkinLanding() {
         {/* Venue info */}
         {venue?.icon && (
           <img
-            src={venue.icon.startsWith('http') ? venue.icon : `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${venue.icon}`}
+            src={IMG(venue.icon)}
             alt={venue?.name}
             style={styles.icon}
             onError={e => { e.target.style.display = 'none'; }}

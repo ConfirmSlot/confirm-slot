@@ -52,7 +52,7 @@ export function AppBanner() {
 }
 
 const sb = {
-  banner:  { display:'flex', alignItems:'center', gap:10, backgroundColor:'#fff', padding:'8px 12px', borderBottom:'1px solid #E5E7EB', position:'sticky', top:56, zIndex:99 },
+  banner:  { display:'flex', alignItems:'center', gap:10, backgroundColor:'#fff', padding:'8px 12px', borderBottom:'1px solid #E5E7EB' },
   logo:    { width:36, height:36, borderRadius:10, flexShrink:0 },
   title:   { margin:0, fontSize:13, fontWeight:700, color:'#1E1B4B' },
   sub:     { margin:0, fontSize:11, color:'#6B7280' },

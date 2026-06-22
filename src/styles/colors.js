@@ -20,12 +20,20 @@ export const C = {
 
 export const IMG = (path) => {
   if (!path) return null;
-  // Normalize old virtual-hosted S3 URLs (confirmslot.com.s3.amazonaws.com/key)
-  // to path-style (s3.ap-south-1.amazonaws.com/confirmslot.com/key)
+  // Normalize old confirmslot virtual-hosted URLs → path-style
   if (path.includes('confirmslot.com.s3.amazonaws.com/')) {
     const key = path.split('confirmslot.com.s3.amazonaws.com/')[1];
-    return `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${key}`;
+    return `https://s3.ap-south-1.amazonaws.com/onezy.net/${key}`;
+  }
+  // Rewrite old bucket path-style URLs to new bucket
+  if (path.includes('s3.ap-south-1.amazonaws.com/confirmslot.com/')) {
+    return path.replace('s3.ap-south-1.amazonaws.com/confirmslot.com/', 's3.ap-south-1.amazonaws.com/onezy.net/');
+  }
+  // Normalize new bucket virtual-hosted URLs → path-style (dots in name break virtual-hosting)
+  if (/onezy\.net\.s3[^/]*\.amazonaws\.com\//.test(path)) {
+    const key = path.split(/onezy\.net\.s3[^/]*\.amazonaws\.com\//)[1];
+    return `https://s3.ap-south-1.amazonaws.com/onezy.net/${key}`;
   }
   if (path.startsWith('http')) return path;
-  return `https://s3.ap-south-1.amazonaws.com/confirmslot.com/${path}`;
+  return `https://s3.ap-south-1.amazonaws.com/onezy.net/${path}`;
 };
