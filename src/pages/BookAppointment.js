@@ -43,6 +43,7 @@ export default function BookAppointment() {
   const paymentMode = sp?.paymentMode || 'OFFLINE';
   const currency    = currencyId === 'INR' ? '₹' : '$';
 
+  
   const extraTotal = selectedExtras.reduce((sum, id) => {
     const e = extras.find(x => x._id === id);
     return sum + (e?.price || 0);
