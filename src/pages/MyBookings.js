@@ -53,6 +53,11 @@ export default function MyBookings() {
   const [myCarnivals,   setMyCarnivals]   = useState([]);
   const [loading,       setLoading]       = useState(true);
 
+  const [mainTab,          setMainTab]          = useState('bookings');
+  const [purchases,        setPurchases]        = useState([]);
+  const [purchasesLoading, setPurchasesLoading] = useState(false);
+  const [purchasesError,   setPurchasesError]   = useState(null);
+
   // Cancel (appointment/token)
   const [cancelConfirm, setCancelConfirm] = useState(null); // booking object
   const [cancellingId,  setCancellingId]  = useState(null);
@@ -105,6 +110,23 @@ export default function MyBookings() {
     setLoading(true);
     fetchBookings().finally(() => setLoading(false));
   }, [fetchBookings]);
+
+  const fetchPurchases = useCallback(async () => {
+    setPurchasesLoading(true);
+    setPurchasesError(null);
+    try {
+      const res = await api.get('/v1/integration/purchases');
+      setPurchases(res.data || []);
+    } catch {
+      setPurchasesError('Failed to load purchases. Please try again.');
+    } finally {
+      setPurchasesLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mainTab === 'purchases') fetchPurchases();
+  }, [mainTab, fetchPurchases]);
 
   // ── Derived lists ─────────────────────────────────────────────────────────
 
@@ -423,96 +445,220 @@ export default function MyBookings() {
 
       <div style={{ padding: '16px 16px 0' }}>
 
-        {/* Filter tabs */}
-        <div style={{ display:'flex', gap:6, marginBottom:10, overflowX:'auto', paddingBottom:2 }}>
-          {FILTER_TABS.map(t => (
-            <button key={t} onClick={() => setFilter(t)}
-              style={{ ...s.pill, ...(filter === t ? s.pillActive : {}), whiteSpace:'nowrap' }}>
-              {t.charAt(0).toUpperCase() + t.slice(1)}
+        {/* ── Main Tab Switcher ── */}
+        <div style={{ display:'flex', backgroundColor:'#F3F4F6', borderRadius:12, padding:4, marginBottom:16 }}>
+          {['bookings','purchases'].map(tab => (
+            <button key={tab} onClick={() => setMainTab(tab)}
+              style={{
+                flex:1, padding:'9px 0', borderRadius:10, border:'none', cursor:'pointer',
+                fontSize:14, fontWeight:700,
+                backgroundColor: mainTab === tab ? '#fff' : 'transparent',
+                color: mainTab === tab ? C.PRIMARY : '#6B7280',
+                boxShadow: mainTab === tab ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+              }}>
+              {tab === 'bookings' ? 'My Bookings' : 'Purchases'}
             </button>
           ))}
         </div>
 
-        {/* Payment filter — shown only on upcoming tab */}
-        {filter === 'upcoming' && (
-          <div style={{ display:'flex', gap:6, marginBottom:14 }}>
-            {['all','paid','unpaid'].map(p => (
-              <button key={p} onClick={() => setPaymentFilter(p)}
-                style={{ ...s.pillSm, ...(paymentFilter === p ? s.pillSmActive : {}) }}>
-                {p.charAt(0).toUpperCase() + p.slice(1)}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {loading ? (
-          <div style={s.center}><Spinner /></div>
-        ) : filtered.length === 0 && filteredSessions.length === 0 && filteredCarnivals.length === 0 ? (
-          <div style={s.center}>
-            <div style={{ textAlign:'center' }}>
-              <p style={{ fontSize:40 }}>📭</p>
-              <p style={{ color:'#6B7280', fontSize:15 }}>No {filter} bookings</p>
-              {filter === 'upcoming' && (
-                <button style={s.exploreBtn} onClick={() => navigate('/home')}>Explore Services</button>
-              )}
+        {/* ── Bookings Tab ── */}
+        {mainTab === 'bookings' && (
+          <>
+            {/* Filter tabs */}
+            <div style={{ display:'flex', gap:6, marginBottom:10, overflowX:'auto', paddingBottom:2 }}>
+              {FILTER_TABS.map(t => (
+                <button key={t} onClick={() => setFilter(t)}
+                  style={{ ...s.pill, ...(filter === t ? s.pillActive : {}), whiteSpace:'nowrap' }}>
+                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                </button>
+              ))}
             </div>
-          </div>
-        ) : (
-          <div style={{ paddingBottom: 80 }}>
 
-            {/* Carnivals */}
-            {filteredCarnivals.length > 0 && (
-              <Section label={filter === 'completed' ? '🏁 Carnivals' : '🎪 Carnivals'}>
-                {filteredCarnivals.map(c => <CarnivalCard key={c._id} c={c} navigate={navigate} />)}
-              </Section>
-            )}
-
-            {/* Tokens */}
-            {tokens.length > 0 && (
-              <Section label="Tokens">
-                {tokens.map(b => (
-                  <BookingCard key={b._id} b={b} filter={filter}
-                    cancellingId={cancellingId}
-                    onCancel={setCancelConfirm}
-                    onReschedule={openReschedule}
-                    onReview={(b) => { setReviewBooking(b); setReviewRating(0); setReviewText(''); }}
-                    navigate={navigate}
-                  />
+            {/* Payment filter — shown only on upcoming tab */}
+            {filter === 'upcoming' && (
+              <div style={{ display:'flex', gap:6, marginBottom:14 }}>
+                {['all','paid','unpaid'].map(p => (
+                  <button key={p} onClick={() => setPaymentFilter(p)}
+                    style={{ ...s.pillSm, ...(paymentFilter === p ? s.pillSmActive : {}) }}>
+                    {p.charAt(0).toUpperCase() + p.slice(1)}
+                  </button>
                 ))}
-              </Section>
+              </div>
             )}
 
-            {/* Appointments */}
-            {appointments.length > 0 && (
-              <Section label="Appointments">
-                {appointments.map(b => (
-                  <BookingCard key={b._id} b={b} filter={filter}
-                    cancellingId={cancellingId}
-                    onCancel={setCancelConfirm}
-                    onReschedule={openReschedule}
-                    onReview={(b) => { setReviewBooking(b); setReviewRating(0); setReviewText(''); }}
-                    navigate={navigate}
-                  />
-                ))}
-              </Section>
-            )}
+            {loading ? (
+              <div style={s.center}><Spinner /></div>
+            ) : filtered.length === 0 && filteredSessions.length === 0 && filteredCarnivals.length === 0 ? (
+              <div style={s.center}>
+                <div style={{ textAlign:'center' }}>
+                  <p style={{ fontSize:40 }}>📭</p>
+                  <p style={{ color:'#6B7280', fontSize:15 }}>No {filter} bookings</p>
+                  {filter === 'upcoming' && (
+                    <button style={s.exploreBtn} onClick={() => navigate('/home')}>Explore Services</button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div style={{ paddingBottom: 80 }}>
 
-            {/* Sessions */}
-            {filteredSessions.length > 0 && (
-              <Section label="Sessions">
-                {filteredSessions.map(sb => (
-                  <SessionCard key={sb._id} sb={sb} filter={filter}
-                    onCancel={setSessionCancelConfirm}
-                    onReschedule={openSessionReschedule}
-                  />
-                ))}
-              </Section>
-            )}
+                {/* Carnivals */}
+                {filteredCarnivals.length > 0 && (
+                  <Section label={filter === 'completed' ? '🏁 Carnivals' : '🎪 Carnivals'}>
+                    {filteredCarnivals.map(c => <CarnivalCard key={c._id} c={c} navigate={navigate} />)}
+                  </Section>
+                )}
 
+                {/* Tokens */}
+                {tokens.length > 0 && (
+                  <Section label="Tokens">
+                    {tokens.map(b => (
+                      <BookingCard key={b._id} b={b} filter={filter}
+                        cancellingId={cancellingId}
+                        onCancel={setCancelConfirm}
+                        onReschedule={openReschedule}
+                        onReview={(b) => { setReviewBooking(b); setReviewRating(0); setReviewText(''); }}
+                        navigate={navigate}
+                      />
+                    ))}
+                  </Section>
+                )}
+
+                {/* Appointments */}
+                {appointments.length > 0 && (
+                  <Section label="Appointments">
+                    {appointments.map(b => (
+                      <BookingCard key={b._id} b={b} filter={filter}
+                        cancellingId={cancellingId}
+                        onCancel={setCancelConfirm}
+                        onReschedule={openReschedule}
+                        onReview={(b) => { setReviewBooking(b); setReviewRating(0); setReviewText(''); }}
+                        navigate={navigate}
+                      />
+                    ))}
+                  </Section>
+                )}
+
+                {/* Sessions */}
+                {filteredSessions.length > 0 && (
+                  <Section label="Sessions">
+                    {filteredSessions.map(sb => (
+                      <SessionCard key={sb._id} sb={sb} filter={filter}
+                        onCancel={setSessionCancelConfirm}
+                        onReschedule={openSessionReschedule}
+                      />
+                    ))}
+                  </Section>
+                )}
+
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── Purchases Tab ── */}
+        {mainTab === 'purchases' && (
+          <div style={{ paddingBottom:80 }}>
+            {purchasesLoading ? (
+              <div style={s.center}><Spinner /></div>
+            ) : purchasesError ? (
+              <div style={{ ...s.card, border:'1px solid #FEE2E2', marginBottom:12 }}>
+                <p style={{ color:'#EF4444', fontSize:13, margin:'0 0 8px' }}>{purchasesError}</p>
+                <button onClick={fetchPurchases} style={{ ...s.outlineBtn, flex:'none', padding:'6px 16px' }}>Retry</button>
+              </div>
+            ) : purchases.length === 0 ? (
+              <div style={s.center}>
+                <div style={{ textAlign:'center' }}>
+                  <p style={{ fontSize:40 }}>🛍️</p>
+                  <p style={{ fontWeight:700, fontSize:17, color:C.TEXT1, margin:'0 0 6px' }}>No Purchases Yet</p>
+                  <p style={{ color:'#6B7280', fontSize:13, lineHeight:1.6 }}>Show your QR code at any Onezy-integrated shop. Your purchases will appear here automatically.</p>
+                </div>
+              </div>
+            ) : (
+              purchases.map(item => {
+                const currSymbol = item.currency === 'INR' ? '₹' : '$';
+                const dateStr = item.date ? new Date(item.date).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '';
+                const timeStr = item.date ? new Date(item.date).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) : '';
+                const meta = [item.storeCategory, dateStr, timeStr].filter(Boolean).join('  ·  ');
+                return (
+                  <PurchaseCard key={item._id} item={item} currSymbol={currSymbol} meta={meta}
+                    onDelete={(id) => setPurchases(prev => prev.filter(p => p._id !== id))} />
+                );
+              })
+            )}
           </div>
         )}
+
       </div>
     </AppLayout>
+  );
+}
+
+// ── PurchaseCard ──────────────────────────────────────────────────────────────
+
+function PurchaseCard({ item, currSymbol, meta, onDelete }) {
+  const [expanded, setExpanded] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (!window.confirm('Remove this purchase record?')) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/v1/integration/purchases/${item._id}`);
+      onDelete(item._id);
+    } catch {
+      toast.error('Failed to delete purchase.');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <div onClick={() => setExpanded(e => !e)}
+      style={{ ...s.card, marginBottom:12, cursor:'pointer', borderLeft:'4px solid #6D28D9' }}>
+      {/* Store name + branch */}
+      <div style={{ display:'flex', alignItems:'flex-start', marginBottom:6 }}>
+        <span style={{ fontSize:22, marginRight:10, lineHeight:1.2 }}>{item.emoji || '🧾'}</span>
+        <div style={{ flex:1 }}>
+          <p style={{ margin:0, fontWeight:800, fontSize:15, color:C.TEXT1 }}>
+            {item.storeName}
+            {item.storeBranch && <span style={{ fontWeight:500, color:'#6B7280' }}> — {item.storeBranch}</span>}
+          </p>
+          <p style={{ margin:'3px 0 0', fontSize:12, color:'#6B7280' }}>{meta}</p>
+        </div>
+      </div>
+      {/* Items · amount */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:6 }}>
+        <span style={{ fontSize:12, color:'#374151' }}>
+          {item.itemCount > 0 ? `${item.itemCount} item${item.itemCount > 1 ? 's' : ''}` : ''}
+          {item.itemCount > 0 && item.paymentMode ? '  ·  ' : ''}
+          {item.paymentMode || ''}
+        </span>
+        <span style={{ fontSize:16, fontWeight:900, color:C.PRIMARY }}>{currSymbol}{(item.totalAmount||0).toLocaleString('en-IN')}</span>
+      </div>
+      {/* Expanded item breakdown */}
+      {expanded && (
+        <div style={{ borderTop:'1px solid #F3F4F6', marginTop:10, paddingTop:10 }}>
+          {item.items && item.items.map((li, i) => (
+            <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0' }}>
+              <div>
+                <p style={{ margin:0, fontSize:13, fontWeight:600, color:C.TEXT1 }}>{li.name}</p>
+                {li.quantity > 1 && <p style={{ margin:0, fontSize:11, color:'#6B7280' }}>{li.quantity} × {currSymbol}{li.unitPrice?.toLocaleString('en-IN')}</p>}
+              </div>
+              <span style={{ fontSize:13, fontWeight:700, color:C.TEXT1 }}>{currSymbol}{(li.totalPrice||0).toLocaleString('en-IN')}</span>
+            </div>
+          ))}
+          {item.billNo && <p style={{ margin:'8px 0 0', fontSize:11, color:'#9CA3AF' }}>Bill No: {item.billNo}</p>}
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            style={{ marginTop:12, padding:'6px 14px', borderRadius:8, border:'1.5px solid #EF4444', background:'none', color:'#EF4444', fontSize:12, fontWeight:600, cursor:'pointer' }}
+          >
+            {deleting ? 'Deleting…' : 'Delete Record'}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
