@@ -29,7 +29,7 @@ async function logVisit(type, store = null) {
   }
 }
 
-const MobileAppSection = () => {
+const MobileAppSection = ({ autoRedirect = true }) => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -38,19 +38,21 @@ const MobileAppSection = () => {
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     const isAndroid = /android/i.test(ua);
 
-    if (isIOS) {
+    // When embedded on the combined page we only log the visit — auto-redirecting
+    // mobile users to the store would hijack the whole page.
+    if (isIOS && autoRedirect) {
       logVisit('page_visit').finally(() => {
         window.location.href = IOS_URL;
       });
-    } else if (isAndroid) {
+    } else if (isAndroid && autoRedirect) {
       logVisit('page_visit').finally(() => {
         window.location.href = ANDROID_URL;
       });
     } else {
-      // desktop / tablet — just log, no redirect
+      // desktop / tablet, or embedded — just log, no redirect
       logVisit('page_visit');
     }
-  }, []);
+  }, [autoRedirect]);
 
   const handleStoreClick = (store) => {
     logVisit('store_click', store);

@@ -19,11 +19,11 @@ import "./Header.css";
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/about-us" },
-  { label: "Services", href: "/services" },
-  { label: "Enquiry", href: "/enquiry" },
-  { label: "Our App", href: "/our-app" },
-  { label: "Contact", href: "/contact" },
+  { label: "About Us", href: "/business#about" },
+  { label: "Services", href: "/business#services" },
+  { label: "Our App", href: "/business#our-app" },
+  { label: "Contact", href: "/business#contact" },
+  { label: "Enquiry", href: "/business#enquiry" },
   { label: "Browse Services ", href: "/home", highlight: true },
 ];
 
@@ -82,13 +82,13 @@ const Header = () => {
                 color="inherit"
                 className="navbar-link"
                 sx={item.highlight ? {
-                  backgroundColor: '#6D28D9',
+                  backgroundColor: '#511f9f',
                   color: '#fff !important',
                   borderRadius: '10px',
                   px: 2,
                   fontWeight: 700,
                   ml: 1,
-                  '&:hover': { backgroundColor: '#5B21B6' }
+                  '&:hover': { backgroundColor: '#3f1780' }
                 } : {}}
               >
                 {item.label}

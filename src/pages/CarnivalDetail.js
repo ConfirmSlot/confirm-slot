@@ -42,7 +42,7 @@ export default function CarnivalDetail() {
         <button onClick={() => navigate(-1)} style={s.backBtn}>←</button>
       </div>
 
-      <div style={{ padding: '20px 16px' }}>
+      <div className="app-narrow" style={{ padding: '20px 16px' }}>
         <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 800, color: C.TEXT1 }}>{carnival.title || carnival.name}</h1>
         {carnival.description && <p style={{ margin: '0 0 16px', color: C.TEXT3, fontSize: 14, lineHeight: 1.6 }}>{carnival.description}</p>}
 

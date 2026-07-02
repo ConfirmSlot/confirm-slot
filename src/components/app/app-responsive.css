@@ -1,0 +1,35 @@
+/* Shared responsive layout primitives for the functional (app) pages.
+   Mobile-first: everything is full width / single column by default,
+   then fills the available horizontal space on wider (web) viewports. */
+
+/* Centered content shell — uses the width on desktop, full width on mobile */
+.app-shell {
+  width: 100%;
+  max-width: 1160px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Bottom tab bar stays a compact, centered mobile-style nav even on desktop */
+.app-tabbar-inner {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+}
+
+/* Responsive card grid: 1 column on phones, auto-fills into multiple
+   columns as the viewport grows — no media queries required. */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* Readable centered column for forms / detail pages that shouldn't stretch */
+.app-narrow {
+  width: 100%;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}

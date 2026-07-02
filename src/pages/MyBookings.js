@@ -574,16 +574,18 @@ export default function MyBookings() {
                 </div>
               </div>
             ) : (
-              purchases.map(item => {
-                const currSymbol = item.currency === 'INR' ? '₹' : '$';
-                const dateStr = item.date ? new Date(item.date).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '';
-                const timeStr = item.date ? new Date(item.date).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) : '';
-                const meta = [item.storeCategory, dateStr, timeStr].filter(Boolean).join('  ·  ');
-                return (
-                  <PurchaseCard key={item._id} item={item} currSymbol={currSymbol} meta={meta}
-                    onDelete={(id) => setPurchases(prev => prev.filter(p => p._id !== id))} />
-                );
-              })
+              <div className="app-grid">
+                {purchases.map(item => {
+                  const currSymbol = item.currency === 'INR' ? '₹' : '$';
+                  const dateStr = item.date ? new Date(item.date).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '';
+                  const timeStr = item.date ? new Date(item.date).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) : '';
+                  const meta = [item.storeCategory, dateStr, timeStr].filter(Boolean).join('  ·  ');
+                  return (
+                    <PurchaseCard key={item._id} item={item} currSymbol={currSymbol} meta={meta}
+                      onDelete={(id) => setPurchases(prev => prev.filter(p => p._id !== id))} />
+                  );
+                })}
+              </div>
             )}
           </div>
         )}
@@ -615,7 +617,7 @@ function PurchaseCard({ item, currSymbol, meta, onDelete }) {
 
   return (
     <div onClick={() => setExpanded(e => !e)}
-      style={{ ...s.card, marginBottom:12, cursor:'pointer', borderLeft:'4px solid #6D28D9' }}>
+      style={{ ...s.card, cursor:'pointer', borderLeft:'4px solid #511f9f' }}>
       {/* Store name + branch */}
       <div style={{ display:'flex', alignItems:'flex-start', marginBottom:6 }}>
         <span style={{ fontSize:22, marginRight:10, lineHeight:1.2 }}>{item.emoji || '🧾'}</span>
@@ -668,7 +670,7 @@ function Section({ label, children }) {
   return (
     <div style={{ marginBottom: 20 }}>
       <p style={{ margin:'0 0 10px', fontSize:15, fontWeight:700, color:'#6B7280' }}>{label}</p>
-      <div style={{ display:'flex', flexDirection:'column', gap:12 }}>{children}</div>
+      <div className="app-grid">{children}</div>
     </div>
   );
 }
@@ -922,7 +924,7 @@ function SessionCard({ sb, filter, onCancel, onReschedule }) {
 // ── CarnivalCard ──────────────────────────────────────────────────────────────
 
 function CarnivalCard({ c, navigate }) {
-  const statusColor = { ACTIVE:'#10B981', UPCOMING:'#F59E0B', COMPLETED:'#6D28D9', ENDED:'#6B7280', CANCELLED:'#EF4444' }[c.status] || '#6B7280';
+  const statusColor = { ACTIVE:'#10B981', UPCOMING:'#F59E0B', COMPLETED:'#511f9f', ENDED:'#6B7280', CANCELLED:'#EF4444' }[c.status] || '#6B7280';
   const cs = c.couponSummary || {};
   return (
     <div onClick={() => navigate(`/carnival/${c._id}`)} style={{ ...s.card, cursor:'pointer', borderLeft:`4px solid ${statusColor}` }}>

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import './ServicesPage.css';
 
-const ServicesPage = () => {
+const ServicesPage = ({ embedded = false }) => {
   const coreServices = [
     {
       title: 'Online Appointment Booking',
@@ -114,23 +114,27 @@ const ServicesPage = () => {
   ];
 
   return (
-    <div className="services-page">
-      {/* Hero Section */}
-      <section className="services-hero">
-        <motion.div
-          className="services-hero-content"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="services-page-title">Our Services</h1>
-          <p className="services-page-subtitle">
-            Comprehensive appointment and queue management solutions designed to streamline your operations and enhance customer experience
-          </p>
-        </motion.div>
-      </section>
+    <div className={`services-page${embedded ? " embedded" : ""}`}>
+      {!embedded && (
+        <>
+          {/* Hero Section */}
+          <section className="services-hero">
+            <motion.div
+              className="services-hero-content"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="services-page-title">Our Services</h1>
+              <p className="services-page-subtitle">
+                Comprehensive appointment and queue management solutions designed to streamline your operations and enhance customer experience
+              </p>
+            </motion.div>
+          </section>
 
-      <div className="section-divider"></div>
+          <div className="section-divider"></div>
+        </>
+      )}
 
       {/* Core Services Section */}
       <section className="core-services-section">

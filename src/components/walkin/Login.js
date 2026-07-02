@@ -4,8 +4,8 @@ import { CircularProgress } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { API_BASE_URL } from '../../config/api';
 
-const PRIMARY   = '#6D28D9';
-const PRIMARY_D = '#4C1D95';
+const PRIMARY   = '#511f9f';
+const PRIMARY_D = '#3f1780';
 
 export default function Login() {
   const navigate       = useNavigate();
@@ -182,7 +182,7 @@ export default function Login() {
                   style={{
                     ...s.otpBox,
                     borderColor: digit ? PRIMARY : '#D1D5DB',
-                    color: digit ? PRIMARY : '#1E1B4B',
+                    color: digit ? PRIMARY : '#2a1052',
                   }}
                 />
               ))}
@@ -227,11 +227,11 @@ export default function Login() {
 const s = {
   page: {
     minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: '24px', position: 'relative', backgroundColor: '#F5F3FF',
+    padding: '24px', position: 'relative', backgroundColor: '#F8FAFC',
   },
   bg: {
     position: 'fixed', inset: 0,
-    background: `linear-gradient(160deg, #7C3AED 0%, ${PRIMARY} 50%, ${PRIMARY_D} 100%)`,
+    background: `linear-gradient(160deg, #6d28d9 0%, ${PRIMARY} 50%, ${PRIMARY_D} 100%)`,
     zIndex: 0,
   },
   card: {
@@ -245,7 +245,7 @@ const s = {
     marginBottom: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
   },
   logo:     { width: '80px', height: '80px', objectFit: 'contain', borderRadius: '16px' },
-  title:    { fontSize: '20px', fontWeight: '800', color: '#1E1B4B', margin: '0 0 4px', textAlign: 'center' },
+  title:    { fontSize: '20px', fontWeight: '800', color: '#2a1052', margin: '0 0 4px', textAlign: 'center' },
   subtitle: { fontSize: '13px', color: '#6B7280', margin: '0 0 20px', textAlign: 'center', lineHeight: 1.5 },
   expiredBanner: {
     backgroundColor: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '10px',
@@ -297,11 +297,11 @@ const s = {
   },
   btn: {
     width: '100%', padding: '15px', borderRadius: '12px',
-    background: `linear-gradient(135deg, #7C3AED, ${PRIMARY_D})`,
+    background: `linear-gradient(135deg, #6d28d9, ${PRIMARY_D})`,
     color: '#fff', border: 'none', fontSize: '16px', fontWeight: '700',
     cursor: 'pointer', marginBottom: '14px', display: 'flex',
     alignItems: 'center', justifyContent: 'center',
-    boxShadow: '0 4px 15px rgba(109,40,217,0.4)',
+    boxShadow: '0 4px 15px rgba(81, 31, 159,0.4)',
   },
   backBtn: {
     background: 'none', border: 'none', color: '#6B7280',

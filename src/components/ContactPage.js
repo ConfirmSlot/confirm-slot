@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ContactPage.css';
 
-const ContactPage = () => {
+const ContactPage = ({ embedded = false }) => {
 
   const mapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -46,14 +46,20 @@ const ContactPage = () => {
 
 
   return (
-    <div className="contact-page">
-      {/* Hero Section */}
-      <div className="hero-section">
-        <div className="hero-content">
-          <h1>Get In Touch</h1>
-          <p>We'd love to hear from you. Reach out to us anytime.</p>
-        </div>
-      </div>
+    <div className={`contact-page${embedded ? " embedded" : ""}`}>
+      {!embedded && (
+        <>
+          {/* Hero Section */}
+          <div className="hero-section">
+            <div className="hero-content">
+              <h1>Get In Touch</h1>
+              <p>We'd love to hear from you. Reach out to us anytime.</p>
+            </div>
+          </div>
+
+          <div className="section-divider"></div>
+        </>
+      )}
 
       {/* Contact Content */}
       <div className="contact-container">

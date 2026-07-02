@@ -175,7 +175,7 @@ const s = {
     border: 'none',
     fontSize: 22,
     cursor: 'pointer',
-    boxShadow: '0 4px 16px rgba(109,40,217,0.4)',
+    boxShadow: '0 4px 16px rgba(81, 31, 159,0.4)',
     zIndex: 200,
     display: 'flex',
     alignItems: 'center',
@@ -215,6 +215,6 @@ const s = {
   quickReplies:{ padding: '8px 12px', display: 'flex', flexWrap: 'wrap', gap: 6, borderTop: '1px solid #F3F4F6' },
   quickBtn:   { fontSize: 12, padding: '5px 10px', borderRadius: 12, border: `1px solid ${C.BORDER}`, backgroundColor: '#fff', color: C.PRIMARY, cursor: 'pointer', fontWeight: 600 },
   inputRow:   { display: 'flex', gap: 8, padding: '10px 12px', borderTop: '1px solid #F3F4F6', alignItems: 'center' },
-  textInput:  { flex: 1, padding: '10px 12px', borderRadius: 20, border: `1.5px solid ${C.BORDER}`, fontSize: 13, outline: 'none', backgroundColor: '#F9F8FF' },
+  textInput:  { flex: 1, padding: '10px 12px', borderRadius: 20, border: `1.5px solid ${C.BORDER}`, fontSize: 13, outline: 'none', backgroundColor: '#F8FAFC' },
   sendBtn:    { width: 36, height: 36, borderRadius: 18, backgroundColor: C.PRIMARY, border: 'none', color: '#fff', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
 };

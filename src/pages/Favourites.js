@@ -87,7 +87,7 @@ export default function Favourites() {
             </div>
           </div>
         ) : (
-          <div style={{ paddingBottom: 20 }}>
+          <div className="app-grid" style={{ padding: '0 16px 20px' }}>
             {favs.map(f => {
               const { spId, title, imgUrl, address } = resolve(f);
               const rating = ratings[f.serviceProviderId] || { avg: 0, total: 0 };
@@ -168,7 +168,6 @@ const s = {
   card: {
     display: 'flex', flexDirection: 'row', alignItems: 'flex-start',
     gap: 12, padding: '16px',
-    marginBottom: 12, marginLeft: 16, marginRight: 16,
     backgroundColor: '#fff', borderRadius: 12,
     border: '1px solid #E5E7EB',
     boxShadow: '0 1px 4px rgba(0,0,0,0.06)',

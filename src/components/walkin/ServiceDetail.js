@@ -170,12 +170,12 @@ export default function ServiceDetail() {
           </button>
         ) : (
           <div style={{ backgroundColor: '#FEF2F2', borderRadius: 12, padding: '14px', border: '1px solid #FEC5C5', marginTop: 8 }}>
-            <p style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 600, color: '#1E1B4B', textAlign: 'center' }}>Leave the queue?</p>
+            <p style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 600, color: '#2a1052', textAlign: 'center' }}>Leave the queue?</p>
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={confirmLeaveQueue} style={{ flex: 1, padding: '10px', borderRadius: 10, backgroundColor: '#EF4444', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer' }}>
                 Yes, Leave
               </button>
-              <button onClick={() => setConfirmLeave(false)} style={{ flex: 1, padding: '10px', borderRadius: 10, backgroundColor: '#F3F4F6', color: '#1E1B4B', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => setConfirmLeave(false)} style={{ flex: 1, padding: '10px', borderRadius: 10, backgroundColor: '#F3F4F6', color: '#2a1052', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
                 Stay
               </button>
             </div>

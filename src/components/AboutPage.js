@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import './AboutPage.css';
 
-const AboutPage = () => {
+const AboutPage = ({ embedded = false }) => {
   const features = [
     { icon: '📅', title: 'Easy Online Booking', desc: 'Intuitive interface for seamless appointment scheduling' },
     { icon: '🎫', title: 'Digital Token Generation', desc: 'Secure, instant token creation for queue management' },
@@ -39,23 +39,27 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="about-page">
-      {/* Hero Section */}
-      <section className="about-hero">
-        <motion.div
-          className="hero-content"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="page-title">Smart Appointment & Token Management</h1>
-          <p className="page-subtitle">
-            Your streamlined solution for managing appointments and tokens efficiently across all industries
-          </p>
-        </motion.div>
-      </section>
+    <div className={`about-page${embedded ? " embedded" : ""}`}>
+      {!embedded && (
+        <>
+          {/* Hero Section */}
+          <section className="about-hero">
+            <motion.div
+              className="hero-content"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="page-title">Smart Appointment & Token Management</h1>
+              <p className="page-subtitle">
+                Your streamlined solution for managing appointments and tokens efficiently across all industries
+              </p>
+            </motion.div>
+          </section>
 
-      <div className="section-divider"></div>
+          <div className="section-divider"></div>
+        </>
+      )}
 
       {/* What We Do Section */}
       <section className="about-section">

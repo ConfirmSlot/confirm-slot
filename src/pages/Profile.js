@@ -155,7 +155,7 @@ export default function Profile() {
 
   return (
     <AppLayout title={info.fName || 'Profile'}>
-      <div style={{ paddingBottom: 100 }}>
+      <div className="app-narrow" style={{ paddingBottom: 100 }}>
 
         {/* ── Avatar section ── */}
         <div style={s.avatarSection}>
@@ -375,11 +375,11 @@ const s = {
   input: {
     width:'100%', padding:'13px 14px', borderRadius:12,
     border:`1.5px solid ${C.BORDER}`, fontSize:14, outline:'none',
-    boxSizing:'border-box', color:C.TEXT1, backgroundColor:'#F9F8FF',
+    boxSizing:'border-box', color:C.TEXT1, backgroundColor:'#F8FAFC',
   },
   countryCode: {
     padding:'13px 14px', borderRadius:12, border:`1.5px solid ${C.BORDER}`,
-    fontSize:14, color:C.TEXT1, backgroundColor:'#F9F8FF', whiteSpace:'nowrap',
+    fontSize:14, color:C.TEXT1, backgroundColor:'#F8FAFC', whiteSpace:'nowrap',
   },
   required:    { color:C.PRIMARY },
   hint:        { margin:'4px 0 0', fontSize:12, color:'#aaa' },

@@ -33,7 +33,7 @@ export default function Notifications() {
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 20 }}>
+          <div className="app-grid" style={{ paddingBottom: 20 }}>
             {notifications.map(n => (
               <div key={n._id} onClick={() => markRead(n._id)} style={{ ...s.card, opacity: n.isRead ? 0.7 : 1 }}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>

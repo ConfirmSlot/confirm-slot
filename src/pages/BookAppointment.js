@@ -101,7 +101,7 @@ export default function BookAppointment() {
 
   return (
     <AppLayout title="Service Add-ons">
-      <div style={{ padding: '16px', paddingBottom: 100 }}>
+      <div className="app-narrow" style={{ padding: '16px', paddingBottom: 100 }}>
 
         {/* SP mini bar */}
         <div style={s.spBar}>
@@ -145,7 +145,7 @@ export default function BookAppointment() {
         {/* Special Requests */}
         <div style={s.card}>
           <h3 style={{ margin: '0 0 10px', fontSize: 15, fontWeight: 700, color: C.TEXT1 }}>Special Requests</h3>
-          <div style={{ backgroundColor: '#F9F8FF', borderRadius: 10, padding: '10px 12px', marginBottom: 8, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+          <div style={{ backgroundColor: '#F8FAFC', borderRadius: 10, padding: '10px 12px', marginBottom: 8, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
             <span style={{ fontSize: 16 }}>ℹ️</span>
             <p style={{ margin: 0, fontSize: 13, color: '#6B7280' }}>Have any specific requests? Our team will do their best to accommodate your needs.</p>
           </div>

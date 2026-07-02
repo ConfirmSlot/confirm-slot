@@ -5,6 +5,7 @@ import { C } from '../../styles/colors';
 import ChatBot from '../ChatBot';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './app-responsive.css';
 
 const IOS_URL     = 'https://apps.apple.com/in/app/confirmslot/id6758349903';
 const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.identifier.confirmslot';
@@ -54,7 +55,7 @@ export function AppBanner() {
 const sb = {
   banner:  { display:'flex', alignItems:'center', gap:10, backgroundColor:'#fff', padding:'8px 12px', borderBottom:'1px solid #E5E7EB' },
   logo:    { width:36, height:36, borderRadius:10, flexShrink:0 },
-  title:   { margin:0, fontSize:13, fontWeight:700, color:'#1E1B4B' },
+  title:   { margin:0, fontSize:13, fontWeight:700, color:'#2a1052' },
   sub:     { margin:0, fontSize:11, color:'#6B7280' },
   openBtn: { padding:'6px 14px', borderRadius:20, backgroundColor:C.PRIMARY, color:'#fff', border:'none', fontSize:12, fontWeight:700, cursor:'pointer', flexShrink:0 },
   closeBtn:{ background:'none', border:'none', fontSize:16, color:'#9CA3AF', cursor:'pointer', padding:'0 4px', flexShrink:0 },
@@ -103,10 +104,11 @@ export default function AppLayout({ children, title }) {
         padding: '12px 16px',
         position: 'sticky', top: 0, zIndex: 100,
       }}>
+       <div className="app-shell">
         {isHome ? (
           /* Home header */
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/home')}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/')}>
               <div style={s.navCircleBtn}>
                 <img src="/logo192.png" alt="Onezy" style={{ width: 24, height: 24, borderRadius: 6 }} onError={e => e.target.style.display='none'} />
               </div>
@@ -123,19 +125,20 @@ export default function AppLayout({ children, title }) {
         ) : (
           /* Inner page header: Logo circle | Title | Bell circle */
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 40 }}>
-            <button onClick={() => navigate('/home')} style={s.navCircleBtn}>
+            <button onClick={() => navigate('/')} style={s.navCircleBtn}>
               <img src="/logo192.png" alt="" style={{ width: 24, height: 24, borderRadius: 6 }} onError={e => e.target.style.display='none'} />
             </button>
             <span style={s.pageTitle}>{pageTitle || 'Onezy'}</span>
             <div style={{ width: 38 }} />
           </div>
         )}
+       </div>
       </div>
 
       {/* App download banner is rendered at root App.js level */}
 
       {/* Page content */}
-      <div>{children}</div>
+      <div className="app-shell">{children}</div>
 
       {/* ChatBot */}
       <ChatBot />
@@ -145,6 +148,7 @@ export default function AppLayout({ children, title }) {
 
       {/* Bottom tab bar */}
       <div style={s.tabBar}>
+       <div className="app-tabbar-inner">
         {tabs.map(t => (
           <button
             key={t.path}
@@ -161,6 +165,7 @@ export default function AppLayout({ children, title }) {
             <span style={{ color: '#fff', fontSize: 10, fontWeight: active(t.path) ? 700 : 400 }}>{t.label}</span>
           </button>
         ))}
+       </div>
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ export default function CarnivalList() {
         ) : carnivals.length === 0 ? (
           <div style={s.center}><p style={{ color: C.TEXT3 }}>No active carnivals</p></div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingBottom: 20 }}>
+          <div className="app-grid" style={{ paddingBottom: 20 }}>
             {carnivals.map(c => {
               const img = c.images?.[0]?.path || c.coverImage;
               return (

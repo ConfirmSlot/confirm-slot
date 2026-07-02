@@ -3,16 +3,14 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from "react-route
 import { AuthProvider } from "./contexts/AuthContext";
 import "./App.css";
 import WhatsAppFloatingButton from "./components/WhatsAppFloatingButton";
-import Header      from "./components/Header";
-import HeroSection from "./components/HeroSection";
 import Footer      from "./components/Footer";
-import PlatformBanner from "./components/PlatformBanner";
 import { AppBanner } from "./components/app/AppLayout";
 import ServicesPage from "./components/ServicesPage";
 import AboutPage    from "./components/AboutPage";
 import OurAppPage   from "./components/OurAppPage";
 import ContactPage  from "./components/ContactPage";
 import EnquiryPage  from "./components/EnquiryPage";
+import BusinessPage from "./components/BusinessPage";
 
 // Walk-in (already built)
 import WalkinLanding from "./components/walkin/WalkinLanding";
@@ -41,7 +39,7 @@ const CarnivalDetail   = lazy(() => import('./pages/CarnivalDetail'));
 const CustomerDetails  = lazy(() => import('./pages/CustomerDetails'));
 const BranchSelection  = lazy(() => import('./pages/BranchSelection'));
 
-const MARKETING_PATHS = ['/', '/services', '/about-us', '/our-app', '/contact', '/enquiry'];
+const MARKETING_PATHS = ['/', '/business', '/services', '/about-us', '/our-app', '/contact', '/enquiry'];
 
 function Layout({ children }) {
   const { pathname } = useLocation();
@@ -51,7 +49,6 @@ function Layout({ children }) {
   if (isWalkin) return <>{children}</>;
   if (isMarketing) return (
     <>
-      <Header />
       <AppBanner />
       {children}
       <Footer />
@@ -67,15 +64,8 @@ function Layout({ children }) {
 }
 
 const Loading = () => (
-  <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5F3FF' }}>
-    <div style={{ width: 40, height: 40, border: '3px solid #EDE9FE', borderTop: '3px solid #6D28D9', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-  </div>
-);
-
-const MarketingHome = () => (
-  <div>
-    <section id="home"><HeroSection /></section>
-    <PlatformBanner />
+  <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8FAFC' }}>
+    <div style={{ width: 40, height: 40, border: '3px solid #f1ebfa', borderTop: '3px solid #511f9f', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
   </div>
 );
 
@@ -93,7 +83,8 @@ const App = () => {
           <Suspense fallback={<Loading />}>
             <Routes>
               {/* Marketing site */}
-              <Route path="/"          element={<MarketingHome />} />
+              <Route path="/"          element={<BusinessPage />} />
+              <Route path="/business"  element={<BusinessPage />} />
               <Route path="/services"  element={<ServicesPage />} />
               <Route path="/about-us"  element={<AboutPage />} />
               <Route path="/our-app"   element={<OurAppPage />} />

@@ -58,7 +58,7 @@ export default function CategoryPage() {
             <p style={{ color: C.TEXT3, fontSize: 15 }}>No services found</p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingBottom: 20 }}>
+          <div className="app-grid" style={{ paddingBottom: 20 }}>
             {providers.map((sp, i) => <SPCard key={sp.serviceProvider?._id || i} sp={sp} navigate={navigate} />)}
           </div>
         )}
@@ -77,7 +77,7 @@ function SPCard({ sp, navigate }) {
         {IMG(img) ? (
           <img src={IMG(img)} alt={info?.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
         ) : (
-          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#6D28D9,#A78BFA)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#511f9f,#8b6bc7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ fontSize: 32 }}>🏪</span>
           </div>
         )}

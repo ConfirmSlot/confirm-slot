@@ -1,21 +1,22 @@
+// Palette aligned with the marketing/home theme: violet #511F9F + dimmed lavender #8B6BC7.
 export const C = {
-  PRIMARY:        '#6D28D9',
-  PRIMARY_LIGHT:  '#EDE9FE',
-  SECONDARY:      '#A78BFA',
-  NAV_BG:         '#4C1D95',
+  PRIMARY:        '#511F9F',
+  PRIMARY_LIGHT:  '#F1EBFA',
+  SECONDARY:      '#8B6BC7',
+  NAV_BG:         '#3F1780',
   SUCCESS:        '#10B981',
   SUCCESS_BG:     '#ECFDF5',
   WARNING:        '#F59E0B',
   ERROR:          '#EF4444',
   ERROR_BG:       '#FEF2F2',
   WHITE:          '#FFFFFF',
-  BG:             '#F5F3FF',
+  BG:             '#FAF8FD',
   CARD:           '#FFFFFF',
-  TEXT1:          '#1E1B4B',
-  TEXT2:          '#4C1D95',
-  TEXT3:          '#7C3AED',
-  BORDER:         '#DDD6FE',
-  SHADOW:         'rgba(109,40,217,0.12)',
+  TEXT1:          '#2A1052',
+  TEXT2:          '#511F9F',
+  TEXT3:          '#665C7A',
+  BORDER:         '#E5DFEE',
+  SHADOW:         'rgba(81,31,159,0.12)',
 };
 
 export const IMG = (path) => {

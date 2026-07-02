@@ -2,7 +2,7 @@ import { useState } from "react";
 import { API_ENDPOINTS } from "../config/api";
 import "./EnquiryPage.css";
 
-const EnquiryPage = () => {
+const EnquiryPage = ({ embedded = false }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,14 +52,20 @@ const EnquiryPage = () => {
   };
 
   return (
-    <div className="enquiry-page">
-      {/* Hero Section */}
-      <div className="hero-section">
-        <div className="hero-content">
-          <h1>Need Help Getting Started?</h1>
-          <p>Learn how to access our app and get answers to your questions</p>
-        </div>
-      </div>
+    <div className={`enquiry-page${embedded ? " embedded" : ""}`}>
+      {!embedded && (
+        <>
+          {/* Hero Section */}
+          <div className="hero-section">
+            <div className="hero-content">
+              <h1>Need Help Getting Started?</h1>
+              <p>Learn how to access our app and get answers to your questions</p>
+            </div>
+          </div>
+
+          <div className="section-divider"></div>
+        </>
+      )}
 
       {/* Content Container */}
       <div className="content-container">

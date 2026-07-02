@@ -48,7 +48,7 @@ export default function BranchSelection() {
 
   return (
     <AppLayout title="Select Branch">
-      <div style={{ padding: '16px', paddingBottom: 100 }}>
+      <div className="app-narrow" style={{ padding: '16px', paddingBottom: 100 }}>
 
         <p style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: C.TEXT1 }}>
           Available Branches <span style={{ fontWeight: 400, color: '#9CA3AF' }}>(Optional)</span>

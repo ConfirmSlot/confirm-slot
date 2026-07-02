@@ -95,7 +95,7 @@ export default function BookSession() {
 
   return (
     <AppLayout>
-      <div style={{ padding: 16 }}>
+      <div className="app-narrow" style={{ padding: 16 }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 20 }}>
           <button onClick={() => navigate(-1)} style={s.back}>←</button>
           <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: C.TEXT1 }}>Book Session</h2>

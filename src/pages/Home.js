@@ -78,18 +78,18 @@ export default function Home() {
           {featured.length === 0 ? (
             <p style={{ color: '#aaa', fontSize: 14, textAlign: 'center', padding: '20px 0' }}>No services available</p>
           ) : (
-            <div style={s.featuredScroll}>
+            <div className="app-grid">
               {featured.map(f => {
                 const sp = f.serviceProvider?.serviceProvider;
                 const img = sp?.images?.[0]?.path;
                 const icon = sp?.icon;
                 return (
                   <div key={f._id} style={s.featCard} onClick={() => navigate(`/sp/${f.serviceProvider?.serviceProvider?._id}`)}>
-                    <div style={{ height: 140, backgroundColor: '#EDE9FE', overflow: 'hidden', borderRadius: '14px 14px 0 0' }}>
+                    <div style={{ height: 140, backgroundColor: '#f1ebfa', overflow: 'hidden', borderRadius: '14px 14px 0 0' }}>
                       {IMG(img || icon) ? (
                         <img src={IMG(img || icon)} alt={sp?.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
                       ) : (
-                        <div style={{ height: '100%', background: 'linear-gradient(135deg,#6D28D9,#A78BFA)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ height: '100%', background: 'linear-gradient(135deg,#511f9f,#8b6bc7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <span style={{ fontSize: 40 }}>🏪</span>
                         </div>
                       )}
@@ -131,13 +131,13 @@ function Spinner() {
   return <div style={{ width: 36, height: 36, border: `3px solid ${C.PRIMARY_LIGHT}`, borderTop: `3px solid ${C.PRIMARY}`, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />;
 }
 
-const CAT_COLORS = ['#EDE9FE','#FEE2E2','#DCFCE7','#FEF3C7','#E0F2FE','#FCE7F3','#F3E8FF','#ECFDF5'];
+const CAT_COLORS = ['#f1ebfa','#FEE2E2','#DCFCE7','#FEF3C7','#E0F2FE','#FCE7F3','#E0F7F6','#ECFDF5'];
 
 const s = {
   center: { minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' },
 
   banner: {
-    background: 'linear-gradient(135deg, #3b0764 0%, #6D28D9 100%)',
+    background: 'linear-gradient(135deg, #2a1052 0%, #511f9f 100%)',
     borderRadius: 20,
     padding: '20px 20px 20px 22px',
     marginBottom: 16,
@@ -168,6 +168,5 @@ const s = {
   catCard: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' },
   catIcon: { width: 56, height: 56, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' },
   catName: { margin: 0, fontSize: 11, fontWeight: 600, color: C.TEXT1, textAlign: 'center' },
-  featuredScroll: { display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'none' },
-  featCard: { minWidth: 200, backgroundColor: '#fff', borderRadius: 14, cursor: 'pointer', boxShadow: `0 2px 12px rgba(0,0,0,0.08)`, flexShrink: 0 },
+  featCard: { minWidth: 0, backgroundColor: '#fff', borderRadius: 14, cursor: 'pointer', boxShadow: `0 2px 12px rgba(0,0,0,0.08)` },
 };

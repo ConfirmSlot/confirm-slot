@@ -68,7 +68,7 @@ export default function BookToken() {
 
   return (
     <AppLayout>
-      <div style={{ padding: '16px' }}>
+      <div className="app-narrow" style={{ padding: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
           <button onClick={() => navigate(-1)} style={s.back}>←</button>
           <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: C.TEXT1 }}>Book Token</h2>
@@ -118,7 +118,7 @@ const s = {
   center: { minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 },
   card: { backgroundColor: '#fff', borderRadius: 20, padding: '32px 24px', maxWidth: 380, width: '100%', boxShadow: `0 4px 24px rgba(0,0,0,0.08)`, display: 'flex', flexDirection: 'column', alignItems: 'center' },
   icon: { width: 64, height: 64, borderRadius: 16, objectFit: 'cover', marginBottom: 12 },
-  tokenCircle: { width: 150, height: 150, borderRadius: 75, backgroundColor: C.PRIMARY, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 32px rgba(109,40,217,0.4)` },
+  tokenCircle: { width: 150, height: 150, borderRadius: 75, backgroundColor: C.PRIMARY, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 32px rgba(81, 31, 159,0.4)` },
   back: { background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: C.PRIMARY, fontWeight: 700, padding: 0 },
   spBar: { display: 'flex', gap: 12, alignItems: 'center', backgroundColor: '#fff', borderRadius: 14, padding: '12px 14px', marginBottom: 16, border: `1px solid ${C.BORDER}` },
   btn: { width: '100%', padding: 15, borderRadius: 14, backgroundColor: C.PRIMARY, color: '#fff', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer' },

@@ -4,8 +4,8 @@ import { C } from '../styles/colors';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
-const PRIMARY   = '#6D28D9';
-const PRIMARY_D = '#4C1D95';
+const PRIMARY   = '#511f9f';
+const PRIMARY_D = '#3f1780';
 
 const TERMS_TEXT = `Welcome to Onezy. By using our app and services, you agree to the following terms.
 
@@ -173,14 +173,14 @@ export default function Terms() {
           <div style={{ ...s.checkbox, ...(accepted.terms ? s.checkboxOn : {}) }}>
             {accepted.terms && <span style={{ color: '#fff', fontSize: 11, lineHeight: 1 }}>✓</span>}
           </div>
-          <span style={{ fontSize: 13, color: '#1E1B4B' }}>I accept the <strong>Terms of Service</strong></span>
+          <span style={{ fontSize: 13, color: '#2a1052' }}>I accept the <strong>Terms of Service</strong></span>
         </label>
 
         <label style={s.checkRow} onClick={() => setAccepted(a => ({ ...a, privacy: !a.privacy }))}>
           <div style={{ ...s.checkbox, ...(accepted.privacy ? s.checkboxOn : {}) }}>
             {accepted.privacy && <span style={{ color: '#fff', fontSize: 11, lineHeight: 1 }}>✓</span>}
           </div>
-          <span style={{ fontSize: 13, color: '#1E1B4B' }}>I accept the <strong>Privacy Policy</strong></span>
+          <span style={{ fontSize: 13, color: '#2a1052' }}>I accept the <strong>Privacy Policy</strong></span>
         </label>
 
         {error && (
@@ -209,24 +209,24 @@ const s = {
   readHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: `1px solid ${C.BORDER}`, backgroundColor: '#fff' },
   backArrow:  { background: 'none', border: 'none', color: PRIMARY, fontSize: 14, fontWeight: 600, cursor: 'pointer', padding: 0, width: 60 },
   readTitle:  { fontSize: 16, fontWeight: 700, color: C.TEXT1 },
-  tabs:       { display: 'flex', margin: '16px 16px 0', backgroundColor: '#fff', borderRadius: 12, padding: 4, border: `1px solid ${C.BORDER}` },
+  tabs:       { display: 'flex', margin: '16px auto 0', width: 'calc(100% - 32px)', maxWidth: 600, backgroundColor: '#fff', borderRadius: 12, padding: 4, border: `1px solid ${C.BORDER}`, boxSizing: 'border-box' },
   tab:        { flex: 1, padding: '10px 8px', border: 'none', background: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', color: C.TEXT3 },
   tabActive:  { backgroundColor: PRIMARY, color: '#fff' },
-  readContent: { flex: 1, margin: '16px 16px 24px', backgroundColor: '#fff', borderRadius: 16, padding: 16, border: `1px solid ${C.BORDER}`, overflow: 'auto' },
+  readContent: { flex: 1, margin: '16px auto 24px', width: 'calc(100% - 32px)', maxWidth: 600, backgroundColor: '#fff', borderRadius: 16, padding: 16, border: `1px solid ${C.BORDER}`, overflow: 'auto', boxSizing: 'border-box' },
   text:       { fontSize: 13, color: C.TEXT1, lineHeight: 1.7, whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 },
 
   /* acceptance */
   acceptWrap: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 28px', textAlign: 'center' },
   logoBox:    { backgroundColor: '#fff', borderRadius: 20, padding: 4, marginBottom: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', display: 'inline-flex' },
   logo:       { width: 80, height: 80, objectFit: 'contain', borderRadius: 16 },
-  title:      { fontSize: 24, fontWeight: 800, color: '#1E1B4B', margin: '0 0 6px' },
+  title:      { fontSize: 24, fontWeight: 800, color: '#2a1052', margin: '0 0 6px' },
   sub:        { fontSize: 14, color: '#6B7280', margin: '0 0 20px' },
-  termsBox:   { backgroundColor: '#F9F8FF', borderRadius: 12, padding: '14px 16px', marginBottom: 16, width: '100%', maxWidth: 380, boxSizing: 'border-box', border: '1px solid #EDE9FE' },
+  termsBox:   { backgroundColor: '#F8FAFC', borderRadius: 12, padding: '14px 16px', marginBottom: 16, width: '100%', maxWidth: 380, boxSizing: 'border-box', border: '1px solid #f1ebfa' },
   termsText:  { margin: 0, fontSize: 13, color: '#374151', lineHeight: 1.7, textAlign: 'left' },
   link:       { background: 'none', border: 'none', padding: 0, color: PRIMARY, fontWeight: 600, fontSize: 13, cursor: 'pointer', textDecoration: 'underline' },
   checkRow:   { display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginBottom: 10, width: '100%', maxWidth: 380, userSelect: 'none', textAlign: 'left' },
   checkbox:   { width: 22, height: 22, borderRadius: 6, border: '2px solid #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', flexShrink: 0 },
   checkboxOn: { backgroundColor: PRIMARY, borderColor: PRIMARY },
   errBox:     { display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, marginBottom: 12, width: '100%', maxWidth: 380, boxSizing: 'border-box', border: '1px solid #FCA5A5', backgroundColor: '#FEE2E2', color: '#DC2626' },
-  btn:        { width: '100%', maxWidth: 380, padding: 15, borderRadius: 14, background: `linear-gradient(135deg, #7C3AED, ${PRIMARY_D})`, color: '#fff', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 15px rgba(109,40,217,0.35)', marginTop: 4 },
+  btn:        { width: '100%', maxWidth: 380, padding: 15, borderRadius: 14, background: `linear-gradient(135deg, #6d28d9, ${PRIMARY_D})`, color: '#fff', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 15px rgba(81, 31, 159,0.35)', marginTop: 4 },
 };

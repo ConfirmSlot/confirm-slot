@@ -285,10 +285,10 @@ export default function SpProfile() {
 
   return (
     <AppLayout title={sp.title}>
-      <div style={{ paddingBottom: 100 }}>
+      <div className="app-narrow" style={{ paddingBottom: 100 }}>
 
         {/* ── Image Carousel ── */}
-        <div style={{ position: 'relative', height: 260, backgroundColor: '#EDE9FE', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', height: 260, backgroundColor: '#f1ebfa', overflow: 'hidden' }}>
           {images.length > 0
             ? <img src={images[slide]} alt={sp.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
             : <div style={{ height: '100%', background: `linear-gradient(135deg,${C.NAV_BG},${C.PRIMARY})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 60 }}>🏪</span></div>
@@ -424,7 +424,7 @@ export default function SpProfile() {
           {!isToken && !isSession && (
             <div style={{ marginBottom: 20 }}>
               {/* Calendar */}
-              <div style={s.calCard}>
+              <div style={{ ...s.calCard, maxWidth: 420, marginLeft: 'auto', marginRight: 'auto' }}>
                 <div style={s.calNav}>
                   <button onClick={prevMonth} style={s.calBtn}>‹</button>
                   <span style={{ fontWeight: 700, fontSize: 15, color: C.TEXT1 }}>
@@ -444,7 +444,8 @@ export default function SpProfile() {
                         disabled={!cd.avail}
                         onClick={() => cd.avail && setSelectedDate(cd.date)}
                         style={{
-                          aspectRatio: '1', borderRadius: '50%', border: 'none',
+                          width: '100%', maxWidth: 44, aspectRatio: '1', margin: '0 auto',
+                          borderRadius: '50%', border: 'none',
                           fontSize: 13, fontWeight: sel || tod ? 700 : 400, cursor: cd.avail ? 'pointer' : 'default',
                           backgroundColor: sel ? C.PRIMARY : 'transparent',
                           color: !cd.cur ? '#D1D5DB' : sel ? '#fff' : !cd.avail ? '#D1D5DB' : C.TEXT1,

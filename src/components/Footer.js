@@ -58,6 +58,10 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="footer-bottom">
           <p>© 2025 Onezy. All rights reserved.</p>
+          <p className="footer-platform">
+            You're viewing a product from{' '}
+            <a href="https://quixentsolutions.com/" target="_blank" rel="noopener noreferrer">Quixent Solutions</a>
+          </p>
         </div>
       </div>
     </footer>

@@ -1,244 +1,253 @@
-/* General Styles */
+/* ContactPage.css — fancy revamp (page styles scoped under .contact-page).
+   The .footer* block near the bottom is intentionally global — it is shared
+   with the <Footer /> component and must stay unscoped. */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+.contact-page.embedded {
+  min-height: auto;
+}
+
 .contact-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(139, 92, 246, 0.12), transparent 60%),
+    radial-gradient(1000px 500px at -10% 10%, rgba(81, 31, 159, 0.08), transparent 55%),
+    #ffffff;
+  overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Hero Section */
-.hero-section {
-  background: linear-gradient(90deg, #064670 0%, #0369a1 100%);
+/* ── Hero ── */
+.contact-page .hero-section {
+  position: relative;
+  padding: 120px 10% 90px;
+  background: linear-gradient(135deg, #3f1780 0%, #511f9f 45%, #3f1780 100%);
   color: white;
-  padding: 80px 24px;
   text-align: center;
+  overflow: hidden;
 }
 
-.hero-content {
-  max-width: 1200px;
+.contact-page .hero-section::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.45), transparent 65%);
+  filter: blur(20px);
+  border-radius: 50%;
+}
+
+.contact-page .hero-section::after {
+  content: '';
+  position: absolute;
+  bottom: -140px;
+  left: -100px;
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, rgba(45, 130, 175, 0.4), transparent 65%);
+  filter: blur(24px);
+  border-radius: 50%;
+}
+
+.contact-page .hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
   margin: 0 auto;
 }
 
-.hero-section h1 {
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 16px;
+.contact-page .hero-section h1 {
+  font-size: 3.25rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
-.hero-section p {
-  font-size: 20px;
-  color: #bfdbfe;
+.contact-page .hero-section p {
+  font-size: 1.3rem;
+  color: rgba(226, 245, 244, 0.9);
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
-/* Contact Container */
-.contact-container {
+/* ── Divider ── */
+.contact-page .section-divider {
+  position: relative;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 64px 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d7e3ea 50%, transparent);
 }
 
-.contact-grid {
+.contact-page .section-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: linear-gradient(135deg, #8b6bc7, #511f9f);
+  border-radius: 2px;
+}
+
+/* ── Content ── */
+.contact-page .contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+.contact-page .contact-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 48px;
   justify-items: center;
 }
 
-/* Contact Form Card */
-.contact-form-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  padding: 32px;
-}
-
-.contact-form-card h2 {
-  font-size: 30px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 24px;
-}
-
-.form-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #475569;
-  margin-bottom: 8px;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 12px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s;
-  font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #0369a1;
-  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
-}
-
-.form-group textarea {
-  resize: none;
-}
-
-.submit-btn {
-  width: 100%;
-  background: linear-gradient(90deg, #064670 0%, #0369a1 100%);
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(6, 70, 112, 0.3);
-}
-
-.submit-btn:hover {
-  background: linear-gradient(90deg, #053959 0%, #025a8a 100%);
-  box-shadow: 0 6px 16px rgba(6, 70, 112, 0.4);
-  transform: translateY(-2px);
-}
-
-/* Contact Info Section */
-.contact-info-section {
+.contact-page .contact-info-section {
   display: flex;
   flex-direction: row;
   gap: 32px;
   width: 100%;
 }
 
-.info-card, .map-card {
+.contact-page .info-card,
+.contact-page .map-card {
   flex: 1;
 }
 
-.info-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  padding: 32px;
+.contact-page .info-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 24px;
+  border: 1px solid rgba(81, 31, 159, 0.08);
+  box-shadow: 0 24px 60px -30px rgba(81, 31, 159, 0.4);
+  padding: 40px;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
-.info-card h2 {
-  font-size: 30px;
-  font-weight: 700;
-  color: #1e293b;
+.contact-page .info-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 30px 66px -28px rgba(81, 31, 159, 0.45);
+}
+
+.contact-page .info-card h2 {
+  font-size: 1.9rem;
+  font-weight: 800;
   margin-bottom: 24px;
+  background: linear-gradient(135deg, #511f9f 0%, #6d28d9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #511f9f;
 }
 
-.info-items {
+.contact-page .info-items {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.info-item {
+.contact-page .info-item {
   display: flex;
   align-items: flex-start;
   gap: 16px;
 }
 
-.info-icon {
-  background: #e0f2fe;
+.contact-page .info-icon {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(81, 31, 159, 0.14));
+  box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.35);
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 14px;
   font-size: 24px;
-  min-width: 48px;
-  text-align: center;
-}
-
-.info-text h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 4px;
-}
-
-.info-text p {
-  font-size: 14px;
-  color: #475569;
-  line-height: 1.6;
-}
-
-/* Map Card */
-.map-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  padding: 16px;
-}
-
-.map-card iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  border-radius: 8px;
-}
-
-.map-placeholder {
-  width: 100%;
-  height: 100%;
-  background: #e2e8f0;
-  border-radius: 8px;
+  min-width: 52px;
+  min-height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.map-placeholder p {
-  color: #64748b;
-  font-size: 14px;
+.contact-page .info-text h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #511f9f;
+  margin-bottom: 4px;
 }
 
-/* Location Selector */
-.location-select {
+.contact-page .info-text p {
+  font-size: 0.95rem;
+  color: #5a6b78;
+  line-height: 1.6;
+}
+
+/* ── Map ── */
+.contact-page .map-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 24px;
+  border: 1px solid rgba(81, 31, 159, 0.08);
+  box-shadow: 0 24px 60px -30px rgba(81, 31, 159, 0.4);
+  padding: 16px;
+  overflow: hidden;
+}
+
+.contact-page .map-card iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  border: 0;
+  border-radius: 16px;
+}
+
+/* ── Location selector ── */
+.contact-page .location-select {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 
-.location-button {
-  padding: 10px 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f0f0f0;
+.contact-page .location-button {
+  padding: 10px 22px;
+  border: 1px solid rgba(81, 31, 159, 0.15);
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: #511f9f;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.location-button.active {
-  background-color: #064670;
+.contact-page .location-button:hover {
+  border-color: #8b6bc7;
+  transform: translateY(-2px);
+}
+
+.contact-page .location-button.active {
+  background: linear-gradient(135deg, #511f9f, #3f1780);
   color: white;
-  border-color: #064670;
+  border-color: transparent;
+  box-shadow: 0 10px 22px -10px rgba(81, 31, 159, 0.7);
 }
 
-/* Footer */
+/* ============================================================
+   Footer styles — shared globally with the <Footer /> component.
+   Kept unscoped and unchanged to avoid affecting the home page.
+   ============================================================ */
 .footer {
   background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
   color: white;
@@ -279,7 +288,7 @@
 .social-icon {
   width: 36px;
   height: 36px;
-  background: #064670;
+  background: #511f9f;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
@@ -336,7 +345,7 @@
 }
 
 .newsletter-input button {
-  background: #064670;
+  background: #511f9f;
   color: white;
   border: none;
   padding: 10px 16px;
@@ -361,19 +370,33 @@
   color: #94a3b8;
 }
 
-/* Responsive Design */
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .contact-page .hero-section {
+    padding: 90px 5% 70px;
+  }
+
+  .contact-page .hero-section h1 {
+    font-size: 2.5rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .hero-section h1 {
-    font-size: 32px;
+  .contact-page .hero-section h1 {
+    font-size: 2rem;
   }
 
-  .hero-section p {
-    font-size: 16px;
+  .contact-page .hero-section p {
+    font-size: 1.1rem;
   }
 
-  .contact-grid {
+  .contact-page .contact-grid {
     grid-template-columns: 1fr;
     gap: 32px;
+  }
+
+  .contact-page .contact-info-section {
+    flex-direction: column;
   }
 
   .footer-grid {
@@ -383,17 +406,20 @@
 }
 
 @media (max-width: 480px) {
-  .hero-section {
-    padding: 60px 16px;
+  .contact-page .hero-section {
+    padding: 70px 5% 50px;
   }
 
-  .contact-container {
-    padding: 32px 16px;
+  .contact-page .hero-section h1 {
+    font-size: 1.7rem;
   }
 
-  .contact-form-card,
-  .info-card {
-    padding: 24px;
+  .contact-page .contact-container {
+    padding: 40px 16px;
+  }
+
+  .contact-page .info-card {
+    padding: 28px;
   }
 
   .footer-grid {

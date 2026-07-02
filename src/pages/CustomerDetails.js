@@ -98,7 +98,7 @@ export default function CustomerDetails() {
 
   return (
     <AppLayout title="Your Details">
-      <div style={{ padding: '16px', paddingBottom: 100 }}>
+      <div className="app-narrow" style={{ padding: '16px', paddingBottom: 100 }}>
 
         {/* Booking summary */}
         {serviceTitle && (
@@ -209,7 +209,7 @@ const s = {
     outline: 'none',
     boxSizing: 'border-box',
     color: C.TEXT1,
-    backgroundColor: '#F9F8FF',
+    backgroundColor: '#F8FAFC',
   },
   inputErr:    { borderColor: C.ERROR, backgroundColor: '#FEF2F2' },
   countryCode: {
@@ -218,7 +218,7 @@ const s = {
     border: `1.5px solid ${C.BORDER}`,
     fontSize: 14,
     color: C.TEXT1,
-    backgroundColor: '#F9F8FF',
+    backgroundColor: '#F8FAFC',
     whiteSpace: 'nowrap',
     flexShrink: 0,
   },
