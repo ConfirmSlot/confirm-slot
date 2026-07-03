@@ -1,6 +1,6 @@
 {
   "name": "confirm-slot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",
