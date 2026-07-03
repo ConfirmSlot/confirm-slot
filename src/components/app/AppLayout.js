@@ -61,26 +61,10 @@ const sb = {
   closeBtn:{ background:'none', border:'none', fontSize:16, color:'#9CA3AF', cursor:'pointer', padding:'0 4px', flexShrink:0 },
 };
 
-const PAGE_TITLES = {
-  '/my-bookings':  'My Bookings',
-  '/profile':      'Profile',
-  '/notifications':'Notifications',
-  '/favourites':   'Saved',
-  '/carnival':     'Carnivals',
-  '/terms':        'Terms & Privacy',
-};
-
-export default function AppLayout({ children, title }) {
-  const { user, isLoggedIn } = useAuth();
+export default function AppLayout({ children }) {
+  const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
-  const isHome = pathname === '/home';
-
-  const pageTitle = title
-    || PAGE_TITLES[pathname]
-    || (pathname.startsWith('/category') ? 'Category' : null)
-    || (pathname.startsWith('/sp/') ? null : null);
 
   const hasFavs = isLoggedIn && localStorage.getItem('cs_hasFavs') === '1';
 
@@ -98,44 +82,7 @@ export default function AppLayout({ children, title }) {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: C.BG, paddingBottom: 64 }}>
 
-      {/* Header */}
-      <div style={{
-        background: `linear-gradient(90deg, ${C.NAV_BG} 0%, ${C.PRIMARY} 100%)`,
-        padding: '12px 16px',
-        position: 'sticky', top: 0, zIndex: 100,
-      }}>
-       <div className="app-shell">
-        {isHome ? (
-          /* Home header */
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/')}>
-              <div style={s.navCircleBtn}>
-                <img src="/logo192.png" alt="Onezy" style={{ width: 24, height: 24, borderRadius: 6 }} onError={e => e.target.style.display='none'} />
-              </div>
-              <span style={{ color: '#fff', fontWeight: 800, fontSize: 18 }}>Onezy</span>
-            </div>
-            {isLoggedIn ? (
-              <div onClick={() => navigate('/profile')} style={s.avatarCircle}>
-                {user?.info?.fName?.[0]?.toUpperCase() || <span style={{ fontSize: 16 }}>👤</span>}
-              </div>
-            ) : (
-              <button onClick={() => navigate('/login')} style={s.loginBtn}>Login</button>
-            )}
-          </div>
-        ) : (
-          /* Inner page header: Logo circle | Title | Bell circle */
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 40 }}>
-            <button onClick={() => navigate('/')} style={s.navCircleBtn}>
-              <img src="/logo192.png" alt="" style={{ width: 24, height: 24, borderRadius: 6 }} onError={e => e.target.style.display='none'} />
-            </button>
-            <span style={s.pageTitle}>{pageTitle || 'Onezy'}</span>
-            <div style={{ width: 38 }} />
-          </div>
-        )}
-       </div>
-      </div>
-
-      {/* App download banner is rendered at root App.js level */}
+      {/* Shared site header (logo + nav) is rendered at root App.js level */}
 
       {/* Page content */}
       <div className="app-shell">{children}</div>

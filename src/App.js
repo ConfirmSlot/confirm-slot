@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from "react-route
 import { AuthProvider } from "./contexts/AuthContext";
 import "./App.css";
 import WhatsAppFloatingButton from "./components/WhatsAppFloatingButton";
+import Header      from "./components/Header";
 import Footer      from "./components/Footer";
 import { AppBanner } from "./components/app/AppLayout";
 import ServicesPage from "./components/ServicesPage";
@@ -44,21 +45,19 @@ const MARKETING_PATHS = ['/', '/business', '/services', '/about-us', '/our-app',
 function Layout({ children }) {
   const { pathname } = useLocation();
   const isMarketing = MARKETING_PATHS.includes(pathname);
-  const isWalkin = ['/service/'].some(p => pathname.startsWith(p));
 
-  if (isWalkin) return <>{children}</>;
-  if (isMarketing) return (
-    <>
-      <AppBanner />
-      {children}
-      <Footer />
-      <WhatsAppFloatingButton />
-    </>
-  );
+  // Single shared header (logo + nav) on every page
   return (
     <>
       <AppBanner />
+      <Header />
       {children}
+      {isMarketing && (
+        <>
+          <Footer />
+          <WhatsAppFloatingButton />
+        </>
+      )}
     </>
   );
 }

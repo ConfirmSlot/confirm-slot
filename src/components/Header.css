@@ -1,12 +1,12 @@
+/* Single combined header: logo · contact · demo + store icons */
 .header-toolbar {
-  padding: 16px 64px;
+  padding: 10px 32px;
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
-  background-color: white;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 20px;
+  background-color: #fff;
   box-sizing: border-box;
-  max-width: 100vw;
   width: 100%;
 }
 
@@ -25,70 +25,152 @@
   height: 40px;
 }
 
-.nav-links {
+/* Contact info */
+.header-contact {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 40px;
-  flex: 1;
+  flex-wrap: wrap;
+  gap: 22px;
+  flex: 1 1 auto;
 }
 
-.navbar-link {
-  color: #555;
-  font-weight: 500;
-  font-size: 16px;
-  text-transform: none;
-  text-decoration: none;
-}
-
-.register-button {
-  border-radius: 999px !important;
-  padding: 8px 24px !important;
-  text-transform: none !important;
-  font-weight: 600;
-  background-color: #00457c !important;
-  color: white !important;
+.hc-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.hc-item:hover {
+  color: #511f9f;
+}
+
+.hc-ic {
+  font-size: 15px;
+}
+
+/* Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex-shrink: 0;
 }
 
-.menu-icon {
-  display: none;
+.hc-demo {
+  display: inline-block;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: #511f9f;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.hc-demo:hover {
+  background: #3f1780;
+}
+
+.hc-stores {
+  display: flex;
+  gap: 8px;
+}
+
+.hc-store {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  line-height: 1;
+  transition: opacity 0.15s ease;
+}
+
+.hc-store:hover {
+  opacity: 0.85;
+}
+
+.hc-store-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hc-store-text small {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  opacity: 0.85;
+}
+
+.hc-store-text strong {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .header-toolbar {
+    padding: 10px 16px;
+    gap: 14px;
+  }
+
+  .header-contact {
+    gap: 14px;
+  }
 }
 
 @media (max-width: 768px) {
   .header-toolbar {
-    padding: 12px 16px;
+    padding: 10px 14px;
+    gap: 10px;
     justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    min-height: 56px;
-  }
-
-  .nav-links {
-    display: none;
-  }
-
-  .menu-icon {
-    display: block;
-    font-size: 24px;
-    cursor: pointer;
-    flex-shrink: 0;
   }
 
   .logo-container {
     font-size: 18px;
     gap: 8px;
-    flex-grow: 0;
-    flex-shrink: 1;
   }
 
   .logo-img {
     height: 32px;
   }
 
-  .register-button {
-    padding: 6px 16px !important;
+  /* Contact drops to its own row below logo + actions */
+  .header-contact {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .hc-item {
+    font-size: 12px;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  /* Icon-only store buttons on mobile */
+  .hc-store-text {
+    display: none;
+  }
+
+  .hc-demo {
+    padding: 8px 14px;
     font-size: 13px;
-    line-height: 1.5;
   }
 }

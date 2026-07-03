@@ -49,19 +49,9 @@ export default function SwiggyBrowse() {
 
   return (
     <div className="sw-browse">
-      {/* Hero: location + search */}
+      {/* Hero: search */}
       <section className="sw-hero">
         <div className="sw-hero-inner">
-          <button className="sw-loc" type="button">
-            <span className="sw-loc-icon">📍</span>
-            <span className="sw-loc-text">
-              <span className="sw-loc-label">SERVICES NEAR</span>
-              <span className="sw-loc-city">
-                Chennai <span className="sw-loc-caret">▾</span>
-              </span>
-            </span>
-          </button>
-
           <h1 className="sw-hero-title">
             Book trusted services,
             <br /> fast and hassle-free

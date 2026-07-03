@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import './ContactPage.css';
+import React, { useState } from "react";
+import "./ContactPage.css";
 
 const ContactPage = ({ embedded = false }) => {
-
   const mapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
   const locations = [
-    { 
-      id: "us", 
-      label: "USA", 
+    {
+      id: "us",
+      label: "USA",
       address: "34785 Pickford Dr, Farmington Hills<br />MI - 48335",
       mapQuery: "34785 Pickford Dr, Farmington Hills, MI 48335",
       phone: "+1 (248) 555-1234",
-      email: "us-sales@onezy.net"
+      email: "us-sales@onezy.net",
     },
     {
       id: "chennai",
@@ -20,15 +19,15 @@ const ContactPage = ({ embedded = false }) => {
       address: "Wimco Nagar<br />Chennai - 600019",
       mapQuery: "Wimco Nagar Metro Station, Chennai 600019",
       phone: "+91 91761 22210",
-      email: "in-sales@onezy.net"
+      email: "info@quixentsolutions.com",
     },
-    { 
-      id: "bengaluru", 
-      label: "Bengaluru", 
+    {
+      id: "bengaluru",
+      label: "Bengaluru",
       address: "Brigade Gardens, Church Street<br />Bengaluru",
       mapQuery: "Brigade Gardens, Church Street, Bengaluru",
       phone: "+91 98765 43210",
-      email: "in-sales@onezy.net"
+      email: "info@quixentsolutions.com",
     },
   ];
 
@@ -42,8 +41,9 @@ const ContactPage = ({ embedded = false }) => {
   };
 
   const selectedLocation = locations.find((l) => l.id === selectedLocationId);
-  const mapSrc = buildMapSrc(selectedLocation.mapQuery || selectedLocation.address.replace('<br />', ''));
-
+  const mapSrc = buildMapSrc(
+    selectedLocation.mapQuery || selectedLocation.address.replace("<br />", ""),
+  );
 
   return (
     <div className={`contact-page${embedded ? " embedded" : ""}`}>
@@ -64,9 +64,6 @@ const ContactPage = ({ embedded = false }) => {
       {/* Contact Content */}
       <div className="contact-container">
         <div className="contact-grid">
-          
-
-
           {/* Contact Information */}
           <div className="contact-info-section">
             <div className="info-card">
@@ -86,16 +83,20 @@ const ContactPage = ({ embedded = false }) => {
                   </button>
                 ))}
               </div>
-              
+
               <div className="info-items">
                 <div className="info-item">
                   <div className="info-icon">📍</div>
                   <div className="info-text">
                     <h3>Address</h3>
-                    <p dangerouslySetInnerHTML={{ __html: selectedLocation.address }} />
+                    <p
+                      dangerouslySetInnerHTML={{
+                        __html: selectedLocation.address,
+                      }}
+                    />
                   </div>
                 </div>
-                
+
                 <div className="info-item">
                   <div className="info-icon">📞</div>
                   <div className="info-text">
@@ -103,7 +104,7 @@ const ContactPage = ({ embedded = false }) => {
                     <p>{selectedLocation.phone}</p>
                   </div>
                 </div>
-                
+
                 <div className="info-item">
                   <div className="info-icon">✉</div>
                   <div className="info-text">
@@ -111,12 +112,16 @@ const ContactPage = ({ embedded = false }) => {
                     <p>{selectedLocation.email}</p>
                   </div>
                 </div>
-                
+
                 <div className="info-item">
                   <div className="info-icon">🕐</div>
                   <div className="info-text">
                     <h3>Business Hours</h3>
-                    <p>Mon - Fri: 9:00 AM - 6:00 PM<br />Sat - Sun: 10:00 AM - 4:00 PM</p>
+                    <p>
+                      Mon - Fri: 9:00 AM - 6:00 PM
+                      <br />
+                      Sat - Sun: 10:00 AM - 4:00 PM
+                    </p>
                   </div>
                 </div>
               </div>
