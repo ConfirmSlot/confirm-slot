@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import SwiggyBrowse from "./SwiggyBrowse";
-import OverviewSection from "./OverviewSection";
+import ServiceTypes from "./ServiceTypes";
 import "./BusinessPage.css";
 
 const BusinessPage = () => {
@@ -29,8 +29,8 @@ const BusinessPage = () => {
         <SwiggyBrowse />
       </section>
 
-      {/* Everything else condensed into one section */}
-      <OverviewSection />
+      {/* The booking models & capabilities we support */}
+      <ServiceTypes />
     </div>
   );
 };
