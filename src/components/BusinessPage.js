@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import SwiggyBrowse from "./SwiggyBrowse";
 import ServiceTypes from "./ServiceTypes";
+import ProviderRegister from "./ProviderRegister";
 import "./BusinessPage.css";
 
 const BusinessPage = () => {
@@ -31,6 +32,9 @@ const BusinessPage = () => {
 
       {/* The booking models & capabilities we support */}
       <ServiceTypes />
+
+      {/* Service-provider onboarding — download, login & register in a few clicks */}
+      <ProviderRegister />
     </div>
   );
 };
