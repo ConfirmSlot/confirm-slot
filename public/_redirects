@@ -10,13 +10,14 @@
 https://confirmslot.com/*  /index.html  200
 
 # EC2-  Admin of confirmslot portal
-https://admin.confirmslot.com/* http://13.204.96.6:5000/:splat  200
+# https://admin.confirmslot.com/* http://13.204.96.6:5000/:splat  200
 
 
 # ECS API (NEW)
 # https://api.confirmslot.com/*  http://confirmslot-api-v1-8e5f9a11a47b8bb7.elb.ap-south-1.amazonaws.com/:splat  200
-https://api.confirmslot.com/*  http://alb-prod-confirmslot-503060885.ap-south-1.elb.amazonaws.com/:splat  200
+# https://api.confirmslot.com/*  http://alb-prod-confirmslot-503060885.ap-south-1.elb.amazonaws.com/:splat  200
 
+#Azure VM (NEW)
 https://onezy.net/* /index.html 200
-https://admin.onezy.net/* http://13.204.96.6:5000/:splat  200
+https://admin.onezy.net/* http://4.213.227.7:5000/:splat  200R
 https://api.onezy.net/* http://4.213.227.7:3000/:splat  200
