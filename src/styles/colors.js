@@ -19,22 +19,10 @@ export const C = {
   SHADOW:         'rgba(81,31,159,0.12)',
 };
 
+const AZURE_BASE = 'https://onezyfiles.blob.core.windows.net/onezy';
+
 export const IMG = (path) => {
   if (!path) return null;
-  // Normalize old confirmslot virtual-hosted URLs → path-style
-  if (path.includes('confirmslot.com.s3.amazonaws.com/')) {
-    const key = path.split('confirmslot.com.s3.amazonaws.com/')[1];
-    return `https://s3.ap-south-1.amazonaws.com/onezy.net/${key}`;
-  }
-  // Rewrite old bucket path-style URLs to new bucket
-  if (path.includes('s3.ap-south-1.amazonaws.com/confirmslot.com/')) {
-    return path.replace('s3.ap-south-1.amazonaws.com/confirmslot.com/', 's3.ap-south-1.amazonaws.com/onezy.net/');
-  }
-  // Normalize new bucket virtual-hosted URLs → path-style (dots in name break virtual-hosting)
-  if (/onezy\.net\.s3[^/]*\.amazonaws\.com\//.test(path)) {
-    const key = path.split(/onezy\.net\.s3[^/]*\.amazonaws\.com\//)[1];
-    return `https://s3.ap-south-1.amazonaws.com/onezy.net/${key}`;
-  }
   if (path.startsWith('http')) return path;
-  return `https://s3.ap-south-1.amazonaws.com/onezy.net/${path}`;
+  return `${AZURE_BASE}/${path}`;
 };
