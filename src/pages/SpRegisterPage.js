@@ -23,7 +23,7 @@ const SpRegisterPage = () => {
   const [serverError, setServerError] = useState("");
 
   useEffect(() => {
-    fetch(API_ENDPOINTS.CATEGORIES)
+    fetch(`${API_ENDPOINTS.CATEGORIES}?limit=100`)
       .then((r) => r.json())
       .then((data) => {
         const cats = Array.isArray(data) ? data : (data.categories || data.data || []);
@@ -36,6 +36,13 @@ const SpRegisterPage = () => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handlePhoneChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+    setForm((prev) => ({ ...prev, phone: digits }));
+    if (digits.length === 10) setErrors((prev) => ({ ...prev, phone: "" }));
+    else if (digits.length > 0) setErrors((prev) => ({ ...prev, phone: "Enter a valid 10-digit phone number" }));
   };
 
   const handleCategoryChange = (e) => {
@@ -159,9 +166,10 @@ const SpRegisterPage = () => {
                 <input
                   id="phone" name="phone" type="tel"
                   placeholder="9876543210"
-                  value={form.phone} onChange={handleChange}
-                  className={errors.phone ? "error" : ""}
-                  maxLength={15}
+                  value={form.phone} onChange={handlePhoneChange}
+                  className={errors.phone ? "error" : form.phone.length === 10 ? "valid" : ""}
+                  maxLength={10}
+                  inputMode="numeric"
                 />
                 {errors.phone && <span className="spr-error">{errors.phone}</span>}
               </div>
@@ -190,9 +198,7 @@ const SpRegisterPage = () => {
                 >
                   <option value="">Select category</option>
                   {categories.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.icon ? `${c.icon} ` : ""}{c.name}
-                    </option>
+                    <option key={c._id} value={c._id}>{c.name}</option>
                   ))}
                 </select>
                 {errors.categoryId && <span className="spr-error">{errors.categoryId}</span>}
@@ -208,9 +214,7 @@ const SpRegisterPage = () => {
                 >
                   <option value="">Select subcategory</option>
                   {subcategories.map((s) => (
-                    <option key={s._id} value={s._id}>
-                      {s.icon ? `${s.icon} ` : ""}{s.name}
-                    </option>
+                    <option key={s._id} value={s._id}>{s.name}</option>
                   ))}
                 </select>
               </div>
