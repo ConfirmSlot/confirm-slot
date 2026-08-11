@@ -6,6 +6,8 @@ export const API_BASE_URL =
 // API endpoints
 export const API_ENDPOINTS = {
   ENQUIRY:          `${API_BASE_URL}/v1/enquiry`,
+  SP_LEADS:         `${API_BASE_URL}/v1/sp-leads`,
+  CATEGORIES:       `${API_BASE_URL}/v1/categories`,
   APP_VISIT_LOG:    `${API_BASE_URL}/v1/app-visit-log`,
   SEND_OTP:         `${API_BASE_URL}/v1/auth/send-verification-code`,
   VERIFY_OTP:       `${API_BASE_URL}/v1/auth/verify-code`,
