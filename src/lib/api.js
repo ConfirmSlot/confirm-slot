@@ -94,6 +94,7 @@ export const api = {
       return r.json();
     }),
 
+    
   upload: (path, formData) =>
     fetch(`${API_BASE_URL}${path}`, {
       method: 'POST',
