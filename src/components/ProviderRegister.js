@@ -101,7 +101,7 @@ const ProviderRegister = () => {
             </div>
           </div>
           <div className="pr-cta-actions">
-            <button className="pr-btn pr-btn-primary" type="button" onClick={() => navigate("/enquiry")}>
+            <button className="pr-btn pr-btn-primary" type="button" onClick={() => navigate("/partner")}>
               Register your business
             </button>
             <button className="pr-btn pr-btn-ghost" type="button" onClick={() => navigate("/contact")}>
