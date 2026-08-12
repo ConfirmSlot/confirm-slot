@@ -39,8 +39,9 @@ const CarnivalList     = lazy(() => import('./pages/CarnivalList'));
 const CarnivalDetail   = lazy(() => import('./pages/CarnivalDetail'));
 const CustomerDetails  = lazy(() => import('./pages/CustomerDetails'));
 const BranchSelection  = lazy(() => import('./pages/BranchSelection'));
+const SpRegisterPage   = lazy(() => import('./pages/SpRegisterPage'));
 
-const MARKETING_PATHS = ['/', '/business', '/services', '/about-us', '/our-app', '/contact', '/enquiry'];
+const MARKETING_PATHS = ['/', '/business', '/services', '/about-us', '/our-app', '/contact', '/enquiry', '/partner'];
 
 function Layout({ children }) {
   const { pathname } = useLocation();
@@ -89,6 +90,7 @@ const App = () => {
               <Route path="/our-app"   element={<OurAppPage />} />
               <Route path="/contact"   element={<ContactPage />} />
               <Route path="/enquiry"   element={<EnquiryPage />} />
+              <Route path="/partner"  element={<SpRegisterPage />} />
 
               {/* Auth */}
               <Route path="/login"                element={<Login />} />
