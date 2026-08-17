@@ -53,8 +53,11 @@ const Header = () => (
         </span>
       </div>
 
-      {/* Actions: Schedule a Demo + store icons */}
+      {/* Actions: Register + Schedule a Demo + store icons */}
       <div className="header-actions">
+        <Link className="hc-register" to="/partner">
+          Register your business
+        </Link>
         <a className="hc-demo" href={TEL}>
           Schedule a Demo
         </a>

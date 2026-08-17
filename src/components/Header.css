@@ -62,6 +62,25 @@ a.hc-item:hover {
   flex-shrink: 0;
 }
 
+.hc-register {
+  display: inline-block;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 2px solid #511f9f;
+  background: transparent;
+  color: #511f9f;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.hc-register:hover {
+  background: #511f9f;
+  color: #fff;
+}
+
 .hc-demo {
   display: inline-block;
   padding: 9px 18px;
@@ -166,6 +185,10 @@ a.hc-item:hover {
 
   /* Icon-only store buttons on mobile */
   .hc-store-text {
+    display: none;
+  }
+
+  .hc-register {
     display: none;
   }
 
