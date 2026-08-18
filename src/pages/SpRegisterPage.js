@@ -16,6 +16,7 @@ const SpRegisterPage = () => {
     name: "", phone: "", email: "",
     categoryId: "", categoryName: "",
     subcategoryId: "", subcategoryName: "",
+    contractorCode: "",
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -183,6 +184,19 @@ const SpRegisterPage = () => {
                 />
                 {errors.email && <span className="spr-error">{errors.email}</span>}
               </div>
+            </div>
+
+            <div className="spr-field">
+              <label htmlFor="contractorCode">
+                Contractor Code <span className="spr-optional">(optional — if referred by a contractor)</span>
+              </label>
+              <input
+                id="contractorCode" name="contractorCode" type="text"
+                placeholder="e.g. CTR-001"
+                value={form.contractorCode}
+                onChange={e => setForm(prev => ({ ...prev, contractorCode: e.target.value.toUpperCase() }))}
+                style={{ textTransform: 'uppercase', letterSpacing: 2 }}
+              />
             </div>
 
             <div className="spr-section-label" style={{ marginTop: 24 }}>Business Category</div>
