@@ -70,10 +70,11 @@ export default function Payment() {
         udf1 = `${start.getFullYear()}-${pad(start.getMonth()+1)}-${pad(start.getDate())}`;
         udf2 = `${pad(start.getHours())}:${pad(start.getMinutes())}`;
         udf4 = 'APPOINTMENT';
+        udf5 = String(bookingData.pointsToRedeem || 0);
       }
 
       const res = await api.post('/v1/general/payments/initiate', {
-        amount:      bookingData.payment.price,
+        amount:      bookingData.payment.payuAmount ?? bookingData.payment.price,
         firstname,
         email,
         phone,

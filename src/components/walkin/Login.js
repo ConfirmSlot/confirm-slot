@@ -81,7 +81,9 @@ export default function Login() {
       showMsg('Verification successful!', 'success');
       const hasAcceptedTerms = (data.user?.acceptedPolicies || []).length > 0;
       setTimeout(() => {
-        if (!hasAcceptedTerms) {
+        if (data.isNewUser) {
+          navigate('/referral-code', { replace: true });
+        } else if (!hasAcceptedTerms) {
           navigate('/terms', { state: { returnTo: redirectTo }, replace: true });
         } else {
           navigate(redirectTo, { replace: true });

@@ -34,6 +34,7 @@ export default function Profile() {
     appUpdates:            settings.appUpdates            ?? true,
   });
 
+  const [walletPoints, setWalletPoints] = useState(0);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -150,6 +151,10 @@ export default function Profile() {
     }).catch(() => toast.error('Failed to delete account. Try again.'));
   };
 
+  React.useEffect(() => {
+    api.get('/v1/wallet').then(r => { if (r.points) setWalletPoints(r.points); }).catch(() => {});
+  }, []);
+
   const setF = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
   const toggleSetting = (key) => setAppSettings(s => ({ ...s, [key]: !s[key] }));
 
@@ -173,6 +178,19 @@ export default function Profile() {
         </div>
 
         <div style={{ padding: '0 16px' }}>
+
+          {/* ── Wallet Balance ── */}
+          <div onClick={() => navigate('/wallet')} style={{ ...s.walletCard, cursor: 'pointer' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={s.walletIcon}>🎁</div>
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,0.75)' }}>Reward Points</p>
+                <p style={{ margin: 0, fontSize: 24, fontWeight: 900, color: '#fff' }}>{walletPoints} pts</p>
+                <p style={{ margin: 0, fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>≈ ₹{(walletPoints * 0.5).toFixed(2)} value</p>
+              </div>
+              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 20 }}>›</span>
+            </div>
+          </div>
 
           {/* ── Personal Information ── */}
           <SectionCard icon="👤" title="Personal Information">
@@ -349,6 +367,15 @@ function Toggle({ label, sub, value, onChange, last }) {
 
 /* ── Styles ── */
 const s = {
+  walletCard: {
+    background: `linear-gradient(135deg, ${C.PRIMARY} 0%, #7c3aed 100%)`,
+    borderRadius: 16, padding: '16px 18px', marginBottom: 14,
+  },
+  walletIcon: {
+    width: 48, height: 48, borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
+  },
   avatarSection: {
     backgroundColor: C.PRIMARY_LIGHT,
     display:'flex', flexDirection:'column', alignItems:'center',

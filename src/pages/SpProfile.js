@@ -276,7 +276,7 @@ export default function SpProfile() {
 
   const images = (sp.images || []).map(i => IMG(i.path)).filter(Boolean);
   const currency = sp.priceRange?.currencyId === 'INR' ? '₹' : '$';
-  const isToken = sp.option === 'token';
+  const isToken = false; // token system disabled
   const isSession = sp.option === 'session';
   const biz = sp.business || {};
   const social = sp.socialMedia || {};

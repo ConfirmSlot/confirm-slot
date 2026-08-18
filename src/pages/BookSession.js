@@ -29,6 +29,8 @@ export default function BookSession() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [booking, setBooking] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [walletPoints, setWalletPoints] = useState(0);
+  const [useWallet, setUseWallet] = useState(false);
   const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
@@ -37,6 +39,9 @@ export default function BookSession() {
     });
     api.get(`/v1/session-booking/sessions/${spId}`).then(r => {
       setSessions(r.sessions || r.data || []);
+    }).catch(() => {});
+    api.get('/v1/wallet').then(r => {
+      if (r.points) setWalletPoints(r.points);
     }).catch(() => {});
   }, [spId]);
 
@@ -54,13 +59,21 @@ export default function BookSession() {
   const doBook = async () => {
     setBooking(true);
     try {
-      const total = selected?.price || 0;
+      const total       = selected?.price || 0;
+      const platformFee = Math.round(total * 0.02 * 100) / 100;
+      const gstAmount   = Math.round(platformFee * 0.18 * 100) / 100;
+      const grandTotal  = parseFloat((total + platformFee + gstAmount).toFixed(2));
+      const maxRedeemPts = Math.floor(grandTotal * 0.5 / 0.5);
+      const ptsToRedeem = useWallet ? Math.min(walletPoints, maxRedeemPts) : 0;
+      const walletDisc  = parseFloat((ptsToRedeem * 0.5).toFixed(2));
+      const finalAmount = parseFloat((grandTotal - walletDisc).toFixed(2));
       const paymentMode = spInfo?.paymentMode;
       const bookData = {
         serviceProviderId: spId,
         sessionId: selected._id,
         date, time: selectedSlot,
-        payment: { price: total, currencyId: 'INR', status: paymentMode === 'ONLINE' ? 0 : 1, paymentMode: paymentMode || 'OFFLINE', referenceNo: `WEB_SESS_${Date.now()}` },
+        payment: { price: total, totalAmount: grandTotal, walletDiscount: walletDisc, payuAmount: finalAmount, currencyId: 'INR', status: paymentMode === 'ONLINE' ? 0 : 4, paymentMode: paymentMode || 'OFFLINE', referenceNo: paymentMode === 'ONLINE' ? '' : `OFFLINE-${Date.now()}` },
+        ...(ptsToRedeem > 0 && { pointsToRedeem: ptsToRedeem }),
         ...(branchId && { branchId, branchName, branchPhone, branchAddressLine1: branchAddrLine1, branchCity, branchState: branchStateVal, branchPincode }),
         ...(employeeId && { employeeId, employeeName }),
       };
@@ -153,17 +166,66 @@ export default function BookSession() {
           </Card>
         )}
 
-        {selected && date && selectedSlot && (
-          <div style={style.summary}>
-            <Row label="Session" value={selected.name} />
-            <Row label="Date" value={date} />
-            <Row label="Time" value={selectedSlot} />
-            <Row label="Total" value={`₹${selected.price}`} bold />
-            <button onClick={handleBook} disabled={booking} style={style.bookBtn}>
-              {booking ? 'Booking...' : spInfo?.paymentMode === 'ONLINE' && selected?.price > 0 ? 'Proceed to Pay' : 'Confirm Booking'}
-            </button>
-          </div>
-        )}
+        {selected && date && selectedSlot && (() => {
+          const price      = selected?.price || 0;
+          const pFee       = Math.round(price * 0.02 * 100) / 100;
+          const gst        = Math.round(pFee * 0.18 * 100) / 100;
+          const grand      = parseFloat((price + pFee + gst).toFixed(2));
+          const maxPts     = Math.floor(grand * 0.5 / 0.5);
+          const pts        = useWallet ? Math.min(walletPoints, maxPts) : 0;
+          const wDisc      = parseFloat((pts * 0.5).toFixed(2));
+          const finalAmt   = parseFloat((grand - wDisc).toFixed(2));
+          return (
+            <div style={style.summary}>
+              <Row label="Session" value={selected.name} />
+              <Row label="Date" value={date} />
+              <Row label="Time" value={selectedSlot} />
+              <div style={{ height: 1, backgroundColor: C.BORDER, margin: '8px 0' }} />
+              <Row label="Base Price" value={`₹${price}`} />
+              <Row label="Platform Fee (2%)" value={`₹${pFee}`} />
+              <Row label="GST (18%)" value={`₹${gst}`} />
+              <div style={{ height: 1, backgroundColor: C.BORDER, margin: '8px 0' }} />
+              <Row label="Total Amount" value={`₹${grand}`} bold />
+              {spInfo?.paymentMode === 'ONLINE' && walletPoints > 0 && (
+                <div style={{ marginTop: 12, padding: '10px 12px', backgroundColor: '#F5F3FF', borderRadius: 10 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span>🎁</span>
+                      <div>
+                        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: C.PRIMARY }}>
+                          {useWallet ? `${pts} pts applied` : 'Use Reward Points'}
+                        </p>
+                        <p style={{ margin: 0, fontSize: 11, color: C.TEXT3 }}>{walletPoints} pts available</p>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {useWallet && <span style={{ fontSize: 13, fontWeight: 700, color: '#10B981' }}>-₹{wDisc}</span>}
+                      <div onClick={() => setUseWallet(v => !v)} style={{
+                        width: 40, height: 22, borderRadius: 11, cursor: 'pointer', position: 'relative',
+                        backgroundColor: useWallet ? C.PRIMARY : '#D1D5DB', transition: 'background 0.2s',
+                      }}>
+                        <div style={{
+                          position: 'absolute', top: 2, left: useWallet ? 20 : 2,
+                          width: 18, height: 18, borderRadius: '50%', backgroundColor: '#fff',
+                          transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                        }} />
+                      </div>
+                    </div>
+                  </div>
+                  {useWallet && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTop: `1px solid ${C.BORDER}` }}>
+                      <span style={{ fontSize: 14, fontWeight: 700 }}>Final Total</span>
+                      <span style={{ fontSize: 14, fontWeight: 900, color: C.PRIMARY }}>₹{finalAmt}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              <button onClick={handleBook} disabled={booking} style={{ ...style.bookBtn, marginTop: 14 }}>
+                {booking ? 'Booking...' : spInfo?.paymentMode === 'ONLINE' && price > 0 ? `Proceed to Pay ₹${finalAmt}` : 'Confirm Booking'}
+              </button>
+            </div>
+          );
+        })()}
       </div>
 
       {showLogin && (

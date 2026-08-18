@@ -40,6 +40,8 @@ const CarnivalDetail   = lazy(() => import('./pages/CarnivalDetail'));
 const CustomerDetails  = lazy(() => import('./pages/CustomerDetails'));
 const BranchSelection  = lazy(() => import('./pages/BranchSelection'));
 const SpRegisterPage   = lazy(() => import('./pages/SpRegisterPage'));
+const Wallet           = lazy(() => import('./pages/Wallet'));
+const ReferralCode     = lazy(() => import('./pages/ReferralCode'));
 
 const MARKETING_PATHS = ['/', '/business', '/services', '/about-us', '/our-app', '/contact', '/enquiry', '/partner'];
 
@@ -123,6 +125,8 @@ const App = () => {
               <Route path="/profile"                 element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/notifications"           element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
               <Route path="/favourites"              element={<ProtectedRoute><Favourites /></ProtectedRoute>} />
+              <Route path="/wallet"                  element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+              <Route path="/referral-code"           element={<ProtectedRoute><ReferralCode /></ProtectedRoute>} />
             </Routes>
           </Suspense>
         </Layout>

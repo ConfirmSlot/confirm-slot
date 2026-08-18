@@ -28,12 +28,17 @@ export default function BookAppointment() {
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [booking, setBooking] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [walletPoints, setWalletPoints] = useState(0);
+  const [useWallet, setUseWallet] = useState(false);
 
   useEffect(() => {
     if (!date || !time) { navigate(-1); return; }
     api.get(`/v1/serviceproviders/${spId}`).then(r => {
       if (r.success) setSp(r.provider);
     });
+    api.get('/v1/wallet').then(r => {
+      if (r.points) setWalletPoints(r.points);
+    }).catch(() => {});
   }, [spId, date, time, navigate]);
 
   const duration    = sp?.appointment?.duration || 60;
@@ -48,7 +53,14 @@ export default function BookAppointment() {
     const e = extras.find(x => x._id === id);
     return sum + (e?.price || 0);
   }, 0);
-  const total = basePrice + extraTotal;
+  const total        = basePrice + extraTotal;
+  const platformFee  = Math.round(total * 0.02 * 100) / 100;
+  const gstAmount    = Math.round(platformFee * 0.18 * 100) / 100;
+  const grandTotal   = parseFloat((total + platformFee + gstAmount).toFixed(2));
+  const maxRedeemPts = Math.floor(grandTotal * 0.5 / 0.5);
+  const ptsToRedeem  = useWallet ? Math.min(walletPoints, maxRedeemPts) : 0;
+  const walletDisc   = parseFloat((ptsToRedeem * 0.5).toFixed(2));
+  const finalAmount  = parseFloat((grandTotal - walletDisc).toFixed(2));
 
   const toggleExtra = (id) =>
     setSelectedExtras(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -71,10 +83,14 @@ export default function BookAppointment() {
       payment: {
         currencyId,
         price: total,
-        status: 1,
+        totalAmount: grandTotal,
+        walletDiscount: walletDisc,
+        payuAmount: finalAmount,
+        status: paymentMode === 'ONLINE' ? 0 : 4,
         paymentMode,
-        referenceNo: `REF-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        referenceNo: paymentMode === 'ONLINE' ? '' : `OFFLINE-${Date.now()}`,
       },
+      ...(ptsToRedeem > 0 && { pointsToRedeem: ptsToRedeem }),
       extra: extraPayload,
       ...(branchId && { branchId, branchName, branchPhone, branchAddressLine1: branchAddrLine1, branchCity, branchState: branchStateVal, branchPincode }),
       ...(employeeId && { employeeId, employeeName }),
@@ -158,23 +174,61 @@ export default function BookAppointment() {
         {/* Payment Summary */}
         <div style={s.card}>
           <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: C.TEXT1 }}>Payment Summary</h3>
-          <Row label="Base Service"    value={`${currency}${basePrice}`} />
+          <Row label="Base Service" value={`${currency}${basePrice}`} />
           {extraTotal > 0 && <Row label="Add-ons" value={`${currency}${extraTotal}`} />}
+          <Row label="Subtotal" value={`${currency}${total}`} />
+          <Row label="Platform Fee (2%)" value={`${currency}${platformFee}`} />
+          <Row label="GST (18%)" value={`${currency}${gstAmount}`} />
           <div style={{ height: 1, backgroundColor: C.BORDER, margin: '10px 0' }} />
-          <Row label="Total Amount" value={`${currency}${total}`} bold purple />
+          <Row label="Total Amount" value={`${currency}${grandTotal}`} bold purple />
           {paymentMode !== 'ONLINE' && (
             <div style={{ backgroundColor: '#EFF6FF', borderRadius: 8, padding: '10px 12px', marginTop: 12 }}>
               <p style={{ margin: 0, fontSize: 13, color: '#1D4ED8' }}>Payment will be made directly to the vendor at the venue</p>
             </div>
           )}
         </div>
+
+        {/* Wallet */}
+        {paymentMode === 'ONLINE' && walletPoints > 0 && (
+          <div style={s.card}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 18 }}>🎁</span>
+                <div>
+                  <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.PRIMARY }}>
+                    {useWallet ? `${ptsToRedeem} pts applied` : 'Use Reward Points'}
+                  </p>
+                  <p style={{ margin: 0, fontSize: 12, color: C.TEXT3 }}>{walletPoints} pts available</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {useWallet && <span style={{ fontSize: 14, fontWeight: 700, color: '#10B981' }}>-{currency}{walletDisc}</span>}
+                <div onClick={() => setUseWallet(v => !v)} style={{
+                  width: 44, height: 24, borderRadius: 12, cursor: 'pointer', position: 'relative',
+                  backgroundColor: useWallet ? C.PRIMARY : '#D1D5DB', transition: 'background 0.2s',
+                }}>
+                  <div style={{
+                    position: 'absolute', top: 2, left: useWallet ? 22 : 2,
+                    width: 20, height: 20, borderRadius: '50%', backgroundColor: '#fff',
+                    transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  }} />
+                </div>
+              </div>
+            </div>
+            <div style={{ height: 1, backgroundColor: C.BORDER, margin: '12px 0 10px' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: C.TEXT1 }}>Total</span>
+              <span style={{ fontSize: 15, fontWeight: 900, color: C.PRIMARY }}>{currency}{finalAmount}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Sticky total + button */}
       <div style={s.bottomBar}>
         <div>
           <p style={{ margin: 0, fontSize: 12, color: '#9CA3AF' }}>Total</p>
-          <p style={{ margin: 0, fontSize: 18, fontWeight: 900, color: C.TEXT1 }}>{currency}{total}</p>
+          <p style={{ margin: 0, fontSize: 18, fontWeight: 900, color: C.TEXT1 }}>{currency}{finalAmount}</p>
         </div>
         <button onClick={handleBook} disabled={booking} style={{ ...s.bookBtn, opacity: booking ? 0.7 : 1 }}>
           {booking ? 'Booking...' : 'Complete Booking'}

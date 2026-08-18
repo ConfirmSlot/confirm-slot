@@ -72,6 +72,7 @@ export default function AppLayout({ children }) {
     { path: '/home',        icon: '🏠', label: 'Home' },
     { path: '/my-bookings', icon: '📅', label: 'Bookings' },
     ...(hasFavs ? [{ path: '/favourites', icon: '❤️', label: 'Saved' }] : []),
+    { path: '/wallet',      icon: '🎁', label: 'Wallet' },
     { path: '/profile',     icon: '👤', label: 'Profile' },
   ];
 

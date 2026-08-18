@@ -293,17 +293,54 @@ export default function MyBookings() {
   // ── Modals ────────────────────────────────────────────────────────────────
 
   const CancelModal = ({ b, onConfirm, onDismiss }) => {
-    const isPaid = b.payment?.status === 1;
+    const isPaid = b.payment?.status === 1 && (b.payment?.referenceNo || b.payment?.paymentReferenceNo);
+    const POINT_VALUE = 0.5;
+    const serviceAmount   = b.payment?.price || 0;
+    const cancelCharge    = b.cancellationPolicy?.cancellationCharge ?? b.cancellationCharge ?? 0;
+    const walletDiscount  = b.payment?.walletDiscount || 0;
+    const totalAmount     = b.payment?.totalAmount || (serviceAmount + Math.round(serviceAmount * 0.02 * 100) / 100 + Math.round(Math.round(serviceAmount * 0.02 * 100) / 100 * 0.18 * 100) / 100);
+    const paidAmount      = parseFloat(Math.max(0, totalAmount - walletDiscount).toFixed(2));
+    const platformFee     = Math.round(serviceAmount * 0.02 * 100) / 100;
+    const gstAmount       = Math.round(platformFee * 0.18 * 100) / 100;
+    const cashRefundable  = parseFloat(Math.max(0, paidAmount - platformFee - gstAmount).toFixed(2));
+    const refundAmount    = Math.max(0, serviceAmount - cancelCharge);
+    const cashRefund      = parseFloat(Math.min(refundAmount, cashRefundable).toFixed(2));
+    const walletRefVal    = parseFloat(Math.max(0, refundAmount - cashRefund).toFixed(2));
+    const maxRestorable   = Math.round(walletDiscount / POINT_VALUE);
+    const walletPts       = Math.min(Math.round(walletRefVal / POINT_VALUE), maxRestorable);
     return (
       <div style={s.overlay}>
         <div style={{ ...s.modal, maxWidth: 360 }}>
-          <p style={{ margin:'0 0 10px', fontSize:17, fontWeight:800, color:C.TEXT1 }}>Confirm Cancellation</p>
-          <p style={{ margin:'0 0 14px', fontSize:14, color:'#6B7280' }}>Are you sure you want to cancel this booking?</p>
-          {isPaid && (
-            <div style={{ backgroundColor:'rgba(59,130,246,0.08)', borderLeft:'3px solid #3B82F6', borderRadius:8, padding:'10px 12px', marginBottom:14 }}>
-              <p style={{ margin:0, fontSize:12, color:'#1D4ED8', lineHeight:1.6 }}>
-                Your payment will be refunded to your original payment method within 5–7 business days.
-              </p>
+          <p style={{ margin:'0 0 4px', fontSize:17, fontWeight:800, color:C.TEXT1 }}>Confirm Cancellation</p>
+          <p style={{ margin:'0 0 14px', fontSize:13, color:'#6B7280' }}>Are you sure you want to cancel this booking?</p>
+          {isPaid ? (
+            <div style={{ backgroundColor:'#F9FAFB', borderRadius:12, padding:'12px 14px', marginBottom:14 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+                <span style={{ fontSize:13, color:'#6B7280' }}>Service amount</span>
+                <span style={{ fontSize:13, color:C.TEXT1 }}>₹{serviceAmount}</span>
+              </div>
+              {cancelCharge > 0 && (
+                <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+                  <span style={{ fontSize:13, color:'#6B7280' }}>Cancellation charge</span>
+                  <span style={{ fontSize:13, color:'#EF4444' }}>-₹{cancelCharge}</span>
+                </div>
+              )}
+              <div style={{ height:1, backgroundColor:'#E5E7EB', margin:'8px 0' }} />
+              <div style={{ display:'flex', justifyContent:'space-between', marginBottom: walletPts > 0 ? 6 : 0 }}>
+                <span style={{ fontSize:13, fontWeight:700, color:C.TEXT1 }}>Cash refund</span>
+                <span style={{ fontSize:13, fontWeight:700, color:'#10B981' }}>₹{cashRefund.toFixed(2)}</span>
+              </div>
+              {walletPts > 0 && (
+                <div style={{ display:'flex', justifyContent:'space-between' }}>
+                  <span style={{ fontSize:13, fontWeight:700, color:C.TEXT1 }}>Wallet restored</span>
+                  <span style={{ fontSize:13, fontWeight:700, color:'#F59E0B' }}>{walletPts} pts</span>
+                </div>
+              )}
+              <p style={{ margin:'10px 0 0', fontSize:11, color:'#9CA3AF', textAlign:'center' }}>Refund within 5–7 business days</p>
+            </div>
+          ) : (
+            <div style={{ backgroundColor:'#F0FDF4', borderRadius:8, padding:'10px 12px', marginBottom:14 }}>
+              <p style={{ margin:0, fontSize:12, color:'#166534' }}>This booking will be cancelled. No payment was made.</p>
             </div>
           )}
           <div style={{ display:'flex', gap:10 }}>
